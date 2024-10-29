@@ -11,11 +11,11 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-import org.firstinspires.ftc.teamcode.hermes_helper.data_types.ExtensionMode;
-import org.firstinspires.ftc.teamcode.hermes_helper.util.DcMotorV2;
-import org.firstinspires.ftc.teamcode.hermes_helper.util.IMUV2;
-import org.firstinspires.ftc.teamcode.hermes_helper.util.MechanumDrive;
-import org.firstinspires.ftc.teamcode.hermes_helper.util.ServoV2;
+import org.firstinspires.ftc.teamcode.hermeshelper.datatypes.ExtensionMode;
+import org.firstinspires.ftc.teamcode.hermeshelper.util.hardware.DcMotorV2;
+import org.firstinspires.ftc.teamcode.hermeshelper.util.hardware.IMUV2;
+import org.firstinspires.ftc.teamcode.hermeshelper.util.hardware.ServoV2;
+import org.firstinspires.ftc.teamcode.hermeshelper.util.mechanum_drive.MechanumDrive;
 
 @TeleOp(name="Robot Go Brrr", group="Linear OpMode")
 public class RobotGoBrrr extends LinearOpMode {
@@ -77,9 +77,7 @@ public class RobotGoBrrr extends LinearOpMode {
 
         hSlideMotor.setDirection(FORWARD);
 
-        IMUV2 imu = new IMUV2("imu", hardwareMap,
-                RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.LEFT);
+        IMUV2 imu = new IMUV2("imu", hardwareMap);
 
         MechanumDrive mechanumDrive = new MechanumDrive
                 (fLMotor,
@@ -87,7 +85,7 @@ public class RobotGoBrrr extends LinearOpMode {
                 bLMotor,
                 bRMotor,
                 imu,
-                gamepad1, gamepad2, telemetry);
+                gamepad1, gamepad2);
 
         // Wait for the game to start
         waitForStart();
