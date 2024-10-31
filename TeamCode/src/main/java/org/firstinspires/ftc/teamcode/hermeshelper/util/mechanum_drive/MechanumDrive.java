@@ -72,8 +72,8 @@ public class MechanumDrive {
     public void fieldCentricDrive(double x, double y, double rx) {
         double botHeading = -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
-        GlobalTelemetry.getTelemetry().addData("bot heading: ", botHeading);
-        GlobalTelemetry.getTelemetry().update();
+        GlobalTelemetry.get().addData("bot heading: ", botHeading);
+        GlobalTelemetry.get().update();
 
         double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
         double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);

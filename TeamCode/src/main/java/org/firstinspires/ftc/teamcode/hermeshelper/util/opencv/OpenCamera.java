@@ -35,8 +35,8 @@ public class OpenCamera {
 
             @Override
             public void onError(int errorCode) {
-                GlobalTelemetry.getTelemetry().addData("Camera Error", "Error code: " + errorCode);
-                GlobalTelemetry.getTelemetry().update();
+                GlobalTelemetry.get().addData("Camera Error", "Error code: " + errorCode);
+                GlobalTelemetry.get().update();
             }
         });
     }

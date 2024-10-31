@@ -8,10 +8,13 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.hermeshelper.datatypes.ExtensionMode;
+import org.firstinspires.ftc.teamcode.hermeshelper.util.GlobalTelemetry;
+import org.firstinspires.ftc.teamcode.hermeshelper.util.Sequence;
 import org.firstinspires.ftc.teamcode.hermeshelper.util.hardware.DcMotorV2;
 import org.firstinspires.ftc.teamcode.hermeshelper.util.hardware.IMUV2;
 import org.firstinspires.ftc.teamcode.hermeshelper.util.hardware.ServoV2;
@@ -35,8 +38,10 @@ public class RobotGoBrrr extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
+        GlobalTelemetry.init(telemetry);
+        
+        GlobalTelemetry.get().addData("Status", "Initialized");
+        GlobalTelemetry.get().update();
 
         //MotorUtilV2 testMotor = new MotorUtilV2("test_motor");
         //testMotor.motor.setPower(1.0);
@@ -49,8 +54,15 @@ public class RobotGoBrrr extends LinearOpMode {
         DcMotorV2 bLMotor = new DcMotorV2("back_left", hardwareMap);
         DcMotorV2 bRMotor = new DcMotorV2("back_right", hardwareMap);
 
-        ServoV2 bucketServoOne = new ServoV2("bucket_one", hardwareMap);
-        ServoV2 bucketServoTwo = new ServoV2("bucket_two", hardwareMap);
+        ServoV2 intakePivotServoOne = new ServoV2("intake_pivot_one", hardwareMap);
+        ServoV2 intakePivotServoTwo = new ServoV2("intake_pivot_two", hardwareMap);
+
+       // ServoV2 intakeClawServo = new ServoV2("intake_claw", hardwareMap);
+       // ServoV2 outtakeClawServo = new ServoV2("outtake_claw", hardwareMap);
+
+        //ServoV2 outtakePivotServo = new ServoV2("outtake_pivot", hardwareMap);
+
+      //  ServoV2 intakeWristServo = new ServoV2("intake_wrist", hardwareMap);
 
         DcMotorV2 hSlideMotor = new DcMotorV2("h_slide", hardwareMap);
         hSlideMotor.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -88,6 +100,36 @@ public class RobotGoBrrr extends LinearOpMode {
                 imu,
                 gamepad1, gamepad2);
 
+        Sequence sequence = new Sequence();
+        sequence.create("transfer")
+                .add(intakePivotServoOne, 0, 0) // intake arm servos move to transfer position
+                .add(intakePivotServoTwo, 0, 0)
+                //.add(intakeClawServo, 0.5f, 20 ) //release sample
+                //.add(outtakeClawServo, 0.5f, 10) //outtake claw grabs sample
+                //.add(outtakePivotServo, 0.5f, 0) //outtake pivot/claw moves to scoring position
+                .build();
+
+        sequence.create("intakeNeutral")
+                //.add(intakeClawServo, 0.5f, 10)
+                .add(intakePivotServoOne, 0.7f, 0) // intake arm servos move to transfer position
+                .add(intakePivotServoTwo, 0.7f, 0)
+                .build();
+
+        sequence.create("intakeExtended")
+                //.add(intakeClawServo, 0.5f, 10)
+                .add(intakePivotServoOne, 1f, 0) // intake arm servos move to transfer position
+                .add(intakePivotServoTwo, 1f, 0)
+                .build();
+
+//        sequence.create("intakeNeutralButton")
+//                .add(intakeWristServo ,0,0) //TODO: add the value of whatever the second driver joystick
+//                .add(outtakeClawServo, 0, 10) //outtake claw grabs sample
+//                .add(outtakePivotServo, 0, 0) //outtake pivot/claw moves to scoring position
+//                .build();
+
+
+        intakePivotServoTwo.setDirection(Servo.Direction.REVERSE);
+
         // Wait for the game to start
         waitForStart();
         runtime.reset();
@@ -101,14 +143,12 @@ public class RobotGoBrrr extends LinearOpMode {
             y = -gamepad1.left_stick_x;
             rx = -gamepad1.right_stick_x;
 
-            int hSlideTargetPosition;
             if (gamepad1.a) { // Extend the slide
                 hSlideMotor.runToPosition(580);
             } else if (gamepad1.b) { // Retract the slide
                 hSlideMotor.runToPosition(0);
             }
 
-            int vSlideTargetPosition;
             if (gamepad1.y && slidestate == ExtensionMode.IDLE) { // Extend the slide
                 vSlideMotorOne.runToPosition(-1000);
                 vSlideMotorTwo.runToPosition(-1000);
@@ -132,6 +172,17 @@ public class RobotGoBrrr extends LinearOpMode {
                 slidestate = ExtensionMode.IDLE;
             }
 
+            if(gamepad1.dpad_right) {
+                //sequence.run("intakeNeutral");
+                intakePivotServoOne.setPosition(0.5f);
+                intakePivotServoTwo.setPosition(0.5f);
+            }
+            if(gamepad1.dpad_left) {
+                //sequence.run("intakeExtended");
+                intakePivotServoOne.setPosition(0f);
+                intakePivotServoTwo.setPosition(0f);
+            }
+
             if(slideTimer.milliseconds() > 2000 && slidestate == ExtensionMode.RETRACTED) {
                 vSlideMotorOne.stopAndReset();
                 vSlideMotorTwo.stopAndReset();
@@ -140,22 +191,14 @@ public class RobotGoBrrr extends LinearOpMode {
                 slidestate = ExtensionMode.IDLE;
             }
 
-            if(gamepad1.dpad_up) {
-                bucketServoOne.setPosition(0.7d);
-                bucketServoTwo.setPosition(0.7d);
-            } else if(gamepad1.dpad_down) {
-                bucketServoOne.setPosition(1.0d);
-                bucketServoTwo.setPosition(1.0d);
-            }
-
             mechanumDrive.fieldCentricDrive(x, y, rx);
 
             // Show the elapsed game time and wheel power.
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Motors", "x (%.2f), y (%.2f), rx (%.2f)", x, y, rx);
-            telemetry.addData("Ticks", "hSlideMotor: " + hSlideMotor.getCurrentPosition());
+            GlobalTelemetry.get().addData("Status", "Run Time: " + runtime.toString());
+            GlobalTelemetry.get().addData("Motors", "x (%.2f), y (%.2f), rx (%.2f)", x, y, rx);
+            GlobalTelemetry.get().addData("Ticks", "hSlideMotor: " + hSlideMotor.getCurrentPosition());
 
-            telemetry.update();
+            GlobalTelemetry.get().update();
         }
     }
 }
