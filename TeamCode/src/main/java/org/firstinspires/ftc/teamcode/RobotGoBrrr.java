@@ -174,8 +174,8 @@ public class RobotGoBrrr extends LinearOpMode {
 
             if(gamepad1.dpad_right) {
                 //sequence.run("intakeNeutral");
-                intakePivotServoOne.setPosition(0.5f);
-                intakePivotServoTwo.setPosition(0.5f);
+                intakePivotServoOne.setPosition(1f);
+                intakePivotServoTwo.setPosition(1f);
             }
             if(gamepad1.dpad_left) {
                 //sequence.run("intakeExtended");
