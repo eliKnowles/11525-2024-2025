@@ -19,18 +19,18 @@ public class LucasCode extends LinearOpMode {
     public static DcMotor fRMotor = null;
     public static DcMotor bLMotor = null;
     public static DcMotor bRMotor = null;
-    public static DcMotor hSlide_motor = null;
-    public static DcMotorEx vSlide_motor_one = null;
-    public static DcMotorEx vSlide_motor_two = null;
+//    public static DcMotor hSlide_motor = null;
+//    public static DcMotorEx vSlide_motor_one = null;
+//    public static DcMotorEx vSlide_motor_two = null;
 
     // Variables for horizontal slides movement
-    int hSlideTargetPosition;
-    int vSlideTargetPosition;
-    private enum vSlidestate {
-        EXTENDING,RETRACTING, DOWN
-    }
-    private vSlidestate slidestate = vSlidestate.DOWN;
-
+//    int hSlideTargetPosition;
+//    int vSlideTargetPosition;
+//    private enum vSlidestate {
+//        EXTENDING,RETRACTING, DOWN
+//    }
+//    private vSlidestate slidestate = vSlidestate.DOWN;
+//
 
     @Override
     public void runOpMode() {
@@ -54,19 +54,19 @@ public class LucasCode extends LinearOpMode {
         bLMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         bRMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        hSlide_motor = hardwareMap.get(DcMotorEx.class, "h_slide");
-        hSlide_motor.setDirection(DcMotorSimple.Direction.FORWARD);
-        hSlide_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        hSlide_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        hSlide_motor = hardwareMap.get(DcMotorEx.class, "h_slide");
+//        hSlide_motor.setDirection(DcMotorSimple.Direction.FORWARD);
+//        hSlide_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        hSlide_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        vSlide_motor_one = hardwareMap.get(DcMotorEx.class, "v_slide_one");
-        vSlide_motor_one.setDirection(DcMotorSimple.Direction.FORWARD);
-        vSlide_motor_one.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        vSlide_motor_one.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        vSlide_motor_two = hardwareMap.get(DcMotorEx.class, "v_slide_two");
-        vSlide_motor_two.setDirection(DcMotorSimple.Direction.FORWARD);
-        vSlide_motor_two.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        vSlide_motor_two.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        vSlide_motor_one = hardwareMap.get(DcMotorEx.class, "v_slide_one");
+//        vSlide_motor_one.setDirection(DcMotorSimple.Direction.FORWARD);
+//        vSlide_motor_one.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        vSlide_motor_one.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        vSlide_motor_two = hardwareMap.get(DcMotorEx.class, "v_slide_two");
+//        vSlide_motor_two.setDirection(DcMotorSimple.Direction.FORWARD);
+//        vSlide_motor_two.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        vSlide_motor_two.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
         // Wait for the game to start
@@ -102,47 +102,46 @@ public class LucasCode extends LinearOpMode {
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
-            telemetry.addData("Slide Motor Position:", hSlide_motor.getCurrentPosition());
-            telemetry.addData("Vertical slide motor 1", vSlide_motor_one.getCurrentPosition());
-            telemetry.addData("Vertical slide motor 2", vSlide_motor_two.getCurrentPosition());
+//            telemetry.addData("Slide Motor Position:", hSlide_motor.getCurrentPosition());
+//            telemetry.addData("Vertical slide motor 1", vSlide_motor_one.getCurrentPosition());
+//            telemetry.addData("Vertical slide motor 2", vSlide_motor_two.getCurrentPosition());
             telemetry.update();
 
-            if (gamepad1.a) { // Extend the slide
-                hSlideTargetPosition = 580; // Target position for extension
-                hSlide_motor.setTargetPosition(hSlideTargetPosition);
-                hSlide_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                hSlide_motor.setPower(1.0);
-            } else if (gamepad1.b) { // Retract the slide
-                hSlideTargetPosition = 0; // Target position for retraction
-                hSlide_motor.setTargetPosition(hSlideTargetPosition);
-                hSlide_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                hSlide_motor.setPower(1.0);
-            }
+//            if (gamepad1.a) { // Extend the slide
+//                hSlideTargetPosition = 580; // Target position for extension
+//                hSlide_motor.setTargetPosition(hSlideTargetPosition);
+//                hSlide_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                hSlide_motor.setPower(1.0);
+//            } else if (gamepad1.b) { // Retract the slide
+//                hSlideTargetPosition = 0; // Target position for retraction
+//                hSlide_motor.setTargetPosition(hSlideTargetPosition);
+//                hSlide_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                hSlide_motor.setPower(1.0);
+//            }
+//
+//            if (gamepad1.y && slidestate == vSlidestate.DOWN) { // Extend the slide
+//                vSlideTargetPosition = -1000; // Target position for extension
+//                vSlide_motor_one.setTargetPosition(vSlideTargetPosition);
+//                vSlide_motor_one.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                vSlide_motor_one.setPower(1.0);
+//                vSlide_motor_two.setTargetPosition(vSlideTargetPosition);
+//                vSlide_motor_two.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                vSlide_motor_two.setPower(1.0);
+//                slidestate = vSlidestate.EXTENDING;
+//            } else if (gamepad1.x && slidestate == vSlidestate.EXTENDING) { // Retract the slide
+//                vSlide_motor_one.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//                vSlide_motor_two.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//                vSlide_motor_one.setPower(.7);
+//                vSlide_motor_two.setPower(.7);
+//                slidestate = vSlidestate.RETRACTING;
+//            }
 
-            if (gamepad1.y && slidestate == vSlidestate.DOWN) { // Extend the slide
-                vSlideTargetPosition = -1000; // Target position for extension
-                vSlide_motor_one.setTargetPosition(vSlideTargetPosition);
-                vSlide_motor_one.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                vSlide_motor_one.setPower(1.0);
-                vSlide_motor_two.setTargetPosition(vSlideTargetPosition);
-                vSlide_motor_two.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                vSlide_motor_two.setPower(1.0);
-                slidestate = vSlidestate.EXTENDING;
-            } else if (gamepad1.x && slidestate == vSlidestate.EXTENDING) { // Retract the slide
-                vSlide_motor_one.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                vSlide_motor_two.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                vSlide_motor_one.setPower(.7);
-                vSlide_motor_two.setPower(.7);
-                slidestate = vSlidestate.RETRACTING;
-            }
-
-            if(vSlide_motor_one.getCurrent(CurrentUnit.AMPS) > 6.5 && slidestate == vSlidestate.RETRACTING ) {
-                vSlide_motor_one.setPower(0);
-                vSlide_motor_one.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                vSlide_motor_two.setPower(0);
-                vSlide_motor_two.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                slidestate = vSlidestate.DOWN;
+//            if(vSlide_motor_one.getCurrent(CurrentUnit.AMPS) > 6.5 && slidestate == vSlidestate.RETRACTING ) {
+//                vSlide_motor_one.setPower(0);
+//                vSlide_motor_one.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//                vSlide_motor_two.setPower(0);
+//                vSlide_motor_two.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//                slidestate = vSlidestate.DOWN;
             }
         }
     }
-}
