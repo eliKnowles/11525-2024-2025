@@ -3,6 +3,10 @@ package org.firstinspires.ftc.teamcode;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.PoseVelocity2d;
+import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -12,14 +16,13 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.hermeshelper.datatypes.ExtensionMode;
 import org.firstinspires.ftc.teamcode.hermeshelper.util.GlobalTelemetry;
 import org.firstinspires.ftc.teamcode.hermeshelper.util.Sequence;
 import org.firstinspires.ftc.teamcode.hermeshelper.util.hardware.DcMotorV2;
 import org.firstinspires.ftc.teamcode.hermeshelper.util.hardware.IMUV2;
 import org.firstinspires.ftc.teamcode.hermeshelper.util.hardware.ServoV2;
-import org.firstinspires.ftc.teamcode.hermeshelper.util.mechanum_drive.MechanumDrive;
-import org.openftc.easyopencv.OpenCvCameraFactory;
 
 @TeleOp(name="Robot Go Brrr", group="Linear OpMode")
 public class RobotGoBrrr extends LinearOpMode {
@@ -36,8 +39,14 @@ public class RobotGoBrrr extends LinearOpMode {
 
     public static ExtensionMode vSlideState = ExtensionMode.IDLE;
 
+    GoBildaPinpointDriver odo;
+
+    double oldTime = 0;
+
     @Override
     public void runOpMode() {
+        Pose2d beginPose = new Pose2d(0, 0, 0);
+
         GlobalTelemetry.init(telemetry);
         
         GlobalTelemetry.get().addData("Status", "Initialized");
@@ -49,10 +58,16 @@ public class RobotGoBrrr extends LinearOpMode {
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
-        DcMotorV2 fLMotor = new DcMotorV2("front_left", hardwareMap);
-        DcMotorV2 fRMotor = new DcMotorV2( "front_right", hardwareMap);
-        DcMotorV2 bLMotor = new DcMotorV2("back_left", hardwareMap);
-        DcMotorV2 bRMotor = new DcMotorV2("back_right", hardwareMap);
+        odo = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
+        odo.setOffsets(145, 60);
+        odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
+        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
+        odo.resetPosAndIMU();
+
+//        DcMotorV2 fLMotor = new DcMotorV2("front_left", hardwareMap);
+//        DcMotorV2 fRMotor = new DcMotorV2( "front_right", hardwareMap);
+//        DcMotorV2 bLMotor = new DcMotorV2("back_left", hardwareMap);
+//        DcMotorV2 bRMotor = new DcMotorV2("back_right", hardwareMap);
 
         ServoV2 intakePivotServoOne = new ServoV2("intake_pivot_one", hardwareMap);
         ServoV2 intakePivotServoTwo = new ServoV2("intake_pivot_two", hardwareMap);
@@ -65,6 +80,7 @@ public class RobotGoBrrr extends LinearOpMode {
       //  ServoV2 intakeWristServo = new ServoV2("intake_wrist", hardwareMap);
 
         DcMotorV2 hSlideMotor = new DcMotorV2("h_slide", hardwareMap);
+
         hSlideMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         hSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         hSlideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -78,27 +94,28 @@ public class RobotGoBrrr extends LinearOpMode {
         vSlideMotorTwo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         vSlideMotorTwo.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        fLMotor.setDirection(FORWARD);
-        fRMotor.setDirection(REVERSE);
-        bLMotor.setDirection(FORWARD);
-        bRMotor.setDirection(REVERSE);
-
-        fLMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        fRMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        bLMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        bRMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        fLMotor.setDirection(FORWARD);
+//        fRMotor.setDirection(REVERSE);
+//        bLMotor.setDirection(FORWARD);
+//        bRMotor.setDirection(REVERSE);
+//
+//        fLMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        fRMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        bLMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        bRMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         hSlideMotor.setDirection(FORWARD);
 
         IMUV2 imu = new IMUV2("imu", hardwareMap);
 
-        MechanumDrive mechanumDrive = new MechanumDrive
+        /* MechanumDrive mechanumDrive = new MechanumDrive
                 (fLMotor,
                 fRMotor,
                 bLMotor,
                 bRMotor,
                 imu,
                 gamepad1, gamepad2);
+         */
 
         Sequence sequence = new Sequence();
         sequence.create("transfer")
@@ -130,12 +147,28 @@ public class RobotGoBrrr extends LinearOpMode {
 
         intakePivotServoTwo.setDirection(Servo.Direction.REVERSE);
 
+        MecanumDrive drive = new MecanumDrive(hardwareMap, beginPose);
+
         // Wait for the game to start
         waitForStart();
         runtime.reset();
 
         // run until the end of the match
         while (opModeIsActive()) {
+
+            drive.setDrivePowers(new PoseVelocity2d(
+                    new Vector2d(
+                            -gamepad1.left_stick_y,
+                            -gamepad1.left_stick_x
+                    ),
+                    -gamepad1.right_stick_x
+            ));
+
+            drive.updatePoseEstimate();
+
+            odo.update();
+            Pose2D pos = odo.getPosition();
+            Pose2D vel = odo.getVelocity();
 
             if(gamepad1.options) imu.resetYaw();
 
@@ -183,6 +216,14 @@ public class RobotGoBrrr extends LinearOpMode {
                 intakePivotServoTwo.setPosition(0.0f);
             }
 
+            if(gamepad1.dpad_up) {
+                Actions.runBlocking(
+                        drive.actionBuilder(beginPose)
+                                .splineTo(new Vector2d(30, 30), Math.PI / 2)
+                                .splineTo(new Vector2d(0, 60), Math.PI)
+                                .build());
+            }
+
             if(slideTimer.milliseconds() > 2000 && slidestate == ExtensionMode.RETRACTED) {
                 vSlideMotorOne.stopAndReset();
                 vSlideMotorTwo.stopAndReset();
@@ -191,7 +232,12 @@ public class RobotGoBrrr extends LinearOpMode {
                 slidestate = ExtensionMode.IDLE;
             }
 
-            mechanumDrive.fieldCentricDrive(x, y, rx);
+            //mechanumDrive.fieldCentricDrive(x, y, rx);
+
+            double newTime = getRuntime();
+            double loopTime = newTime-oldTime;
+            double frequency = 1/loopTime;
+            oldTime = newTime;
 
             // Show the elapsed game time and wheel power.
             GlobalTelemetry.get().addData("Status", "Run Time: " + runtime.toString());
