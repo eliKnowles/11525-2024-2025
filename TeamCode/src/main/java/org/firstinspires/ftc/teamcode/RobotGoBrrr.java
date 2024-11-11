@@ -80,7 +80,6 @@ public class RobotGoBrrr extends LinearOpMode {
       //  ServoV2 intakeWristServo = new ServoV2("intake_wrist", hardwareMap);
 
         DcMotorV2 hSlideMotor = new DcMotorV2("h_slide", hardwareMap);
-
         hSlideMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         hSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         hSlideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
