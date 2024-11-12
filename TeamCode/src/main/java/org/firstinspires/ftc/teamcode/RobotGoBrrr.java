@@ -117,32 +117,35 @@ public class RobotGoBrrr extends LinearOpMode {
          */
 
         Sequence sequence = new Sequence();
+        
         sequence.create("transfer")
-                .add(intakePivotServoOne, 0, 0) // intake arm servos move to transfer position
-                .add(intakePivotServoTwo, 0, 0)
-                //.add(intakeClawServo, 0.5f, 20 ) //release sample
-                //.add(outtakeClawServo, 0.5f, 10) //outtake claw grabs sample
+                .add(intakePivotServoOne, .57f, 0) // intake arm servos move to transfer position
+             //   .add(intakePivotServoTwo, .57f, 0)
+                .add(intakeWristServo, 0f, 0)
+                .add(hSlideMotor, 0f, 400)
+                .add(outtakeClawServo, 0.5f, 400) //outtake claw grabs sample
+                .add(intakeClawServo, 0.4f,  ) //release sample
+               
                 //.add(outtakePivotServo, 0.5f, 0) //outtake pivot/claw moves to scoring position
                 .build();
 
         sequence.create("intakeNeutral")
                 //.add(intakeClawServo, 0.5f, 10)
-                .add(intakePivotServoOne, 0.7f, 0) // intake arm servos move to transfer position
-                .add(intakePivotServoTwo, 0.7f, 0)
+                .add(hSlideMotor, 200f, 300)
+                .add(intakePivotServoOne, 0f, 0) // intake arm servos move to transfer position
+             //   .add(intakePivotServoTwo, 0f, 0)
+                .add(intakeWristServo, .98f, 0)
+                .add(intakeClawServo, .4f, 0 )
                 .build();
 
-        sequence.create("intakeExtended")
-                //.add(intakeClawServo, 0.5f, 10)
-                .add(intakePivotServoOne, 1f, 0) // intake arm servos move to transfer position
-                .add(intakePivotServoTwo, 1f, 0)
+        sequence.create("intakeGrab")
+
+                .add(intakeClawServo, .9f, 400)
+                .add(intakePivotServoOne, .2f, 0) 
+           //     .add(intakePivotServoTwo, .2f, 0)
+
+
                 .build();
-
-//        sequence.create("intakeNeutralButton")
-//                .add(intakeWristServo ,0,0) //TODO: add the value of whatever the second driver joystick
-//                .add(outtakeClawServo, 0, 10) //outtake claw grabs sample
-//                .add(outtakePivotServo, 0, 0) //outtake pivot/claw moves to scoring position
-//                .build();
-
 
         intakePivotServoTwo.setDirection(Servo.Direction.REVERSE);
 
@@ -176,10 +179,10 @@ public class RobotGoBrrr extends LinearOpMode {
             rx = -gamepad1.right_stick_x;
 
             if (gamepad1.a) { // Extend the slide
-                hSlideMotor.runToPosition(580);
+                hSlideMotor.runToPosition(280);
             } else if (gamepad1.b) { // Retract the slide
                 hSlideMotor.runToPosition(0);
-            }
+            } 
 
             if (gamepad1.y && slidestate == ExtensionMode.IDLE) { // Extend the slide
                 vSlideMotorOne.runToPosition(-1000);
@@ -206,16 +209,18 @@ public class RobotGoBrrr extends LinearOpMode {
 
             if(gamepad1.dpad_right) {
                 //sequence.run("intakeNeutral");
-                intakePivotServoOne.setPosition(1.0f);
-                intakePivotServoTwo.setPosition(1.0f);
-            }
+                sequence.run("intakeGrab")
+                }
             if(gamepad1.dpad_left) {
-                //sequence.run("intakeExtended");
-                intakePivotServoOne.setPosition(0.0f);
-                intakePivotServoTwo.setPosition(0.0f);
-            }
-
-            if(gamepad1.dpad_up) {
+                sequence.run("transfer")
+                }
+            if(gamepad1.dpad_down) {
+                sequence.run("intakeNeutral")
+                    }
+            if(gamepad1.dpad_up){
+                outtakeClawServo.setposition(.4f)
+                }
+            if(gamepad2.dpad_up) {
                 Actions.runBlocking(
                         drive.actionBuilder(beginPose)
                                 .splineTo(new Vector2d(30, 30), Math.PI / 2)
