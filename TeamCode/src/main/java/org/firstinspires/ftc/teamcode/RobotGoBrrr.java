@@ -141,7 +141,7 @@ public class RobotGoBrrr extends LinearOpMode {
         sequence.create("intakeNeutral")
                 //.add(intakeClawServo, 0.5f, 10)
                 .add(hSlideMotor, 200f, 300)
-                .add(outtakePivotServo, .7f, 0)
+                .add(outtakePivotServo, .75f, 0)
                 .add(intakePivotServoOne, .05, 0) // intake arm servos move to transfer position
                 //   .add(intakePivotServoTwo, 0f, 0)
                 .add(intakeWristServo, .98f, 0)
