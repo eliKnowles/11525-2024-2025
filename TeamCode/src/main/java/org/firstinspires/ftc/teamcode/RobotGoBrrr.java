@@ -40,7 +40,7 @@ public class RobotGoBrrr extends LinearOpMode {
     //public static ExtensionMode vSlideState = ExtensionMode.IDLE;
 
     enum transferState {            // states for scoring and whatnot
-        H_IDLE, V_IDLE, TRANSFERED, H_EXTENDED, H_INTAKEN
+        H_IDLE, TRANSFERED, H_EXTENDED, H_INTAKEN
     }
 
     private transferState currentTransferState = transferState.H_IDLE;
