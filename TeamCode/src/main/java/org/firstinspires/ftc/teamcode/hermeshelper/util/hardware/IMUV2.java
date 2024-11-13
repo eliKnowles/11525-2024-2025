@@ -19,9 +19,9 @@ public class IMUV2 implements IMU {
     public IMUV2(String name, HardwareMap hardwareMap) {
         this.imu = hardwareMap.get(IMU.class, name);
 
-        IMU.Parameters parameters;
+        Parameters parameters;
 
-        parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+        parameters = new Parameters(new RevHubOrientationOnRobot(
                 HermesConfig.IMU.LOGO_FACING_DIRECTION, HermesConfig.IMU.USB_FACING_DIRECTION));
 
         imu.initialize(parameters);

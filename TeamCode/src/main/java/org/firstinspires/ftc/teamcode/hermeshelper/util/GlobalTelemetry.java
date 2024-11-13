@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.hermeshelper.util;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class GlobalTelemetry{
+public class GlobalTelemetry {
 
     // Singleton instance of telemetry
     private static Telemetry telemetryInstance;
