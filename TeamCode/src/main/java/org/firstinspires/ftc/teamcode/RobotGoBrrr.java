@@ -75,7 +75,7 @@ public class RobotGoBrrr extends OpMode {
 
     private TransferState currentTransferState = TransferState.H_IDLE;
 
-    GoBildaPinpointDriver odo;
+//    GoBildaPinpointDriver odo;
 
     double oldTime = 0;
 
@@ -95,11 +95,11 @@ public class RobotGoBrrr extends OpMode {
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
-        odo = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
-        odo.setOffsets(145, 60);
-        odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
-        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
-        odo.resetPosAndIMU();
+//        odo = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
+//        odo.setOffsets(145, 60);
+//        odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
+//        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
+//        odo.resetPosAndIMU();
 
         fLMotor = new DcMotorV2(leftFrontMotorName, hardwareMap);
         fRMotor = new DcMotorV2(leftRearMotorName, hardwareMap);
@@ -179,9 +179,9 @@ public class RobotGoBrrr extends OpMode {
         follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
         follower.update();
 
-        odo.update();
-        Pose2D pos = odo.getPosition();
-        Pose2D vel = odo.getVelocity();
+//        odo.update();
+//        Pose2D pos = odo.getPosition();
+//        Pose2D vel = odo.getVelocity();
 
         if (gamepad1.options) imu.resetYaw();
 
