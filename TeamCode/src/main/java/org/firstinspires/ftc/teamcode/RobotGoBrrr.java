@@ -78,7 +78,7 @@ public class RobotGoBrrr extends OpMode {
     public static double y = 0;
     public static double rx = 0;
 
-    //public static ExtensionMode vSlideState = ExtensionMode.IDLE;
+    // public static ExtensionMode vSlideState = ExtensionMode.IDLE;
 
     private TransferState currentTransferState = TransferState.H_IDLE;
 
