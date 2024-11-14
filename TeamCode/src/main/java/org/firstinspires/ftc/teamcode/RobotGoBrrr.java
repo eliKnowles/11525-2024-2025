@@ -122,7 +122,7 @@ public class RobotGoBrrr extends OpMode {
         hSlideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         vSlideMotorOne = new DcMotorV2("v_slide_one", hardwareMap);
-        vSlideMotorOne.setDirection(DcMotorSimple.Direction.FORWARD);
+        vSlideMotorOne.setDirection(DcMotorSimple.Direction.REVERSE);
         vSlideMotorOne.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         vSlideMotorOne.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         vSlideMotorTwo = new DcMotorV2("v_slide_two", hardwareMap);
@@ -240,19 +240,46 @@ public class RobotGoBrrr extends OpMode {
 
         // Set target positions for slides based on gamepad input
         if (gamepad1.y) {
-            targetSlidePosition = 800; // Example extension position
-        } else if (gamepad1.a) {
-            targetSlidePosition = 0;
+        targetSlidePosition = 800; // Example extension position for PIDF
+        }else if (gamepad1.a) {
+        // Replace this line to run the slides to position zero with controlled power
+        vSlideMotorOne.setTargetPosition(0);
+        vSlideMotorTwo.setTargetPosition(0);
+        vSlideMotorOne.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        vSlideMotorTwo.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        vSlideMotorOne.setPower(0.3); // Reduced power for smooth retraction
+        vSlideMotorTwo.setPower(0.3);
         }
 
-        // Wrist Servo Control
+        // PIDF Control for all other slide movements
+        if (targetSlidePosition != 0) { // Only use PIDF if target is not zero
+        double currentSlidePosition = vSlideMotorOne.getCurrentPosition();
+        double pidfOutput = computePIDFOutput(targetSlidePosition, currentSlidePosition);
+        vSlideMotorOne.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        vSlideMotorTwo.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        vSlideMotorOne.setPower(pidfOutput);
+        vSlideMotorTwo.setPower(pidfOutput);
+        }
+         // Wrist Servo Control
+        
+        double wristLeftPosition = 57.0 / 180.0;   
+        double wristCenterPosition = 90.0 / 180.0; 
+        double wristRightPosition = 123.0 / 180.0; 
         int wristPos = 0;
         if (gamepad1.left_bumper) wristPos -= 1;
-
         if (gamepad1.right_bumper) wristPos += 1;
 
         wristPos = Range.clip(wristPos, -1, 1);
-        intakeWristServo.setPosition(wristPos);
+       // intakeWristServo.setPosition(wristPos);
+
+// Set servo position based on wristPos
+        if (wristPos == -1) {
+        intakeWristServo.setPosition(wristLeftPosition);
+        } else if (wristPos == 0) {
+         intakeWristServo.setPosition(wristCenterPosition);
+        } else if (wristPos == 1) {
+        intakeWristServo.setPosition(wristRightPosition);
+        }
 
         // PIDF Control for Vertical Slides
         double currentSlidePosition = (vSlideMotorOne.getCurrentPosition());
