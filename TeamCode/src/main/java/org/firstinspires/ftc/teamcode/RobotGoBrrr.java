@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.hermeshelper.datatypes.TransferState;
@@ -242,8 +243,16 @@ public class RobotGoBrrr extends OpMode {
             targetSlidePosition = 800; // Example extension position
         } else if (gamepad1.a) {
             targetSlidePosition = 0;
-
         }
+
+        // Wrist Servo Control
+        int wristPos = 0;
+        if (gamepad1.left_bumper) wristPos -= 1;
+
+        if (gamepad1.right_bumper) wristPos += 1;
+
+        wristPos = Range.clip(wristPos, -1, 1);
+        intakeWristServo.setPosition(wristPos);
 
         // PIDF Control for Vertical Slides
         double currentSlidePosition = (vSlideMotorOne.getCurrentPosition());
