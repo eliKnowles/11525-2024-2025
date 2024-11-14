@@ -247,8 +247,8 @@ public class RobotGoBrrr extends OpMode {
         vSlideMotorTwo.setTargetPosition(0);
         vSlideMotorOne.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         vSlideMotorTwo.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        vSlideMotorOne.setPower(0.3); // Reduced power for smooth retraction
-        vSlideMotorTwo.setPower(0.3);
+        vSlideMotorOne.setPower(0.7); // Reduced power for smooth retraction
+        vSlideMotorTwo.setPower(0.7);
         }
 
         // PIDF Control for all other slide movements
@@ -262,9 +262,9 @@ public class RobotGoBrrr extends OpMode {
         }
          // Wrist Servo Control
         
-        double wristLeftPosition = 57.0 / 180.0;   
-        double wristCenterPosition = 90.0 / 180.0; 
-        double wristRightPosition = 123.0 / 180.0; 
+        double wristLeftPosition = .31;
+        double wristCenterPosition = .5;
+        double wristRightPosition = .68;
         int wristPos = 0;
         if (gamepad1.left_bumper) wristPos -= 1;
         if (gamepad1.right_bumper) wristPos += 1;
