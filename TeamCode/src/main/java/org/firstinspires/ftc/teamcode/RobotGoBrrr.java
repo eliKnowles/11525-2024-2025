@@ -266,6 +266,7 @@ public class RobotGoBrrr extends OpMode {
         double wristCenterPosition = .5;
         double wristRightPosition = .68;
         int wristPos = 0;
+
         if (gamepad1.left_bumper) wristPos -= 1;
         if (gamepad1.right_bumper) wristPos += 1;
 
