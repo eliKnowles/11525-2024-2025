@@ -57,7 +57,6 @@ public class RobotGoBrrr extends OpMode {
     private ServoV2 intakeWristServo;
     private ServoV2 intakeWristServoTwo;
 
-
     private DcMotorV2 hSlideMotor;
     private DcMotorV2 vSlideMotorOne;
     private DcMotorV2 vSlideMotorTwo;
