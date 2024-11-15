@@ -229,6 +229,7 @@ public class RobotGoBrrr extends OpMode {
             outtakePivotServo.setPosition(.7);
         }
 
+
         if (hSlideMotor.getCurrentPosition() == 0);
             hSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
