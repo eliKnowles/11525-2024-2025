@@ -249,6 +249,12 @@ public class RobotGoBrrr extends OpMode {
             intakeWristServoTwo.setPosition(wristRightPosition);
         }
 
+//        if (currentTransferState  == TransferState.H_EXTENDED) {
+//            fRMotor.setPower(); TODO: variables in mecanum drive code need to be made, so when extended you can multiply the motor power by .5 or smth
+//            fLMotor.setPower();
+//            bRMotor.setPower();
+//            bLMotor.setPower();
+//        }
         // PIDF Control for Vertical Slides
         double currentSlidePosition = (vSlideMotorOne.getCurrentPosition());
         double pidfOutput = computePIDFOutput(targetSlidePosition, currentSlidePosition);
