@@ -250,7 +250,7 @@ public class RobotGoBrrr extends OpMode {
         }
 
 //        if (currentTransferState  == TransferState.H_EXTENDED) {
-//            fRMotor.setPower(); TODO: variables in mecanum drive code need to be made, so when extended you can multiply the motor power by .5 or smth
+//            fRMotor.setPower();  TODO: variables in mecanum drive code need to be made, so when extended you can multiply the motor power by .5 or smth
 //            fLMotor.setPower();
 //            bRMotor.setPower();
 //            bLMotor.setPower();
