@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 // import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.hermeshelper.datatypes.TransferState;
@@ -54,6 +55,8 @@ public class RobotGoBrrr extends OpMode {
     private ServoV2 outtakeClawServo;
     private ServoV2 outtakePivotServo;
     private ServoV2 intakeWristServo;
+    private ServoV2 intakeWristServoTwo;
+
 
     private DcMotorV2 hSlideMotor;
     private DcMotorV2 vSlideMotorOne;
@@ -114,6 +117,8 @@ public class RobotGoBrrr extends OpMode {
 
         outtakePivotServo = new ServoV2("outtake_pivot_one", hardwareMap);
         intakeWristServo = new ServoV2("intake_wrist", hardwareMap);
+        intakeWristServoTwo = new ServoV2("intake_wrist_two", hardwareMap);
+
 
         hSlideMotor = new DcMotorV2("h_slide", hardwareMap);
         hSlideMotor.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -121,7 +126,7 @@ public class RobotGoBrrr extends OpMode {
         hSlideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         vSlideMotorOne = new DcMotorV2("v_slide_one", hardwareMap);
-        vSlideMotorOne.setDirection(DcMotorSimple.Direction.FORWARD);
+        vSlideMotorOne.setDirection(DcMotorSimple.Direction.REVERSE);
         vSlideMotorOne.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         vSlideMotorOne.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         vSlideMotorTwo = new DcMotorV2("v_slide_two", hardwareMap);
@@ -129,10 +134,10 @@ public class RobotGoBrrr extends OpMode {
         vSlideMotorTwo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         vSlideMotorTwo.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        fLMotor.setDirection(FORWARD);
+        fLMotor.setDirection(REVERSE);
         fRMotor.setDirection(REVERSE);
         bLMotor.setDirection(FORWARD);
-        bRMotor.setDirection(REVERSE);
+        bRMotor.setDirection(FORWARD);
 
         fLMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         fRMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -145,19 +150,25 @@ public class RobotGoBrrr extends OpMode {
 
         sequence = new Sequence();
 
+
+
+
+
         sequence.create("transfer")
                 .add(intakePivotServoOne, .59f, 0)
                 .add(intakeWristServo, 0f, 700)
-                .add(hSlideMotor, 0f, 400)
-                .add(outtakeClawServo, 0.65f, 400)
+                .add(hSlideMotor, 0f, 600)
+                .add(outtakeClawServo, 0.68f, 400)
+                .add(intakeWristServoTwo,.5,0)
                 .add(intakeClawServo, 0.4f, 0)
-                .add(outtakePivotServo, .28f, 0)
+                .add(outtakePivotServo, .26f, 0)
                 .build();
 
         sequence.create("intakeNeutral")
-                .add(hSlideMotor, 200f, 300)
-                .add(outtakePivotServo, .7f, 0)
-                .add(intakePivotServoOne, .02, 0)
+                .add(hSlideMotor, 450f, 300)
+                .add(intakeWristServoTwo, .5, 0)
+                .add(outtakePivotServo, .73f, 0)
+                .add(intakePivotServoOne, .05, 0)
                 .add(intakeWristServo, 1f, 0)
                 .add(intakeClawServo, .4f, 0)
                 .build();
@@ -176,7 +187,7 @@ public class RobotGoBrrr extends OpMode {
 
     @Override
     public void loop() {
-        follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
+        follower.setTeleOpMovementVectors(gamepad1.left_stick_x, gamepad1.left_stick_y, -gamepad1.right_stick_x);
         follower.update();
 
 //        odo.update();
@@ -185,38 +196,15 @@ public class RobotGoBrrr extends OpMode {
 
         if (gamepad1.options) imu.resetYaw();
 
+        double wristLeftPosition = .05;
+        double wristCenterPosition = .5;
+        double wristRightPosition = .95;
+        int wristPos = 0;
+
         x = gamepad1.left_stick_y; // Y is reversed because gamepads are dumb
         y = -gamepad1.left_stick_x;
         rx = -gamepad1.right_stick_x;
 
-//            if (gamepad1.a) { // Extend the slide
-//                hSlideMotor.runToPosition(280);
-//            } else if (gamepad1.b) { // Retract the slide
-//                hSlideMotor.runToPosition(0);
-//            }
-
-//            if (gamepad1.y && slidestate == ExtensionMode.IDLE) { // Extend the slide
-//                vSlideMotorOne.runToPosition(-1000);
-//                vSlideMotorTwo.runToPosition(-1000);
-//                if(!vSlideMotorOne.isBusy()) vSlideMotorOne.stop();
-//                if(!vSlideMotorTwo.isBusy()) vSlideMotorTwo.stop();
-//                slidestate = ExtensionMode.EXTENDED;
-//            } else if (gamepad1.x && slidestate == ExtensionMode.EXTENDED) { // Retract the slide
-//                vSlideMotorOne.setPowerWithoutPosition(1.0d);
-//                vSlideMotorTwo.setPowerWithoutPosition(1.0d);
-//                vSlideMotorOne.setBreak();
-//                vSlideMotorTwo.setBreak();
-//                slideTimer.reset();
-//                slidestate = ExtensionMode.RETRACTED;
-//            }
-//
-//            if(vSlideMotorOne.getCurrent(CurrentUnit.AMPS) > 6.5 && slidestate == ExtensionMode.RETRACTED) {
-//                vSlideMotorOne.stopAndReset();
-//                vSlideMotorTwo.stopAndReset();
-//                vSlideMotorOne.setBreak();
-//                vSlideMotorTwo.setBreak();
-//                slidestate = ExtensionMode.IDLE;
-//            }
 
         if (gamepad1.dpad_right && currentTransferState == TransferState.H_EXTENDED) {
             //sequence.run("intakeNeutral");
@@ -229,6 +217,7 @@ public class RobotGoBrrr extends OpMode {
             currentTransferState = TransferState.TRANSFERED;
         }
         if (gamepad1.dpad_left && (currentTransferState == TransferState.H_IDLE || currentTransferState == TransferState.H_INTAKEN)) {
+            wristPos = 0;
             sequence.run("intakeNeutral");
             currentTransferState = TransferState.H_EXTENDED;
         }
@@ -239,10 +228,31 @@ public class RobotGoBrrr extends OpMode {
 
         // Set target positions for slides based on gamepad input
         if (gamepad1.y) {
-            targetSlidePosition = 800; // Example extension position
-        } else if (gamepad1.a) {
-            targetSlidePosition = 0;
+            targetSlidePosition = 830; // Example extension position for PIDF
+        }else if (gamepad1.a) {
+            targetSlidePosition= 0;
+            outtakePivotServo.setPosition(.7);
+        }
 
+        if (hSlideMotor.getCurrentPosition() == 0);
+            hSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        // Wrist Servo Control
+
+
+        if (gamepad1.left_bumper) wristPos -= 1;
+        if (gamepad1.right_bumper) wristPos += 1;
+
+        wristPos = Range.clip(wristPos, -1, 1);
+        // intakeWristServo.setPosition(wristPos);
+
+// Set servo position based on wristPos
+        if (wristPos == -1) {
+            intakeWristServoTwo.setPosition(wristLeftPosition);
+        } else if (wristPos == 0) {
+            intakeWristServoTwo.setPosition(wristCenterPosition);
+        } else if (wristPos == 1) {
+            intakeWristServoTwo.setPosition(wristRightPosition);
         }
 
         // PIDF Control for Vertical Slides
