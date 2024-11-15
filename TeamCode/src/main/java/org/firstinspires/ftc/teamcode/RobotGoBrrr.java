@@ -233,8 +233,6 @@ public class RobotGoBrrr extends OpMode {
             hSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Wrist Servo Control
-
-
         if (gamepad1.left_bumper) wristPos -= 1;
         if (gamepad1.right_bumper) wristPos += 1;
 
