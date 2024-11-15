@@ -150,7 +150,6 @@ public class RobotGoBrrr extends OpMode {
 
         sequence = new Sequence();
 
-
         sequence.create("transfer")
                 .add(intakePivotServoOne, .59f, 0)
                 .add(intakeWristServo, 0f, 700)
