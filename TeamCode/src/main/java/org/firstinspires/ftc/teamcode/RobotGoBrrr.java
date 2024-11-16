@@ -43,6 +43,7 @@ public class RobotGoBrrr extends OpMode {
     private double targetSlidePosition = 0;
     private double lastError = 0;
     private double integral = 0;
+    private double speed = 1;
 
     private DcMotorV2 fLMotor;
     private DcMotorV2 fRMotor;
@@ -156,7 +157,7 @@ public class RobotGoBrrr extends OpMode {
                 .add(outtakeClawServo, 0.68f, 400)
                 .add(intakeWristServoTwo,.5,0)
                 .add(intakeClawServo, 0.4f, 0)
-                .add(outtakePivotServo, .26f, 0)
+                .add(outtakePivotServo, .31f, 0)
                 .build();
 
         sequence.create("intakeNeutral")
@@ -182,7 +183,7 @@ public class RobotGoBrrr extends OpMode {
 
     @Override
     public void loop() {
-        follower.setTeleOpMovementVectors(gamepad1.left_stick_x, gamepad1.left_stick_y, -gamepad1.right_stick_x);
+        follower.setTeleOpMovementVectors(gamepad1.left_stick_x * speed, gamepad1.left_stick_y * speed, -gamepad1.right_stick_x * speed);
         follower.update();
 
 //        odo.update();
@@ -205,20 +206,25 @@ public class RobotGoBrrr extends OpMode {
             //sequence.run("intakeNeutral");
             sequence.run("intakeGrab");
             currentTransferState = TransferState.H_INTAKEN;
+            sequence.shutdown();
         }
 
         if (gamepad1.dpad_down && currentTransferState == TransferState.H_INTAKEN) {
             sequence.run("transfer");
             currentTransferState = TransferState.TRANSFERED;
+            sequence.shutdown();
         }
         if (gamepad1.dpad_left && (currentTransferState == TransferState.H_IDLE || currentTransferState == TransferState.H_INTAKEN)) {
             wristPos = 0;
             sequence.run("intakeNeutral");
             currentTransferState = TransferState.H_EXTENDED;
+            speed = 0.4;
+            sequence.shutdown();
         }
         if (gamepad1.dpad_up && currentTransferState == TransferState.TRANSFERED) {
             outtakeClawServo.setPosition(.4f);
             currentTransferState = TransferState.H_IDLE;
+            speed = 1;
         }
 
         // Set target positions for slides based on gamepad input
@@ -231,7 +237,7 @@ public class RobotGoBrrr extends OpMode {
 
 
         if (hSlideMotor.getCurrentPosition() == 0);
-            hSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        hSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Wrist Servo Control
         if (gamepad1.left_bumper) wristPos -= 1;
