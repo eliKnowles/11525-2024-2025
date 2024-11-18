@@ -1,19 +1,20 @@
 package org.firstinspires.ftc.teamcode.hermeshelper.util;
 
+import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.hermeshelper.util.hardware.DcMotorV2;
 import org.firstinspires.ftc.teamcode.hermeshelper.util.hardware.ServoV2;
 
-import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Sequence {
     // Inner class to represent a command with its target, position, and delay
     private static class Command {
         Object target;
         double position;
-        int delay;
+        int delay; // Delay in milliseconds
 
         public Command(Object target, double position, int delay) {
             this.target = target;
@@ -22,7 +23,7 @@ public class Sequence {
         }
 
         public void execute() {
-            // Add specific handling for different types of objects (e.g., Servo, DcMotor)
+            // Set the target's position based on type
             if (target instanceof ServoV2) {
                 ((ServoV2) target).setPosition(position);
             } else if (target instanceof DcMotorV2) {
@@ -31,9 +32,9 @@ public class Sequence {
         }
     }
 
+    // Store sequences by name
     private final Map<String, List<Command>> sequences = new HashMap<>();
     private List<Command> currentSequence;
-    private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
     // Method to create a new sequence by name
     public Sequence create(String name) {
@@ -59,26 +60,18 @@ public class Sequence {
     public void run(String name) {
         List<Command> sequence = sequences.get(name);
         if (sequence != null) {
-            // Start executing the sequence
-            executeSequence(sequence.iterator(), 0);
+            ElapsedTime timer = new ElapsedTime();
+            for (Command command : sequence) {
+                command.execute();
+
+                // Wait for the specified delay without blocking
+                timer.reset();
+                while (timer.milliseconds() < command.delay) {
+                    // You can add telemetry updates here if needed
+                }
+            }
         } else {
             System.out.println("Sequence not found: " + name);
         }
-    }
-
-    // Helper method to execute commands sequentially
-    private void executeSequence(Iterator<Command> iterator, int initialDelay) {
-        if (iterator.hasNext()) {
-            Command command = iterator.next();
-            executor.schedule(() -> {
-                command.execute();
-                executeSequence(iterator, command.delay);
-            }, initialDelay, TimeUnit.MILLISECONDS);
-        }
-    }
-
-    // Method to shut down the executor when done
-    public void shutdown() {
-        executor.shutdown();
     }
 }

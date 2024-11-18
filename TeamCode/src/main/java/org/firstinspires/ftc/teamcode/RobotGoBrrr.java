@@ -206,20 +206,18 @@ public class RobotGoBrrr extends OpMode {
             //sequence.run("intakeNeutral");
             sequence.run("intakeGrab");
             currentTransferState = TransferState.H_INTAKEN;
-            sequence.shutdown();
         }
 
         if (gamepad1.dpad_down && currentTransferState == TransferState.H_INTAKEN) {
             sequence.run("transfer");
             currentTransferState = TransferState.TRANSFERED;
-            sequence.shutdown();
+
         }
         if (gamepad1.dpad_left && (currentTransferState == TransferState.H_IDLE || currentTransferState == TransferState.H_INTAKEN)) {
             wristPos = 0;
             sequence.run("intakeNeutral");
             currentTransferState = TransferState.H_EXTENDED;
             speed = 0.4;
-            sequence.shutdown();
         }
         if (gamepad1.dpad_up && currentTransferState == TransferState.TRANSFERED) {
             outtakeClawServo.setPosition(.4f);
