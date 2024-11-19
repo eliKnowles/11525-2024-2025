@@ -3,10 +3,10 @@ package org.firstinspires.ftc.teamcode.hermeshelper.util;
 import org.firstinspires.ftc.teamcode.hermeshelper.util.hardware.DcMotorV2;
 import org.firstinspires.ftc.teamcode.hermeshelper.util.hardware.ServoV2;
 
-import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Sequence {
     // Inner class to represent a command with its target, position, and delay
@@ -28,12 +28,18 @@ public class Sequence {
             } else if (target instanceof DcMotorV2) {
                 ((DcMotorV2) target).runToPosition((int) position);
             }
+            // Add handling for other types if needed
+            try {
+                Thread.sleep(delay);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
         }
     }
 
+    // Store sequences by name
     private final Map<String, List<Command>> sequences = new HashMap<>();
     private List<Command> currentSequence;
-    private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
     // Method to create a new sequence by name
     public Sequence create(String name) {
@@ -59,26 +65,11 @@ public class Sequence {
     public void run(String name) {
         List<Command> sequence = sequences.get(name);
         if (sequence != null) {
-            // Start executing the sequence
-            executeSequence(sequence.iterator(), 0);
+            for (Command command : sequence) {
+                command.execute();
+            }
         } else {
             System.out.println("Sequence not found: " + name);
         }
-    }
-
-    // Helper method to execute commands sequentially
-    private void executeSequence(Iterator<Command> iterator, int initialDelay) {
-        if (iterator.hasNext()) {
-            Command command = iterator.next();
-            executor.schedule(() -> {
-                command.execute();
-                executeSequence(iterator, command.delay);
-            }, initialDelay, TimeUnit.MILLISECONDS);
-        }
-    }
-
-    // Method to shut down the executor when done
-    public void shutdown() {
-        executor.shutdown();
     }
 }
