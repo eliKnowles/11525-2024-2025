@@ -153,7 +153,7 @@ public class RobotGoBrrr extends OpMode {
         sequence.create("transfer")
                 .add(intakePivotServoOne, .59f, 0)
                 .add(intakeWristServo, 0f, 0)
-                .add(intakeWristServoTwo, .5, 0)
+                .add(intakeWristServoTwo, .5f, 0)
                 .add(hSlideMotor, 0f, 300)
                 .add(outtakeClawServo, 0.68f, 500)
                 .add(intakeClawServo, 0.4f, 100)
@@ -162,9 +162,10 @@ public class RobotGoBrrr extends OpMode {
 
         sequence.create("intakeNeutral")
                 .add(hSlideMotor, 450f, 0)
-                .add(intakeWristServoTwo, .5, 0)
+                .add(intakeWristServoTwo, .5f, 0)
                 .add(outtakePivotServo, .76f, 0)
-                .add(intakePivotServoOne, .07, 0)
+                .add(outtakeClawServo, .4f, 0 )
+                .add(intakePivotServoOne, .07f, 0)
                 .add(intakeWristServo, .75f, 0)
                 .add(intakeClawServo, .4f, 0)
                 .build();
@@ -172,6 +173,13 @@ public class RobotGoBrrr extends OpMode {
         sequence.create("intakeGrab")
                 .add(intakeClawServo, .9f, 0)
                 .add(intakePivotServoOne, .2f, 300)
+                .build();
+
+        sequence.create("Idle")
+                .add(intakePivotServoOne, .5f, 0)
+                .add(intakeWristServoTwo, .5f, 0)
+                .add(intakeWristServo, .7f, 0)
+                .add(outtakePivotServo, .76f, 0)
                 .build();
 
         intakePivotServoTwo.setDirection(Servo.Direction.REVERSE);
@@ -224,6 +232,9 @@ public class RobotGoBrrr extends OpMode {
             currentTransferState = TransferState.H_IDLE;
             speed = 1;
         }
+
+        if (currentTransferState == TransferState.H_IDLE)
+            sequence.run("idle");
 
         // Set target positions for slides based on gamepad input
         if (gamepad1.y) {
