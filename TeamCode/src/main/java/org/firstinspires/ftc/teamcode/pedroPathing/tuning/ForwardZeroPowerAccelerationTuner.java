@@ -76,8 +76,10 @@ public class ForwardZeroPowerAccelerationTuner extends OpMode {
         rightFront = hardwareMap.get(DcMotorEx.class, rightFrontMotorName);
 
         // TODO: Make sure that this is the direction your motors need to be reversed in.
-        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftFront.setDirection(DcMotor.Direction.REVERSE);  // Set leftFront to FORWARD
+        leftRear.setDirection(DcMotor.Direction.FORWARD);   // Reverse leftRear
+        rightFront.setDirection(DcMotor.Direction.REVERSE); // Reverse rightFront
+        rightRear.setDirection(DcMotor.Direction.FORWARD);
 
         motors = Arrays.asList(leftFront, leftRear, rightFront, rightRear);
 

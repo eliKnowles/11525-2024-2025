@@ -165,13 +165,13 @@ public class RobotGoBrrr extends OpMode {
                 .add(intakeWristServoTwo, .5, 0)
                 .add(outtakePivotServo, .76f, 0)
                 .add(intakePivotServoOne, .07, 0)
-                .add(intakeWristServo, .8f, 0)
+                .add(intakeWristServo, .75f, 0)
                 .add(intakeClawServo, .4f, 0)
                 .build();
 
         sequence.create("intakeGrab")
                 .add(intakeClawServo, .9f, 0)
-                .add(intakePivotServoOne, .2f, 350)
+                .add(intakePivotServoOne, .2f, 300)
                 .build();
 
         intakePivotServoTwo.setDirection(Servo.Direction.REVERSE);
@@ -229,7 +229,7 @@ public class RobotGoBrrr extends OpMode {
         if (gamepad1.y) {
             targetSlidePosition = 830; // Example extension position for PIDF
         }else if (gamepad1.a) {
-            targetSlidePosition= 0;
+            targetSlidePosition = 0;
             outtakePivotServo.setPosition(.7);
         }
 

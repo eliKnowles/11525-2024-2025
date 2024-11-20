@@ -15,8 +15,8 @@ public class GeneratedPath {
                 .addPath(
                         new BezierCurve(
                                 new Point(9.757, 84.983, Point.CARTESIAN),
-                                new Point(24.000, 137.739, Point.CARTESIAN),
-                                new Point(57.391, 124.435, Point.CARTESIAN)
+                                new Point(18.808, 58.423, Point.CARTESIAN),
+                                new Point(39.732, 79.935, Point.CARTESIAN)
                         )
                 )
                 .setTangentHeadingInterpolation()

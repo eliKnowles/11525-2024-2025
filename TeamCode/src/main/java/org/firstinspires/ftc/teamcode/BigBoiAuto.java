@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstan
 import static org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants.rightFrontMotorName;
 import static org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants.rightRearMotorName;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -24,7 +25,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
  * @author Harrison Womack - 10158 Scott's Bots
  * @version 1.0, 3/21/2024
  */
-@TeleOp(name = "Pedro Pathing TeleOp Enhancements", group = "Test")
+@Autonomous(name = "BezierCurve", group = "Test")
 public class BigBoiAuto extends OpMode {
     GeneratedPath pathGenerator = new GeneratedPath();
     PathChain path = pathGenerator.getPath();
