@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 public class Sequence {
-    // Inner class to represent a command with its target, position, and delay
     private static class Command {
         Object target;
         double position;
@@ -23,7 +22,6 @@ public class Sequence {
         }
 
         public void execute() {
-            // Set the target's position based on type
             if (target instanceof ServoV2) {
                 ((ServoV2) target).setPosition(position);
             } else if (target instanceof DcMotorV2) {
@@ -32,18 +30,18 @@ public class Sequence {
         }
     }
 
-    // Store sequences by name
     private final Map<String, List<Command>> sequences = new HashMap<>();
     private List<Command> currentSequence;
+    private List<Command> activeSequence = null;
+    private int activeIndex = 0;
+    private final ElapsedTime commandTimer = new ElapsedTime();
 
-    // Method to create a new sequence by name
     public Sequence create(String name) {
         currentSequence = new ArrayList<>();
         sequences.put(name, currentSequence);
         return this;
     }
 
-    // Method to add a command to the current sequence
     public Sequence add(Object target, double position, int delay) {
         if (currentSequence != null) {
             currentSequence.add(new Command(target, position, delay));
@@ -51,27 +49,39 @@ public class Sequence {
         return this;
     }
 
-    // Method to finalize the current sequence
     public void build() {
         currentSequence = null;
     }
 
-    // Method to run a sequence by name
     public void run(String name) {
-        List<Command> sequence = sequences.get(name);
-        if (sequence != null) {
-            ElapsedTime timer = new ElapsedTime();
-            for (Command command : sequence) {
-                command.execute();
-
-                // Wait for the specified delay without blocking
-                timer.reset();
-                while (timer.milliseconds() < command.delay) {
-                    // You can add telemetry updates here if needed
-                }
+        if (activeSequence == null) {
+            activeSequence = sequences.get(name);
+            if (activeSequence != null) {
+                activeIndex = 0;
+                commandTimer.reset();
             }
-        } else {
-            System.out.println("Sequence not found: " + name);
         }
+    }
+
+    public void update() {
+        if (activeSequence != null && activeIndex < activeSequence.size()) {
+            Command currentCommand = activeSequence.get(activeIndex);
+
+            // Only execute the next command if the timer has passed the current command's delay
+            if (commandTimer.milliseconds() >= currentCommand.delay) {
+                currentCommand.execute();
+                activeIndex++;
+                commandTimer.reset(); // Reset the timer after executing a command
+            }
+        }
+
+        // Reset if the sequence is complete
+        if (activeSequence != null && activeIndex >= activeSequence.size()) {
+            activeSequence = null;
+            activeIndex = 0;
+        }
+    }
+    public boolean isRunning() {
+        return activeSequence != null;
     }
 }
