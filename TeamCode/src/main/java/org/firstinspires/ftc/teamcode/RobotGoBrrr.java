@@ -211,8 +211,8 @@ public class RobotGoBrrr extends OpMode {
         if (gamepad1.dpad_down && currentTransferState == TransferState.H_INTAKEN) {
             sequence.run("transfer");
             currentTransferState = TransferState.TRANSFERED;
-
         }
+
         if (gamepad1.dpad_left && (currentTransferState == TransferState.H_IDLE || currentTransferState == TransferState.H_INTAKEN)) {
             wristPos = 0;
             sequence.run("intakeNeutral");
