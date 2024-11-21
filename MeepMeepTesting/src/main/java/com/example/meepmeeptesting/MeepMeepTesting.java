@@ -16,6 +16,7 @@ public class MeepMeepTesting {
                 .setConstraints(60, 60, 60, 60, 15.7)
                 .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(new Pose2d(-26, 63, 4.71239))
                         .splineTo(new Vector2d(-36, 13), 4.71239)
+                        .splineTo(new Vector2d(-36, 13), 4.71239)
                         //go to starting pos for sample pusher
                         .strafeTo(new Vector2d(-47,13))
                         //align to sample
