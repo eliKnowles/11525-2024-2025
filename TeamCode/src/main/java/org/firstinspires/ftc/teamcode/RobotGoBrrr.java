@@ -164,7 +164,14 @@ public class RobotGoBrrr extends OpMode {
                 .add(intakeWristServo, .7f, 0)
                 .add(outtakePivotServo, .76f, 0)
                 .build();
-
+        sequence.create("Specimen_open_claw")
+                        .add(outtakePivotServo, .15f,0)
+                        .add(outtakeClawServo,.4f,0)
+                        .build();
+        sequence.create("specimen_close_claw")
+                        .add(outtakeClawServo, .68,0)
+                        .add(outtakePivotServo ,25,0)
+                        .build();
         intakePivotServoTwo.setDirection(Servo.Direction.REVERSE);
 
         runtime.reset();
