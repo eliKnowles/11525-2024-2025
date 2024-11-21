@@ -3,12 +3,9 @@ package org.firstinspires.ftc.teamcode;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 
-import static org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants.leftFrontMotorName;
-import static org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants.leftRearMotorName;
-import static org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants.rightFrontMotorName;
-import static org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants.rightRearMotorName;
-
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.PoseVelocity2d;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -24,11 +21,11 @@ import org.firstinspires.ftc.teamcode.hermeshelper.util.Sequence;
 import org.firstinspires.ftc.teamcode.hermeshelper.util.hardware.DcMotorV2;
 import org.firstinspires.ftc.teamcode.hermeshelper.util.hardware.IMUV2;
 import org.firstinspires.ftc.teamcode.hermeshelper.util.hardware.ServoV2;
-import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 
 @TeleOp(name="Robot Go Brrr", group="Linear OpMode")
 public class RobotGoBrrr extends OpMode {
-    private Follower follower;
+
+    private static PinpointDrive otosDrive;
 
     // Declare OpMode members.
     private final ElapsedTime runtime = new ElapsedTime();
@@ -84,7 +81,8 @@ public class RobotGoBrrr extends OpMode {
 
     @Override
     public void init() {
-        follower = new Follower(hardwareMap);
+
+        otosDrive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
 
         Pose2d beginPose = new Pose2d(0, 0, 0);
 
@@ -103,11 +101,6 @@ public class RobotGoBrrr extends OpMode {
 //        odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
 //        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
 //        odo.resetPosAndIMU();
-
-        fLMotor = new DcMotorV2(leftFrontMotorName, hardwareMap);
-        fRMotor = new DcMotorV2(leftRearMotorName, hardwareMap);
-        bLMotor = new DcMotorV2(rightFrontMotorName, hardwareMap);
-        bRMotor = new DcMotorV2(rightRearMotorName, hardwareMap);
 
         intakePivotServoOne = new ServoV2("intake_pivot_one", hardwareMap);
         intakePivotServoTwo = new ServoV2("intake_pivot_two", hardwareMap);
@@ -133,16 +126,6 @@ public class RobotGoBrrr extends OpMode {
         vSlideMotorTwo.setDirection(DcMotorSimple.Direction.FORWARD);
         vSlideMotorTwo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         vSlideMotorTwo.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        fLMotor.setDirection(REVERSE);
-        fRMotor.setDirection(REVERSE);
-        bLMotor.setDirection(FORWARD);
-        bRMotor.setDirection(FORWARD);
-
-        fLMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        fRMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        bLMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        bRMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         hSlideMotor.setDirection(FORWARD);
 
@@ -184,15 +167,21 @@ public class RobotGoBrrr extends OpMode {
 
         intakePivotServoTwo.setDirection(Servo.Direction.REVERSE);
 
-        follower.startTeleopDrive();
-
         runtime.reset();
     }
 
     @Override
     public void loop() {
-        follower.setTeleOpMovementVectors(gamepad1.left_stick_x * speed, gamepad1.left_stick_y * speed, -gamepad1.right_stick_x * speed);
-        follower.update();
+        otosDrive.setDrivePowers(new PoseVelocity2d(
+                new Vector2d(
+                        -gamepad1.left_stick_y,
+                        -gamepad1.left_stick_x
+                ),
+                -gamepad1.right_stick_x
+        ));
+
+        otosDrive.updatePoseEstimate();
+
 
 //        odo.update();
 //        Pose2D pos = odo.getPosition();

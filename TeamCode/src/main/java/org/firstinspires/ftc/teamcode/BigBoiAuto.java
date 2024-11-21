@@ -1,68 +1,78 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants.leftFrontMotorName;
-import static org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants.leftRearMotorName;
-import static org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants.rightFrontMotorName;
-import static org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants.rightRearMotorName;
+import androidx.annotation.NonNull;
 
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.ParallelAction;
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.robot.Robot;
 
-import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
-import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathBuilder;
-import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
+@Config
+@Autonomous(name = "Template Autoop", group = "16481-Example")
+public class BigBoiAuto extends LinearOpMode {
 
-/**
- * This is the TeleOpEnhancements OpMode. It is an example usage of the TeleOp enhancements that
- * Pedro Pathing is capable of.
- *
- * @author Anyi Lin - 10158 Scott's Bots
- * @author Aaron Yang - 10158 Scott's Bots
- * @author Harrison Womack - 10158 Scott's Bots
- * @version 1.0, 3/21/2024
- */
-@Autonomous(name = "BezierCurve", group = "Test")
-public class BigBoiAuto extends OpMode {
-    GeneratedPath pathGenerator = new GeneratedPath();
-    PathChain path = pathGenerator.getPath();
-    private Follower follower;
-
-    private DcMotorEx leftFront;
-    private DcMotorEx leftRear;
-    private DcMotorEx rightFront;
-    private DcMotorEx rightRear;
-
-    /**
-     * This initializes the drive motors as well as the Follower and motion Vectors.
-     */
     @Override
-    public void init() {
-        follower = new Follower(hardwareMap);
+    public void runOpMode() {
 
-        leftFront = hardwareMap.get(DcMotorEx.class, leftFrontMotorName);
-        leftRear = hardwareMap.get(DcMotorEx.class, leftRearMotorName);
-        rightRear = hardwareMap.get(DcMotorEx.class, rightRearMotorName);
-        rightFront = hardwareMap.get(DcMotorEx.class, rightFrontMotorName);
+        MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0,0,0));
 
-        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        DcMotor motor1 = hardwareMap.get(DcMotor.class,  "motor");
 
-        follower.startTeleopDrive();
-    }
+        // Delcare Trajectory as such
+        Action TrajectoryAction1 = drive.actionBuilder(drive.pose)
+                .lineToX(10)
+                .build();
 
-    /**
-     * This runs the OpMode. This is only drive control with Pedro Pathing live centripetal force
-     * correction.
-     */
-    @Override
-    public void loop() {
-        follower.followPath(path);
-        follower.update();
+        Action TrajectoryAction2 = drive.actionBuilder(new Pose2d(15,20,0))
+                .splineTo(new Vector2d(5,5), Math.toRadians(90))
+                .build();
+
+
+        while(!isStopRequested() && !opModeIsActive()) {
+
+        }
+
+        waitForStart();
+
+        if (isStopRequested()) return;
+
+        Actions.runBlocking(
+                new SequentialAction(
+                        TrajectoryAction1, // Example of a drive action
+
+                        // This action and the following action do the same thing
+                        new Action() {
+                            @Override
+                            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                                telemetry.addLine("Action!");
+                                telemetry.update();
+                                return false;
+                            }
+                        },
+                        // Only that this action uses a Lambda expression to reduce complexity
+                        (telemetryPacket) -> {
+                            telemetry.addLine("Action!");
+                            telemetry.update();
+                            return false; // Returning true causes the action to run again, returning false causes it to cease
+                        },
+                        new ParallelAction( // several actions being run in parallel
+                                TrajectoryAction2, // Run second trajectory
+                                (telemetryPacket) -> { // Run some action
+                                    motor1.setPower(1);
+                                    return false;
+                                }
+                        ),
+                        drive.actionBuilder(new Pose2d(15,10,Math.toRadians(125))) // Another way of running a trajectory (not recommended because trajectories take time to build and will slow down your code, always try to build them beforehand)
+                                .splineTo(new Vector2d(25, 15), 0)
+                                .build()
+                )
+        );
     }
 }
