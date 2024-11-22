@@ -15,6 +15,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 public class DcMotorV2 implements DcMotorEx{
     public DcMotorEx motor = null;
     public final HardwareMap hardwareMap;
+    public double integral, lastError, kP, kI, kD, kF = 0;
 
     public DcMotorV2(String motorName, @NonNull HardwareMap hardwareMap) {
         this.hardwareMap = hardwareMap;
@@ -69,6 +70,26 @@ public class DcMotorV2 implements DcMotorEx{
     public void setPowerWithoutPosition(double power) {
         motor.setMode(RunMode.RUN_WITHOUT_ENCODER);
         motor.setPower(power);
+    }
+
+    public void setPIDFCoefficients(double p, double i, double d, double f) {
+        kP = p;
+        kI = i;
+        kD = d;
+        kF = f;
+    }
+
+    public void setPositionWithPIDF(double targetPosition, double currentPosition) {
+        setPower(computePIDFOutput(targetPosition, currentPosition));
+    }
+
+    private double computePIDFOutput(double targetPosition, double currentPosition) {
+        double error = targetPosition - currentPosition;
+        integral += error;
+        double derivative = error - lastError;
+        lastError = error;
+
+        return kP * error + kI * integral + kD * derivative + kF * targetPosition;
     }
 
     // Normal motor methods

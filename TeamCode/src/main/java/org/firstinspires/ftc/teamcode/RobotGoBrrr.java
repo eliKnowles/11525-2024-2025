@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -129,6 +130,10 @@ public class RobotGoBrrr extends OpMode {
 
         hSlideMotor.setDirection(FORWARD);
 
+        // TODO: Set PIDF coefficients for hSlideMotor
+        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(0, 0, 0, 0);
+        hSlideMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+
         imu = new IMUV2("imu", hardwareMap);
 
         sequence = new Sequence();
@@ -239,7 +244,6 @@ public class RobotGoBrrr extends OpMode {
             targetSlidePosition = 0;
             outtakePivotServo.setPosition(.7);
         }
-
 
         if (hSlideMotor.getCurrentPosition() == 0);
         hSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
