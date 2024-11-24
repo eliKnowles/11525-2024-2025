@@ -12,50 +12,193 @@ import org.firstinspires.ftc.teamcode.PinpointDrive;
 import org.firstinspires.ftc.teamcode.TankDrive;
 
 public final class SplineTest extends LinearOpMode {
-    Sequence sequence = new Sequence();
-    @Override
     public void runOpMode() throws InterruptedException {
-        Pose2d beginPose = new Pose2d(-26, 63,4.71239);
-        if (TuningOpModes.DRIVE_CLASS.equals(PinpointDrive.class)) {
+
+
+        Pose2d beginPose = new Pose2d(-23.5, 63,Math.toRadians(90));
+//        if (TuningOpModes.DRIVE_CLASS.equals(PinpointDrive.class)) {
             PinpointDrive drive = new PinpointDrive(hardwareMap, beginPose);
             waitForStart();
-
             Actions.runBlocking(
                     drive.actionBuilder(beginPose)
-                            .splineTo(new Vector2d(-36, 13), 4.71239)
-                            .strafeTo(new Vector2d(-47,13))
-                            //align to sample
-                            .strafeTo(new Vector2d(-47,52))
-                            .strafeTo(new Vector2d(-47,13))
-                            //return to position
-                            .strafeTo(new Vector2d(-57, 13))
-                            //align to sample
-                            .strafeTo(new Vector2d(-57, 52))
-                            //push sample
-                            .strafeTo(new Vector2d(-57, 13))
-                            //return to position
-                            .strafeTo(new Vector2d(-61, 13))
-                            //align to sample
-                            .strafeTo(new Vector2d(-61, 52))
-                            //push sample
-                            .strafeTo(new Vector2d(-42,54))
+
+                            // place 1st specimen
+                            .setReversed(true)
+                            .splineTo(new Vector2d(-5, 36), Math.toRadians(270))
+                            // once at -5, 36, open claw
+
+                            //pivotservo set to specimen
+                            //slides set to specimen
+                            .waitSeconds(.2)
+                            //action
+
+                            // drive to push samples
+                            .setReversed(false)
+                            .splineTo(new Vector2d(-34, 28), Math.toRadians(270)) //waypoint to first sample
+
+                            .splineTo(new Vector2d(-45, 6), Math.toRadians(270)) // align with first sample
 
 
-                            .setTangent(0)
-                            .splineToLinearHeading(new Pose2d(-5, 37, Math.toRadians(90)), Math.toRadians(0))
-                            .setTangent(180)
-                            .splineToLinearHeading(new Pose2d(-42, 54, Math.toRadians(270)), Math.toRadians(0))
-                            .setTangent(0)
-                            .splineToLinearHeading(new Pose2d(-5, 37, Math.toRadians(90)), Math.toRadians(0))
-                            .setTangent(0)
-                            .splineToLinearHeading(new Pose2d(-42, 54, Math.toRadians(270)), Math.toRadians(0))
-//                            .splineTo(new Vector2d(30, 30), Math.PI / 2)
-//                            .splineTo(new Vector2d(0, 60), Math.PI)
-                            .build());
-//        } else if (TuningOpModes.DRIVE_CLASS.equals(TankDrive.class)) {
-//            TankDrive drive = new TankDrive(hardwareMap, beginPose);
+                            .setReversed(true)
+                            .splineTo(new Vector2d(-46,53), Math.toRadians(90))// push first sample
+                            .setReversed(false)// push first sample
+
+                            .splineTo(new Vector2d(-47, 4), Math.toRadians(270))  // return
+                            .setReversed(true)
+                            .splineTo(new Vector2d(-56, 22), Math.toRadians(90)) // waypoint
+                            .splineTo(new Vector2d( -57, 53), Math.toRadians(90))  //push 2nd
+                            .setReversed(false)
+
+
+                            //cycle 2nd specimen
+                            .splineToLinearHeading(new Pose2d( -37, 50, Math.toRadians(270)), Math.toRadians(90))//position for intaking
+                            //grab 2nd
+                            .waitSeconds(.2)
+                            .setTangent(Math.toRadians(90))
+                            .splineTo(new Vector2d(-37, 57), Math.toRadians(90))
+
+                            //place 2nd
+                            .setTangent(Math.toRadians(0))
+                            .splineToLinearHeading(new Pose2d(-2, 36, Math.toRadians(90)), Math.toRadians(270))
+                            .waitSeconds(.15)
+
+                            // cycle 3rd specimen
+                            .setReversed(true)
+                            .setTangent(Math.toRadians(0))
+                            .splineToLinearHeading(new Pose2d( -37, 50, Math.toRadians(270)), Math.toRadians(90))//position for intaking
+                            .setReversed(false)
+
+                            //grab 3rd
+                            .setTangent(Math.toRadians(90))
+                            .splineTo(new Vector2d(-37, 57), Math.toRadians(90))
+                            .waitSeconds(.2) // grab
+
+                            // place
+                            .setTangent(Math.toRadians(0))
+                            .splineToLinearHeading(new Pose2d(-2, 36, Math.toRadians(90)), Math.toRadians(270))
+                            .waitSeconds(.2)
+
+                            // cycle 4th specimen
+                            .setReversed(true)
+                            .setTangent(Math.toRadians(0))
+                            .splineToLinearHeading(new Pose2d( -37, 50, Math.toRadians(270)), Math.toRadians(90))//position for intaking
+                            .setReversed(false)
+
+                            //// grab
+                            .setTangent(Math.toRadians(90))
+                            .splineTo(new Vector2d(-37, 57), Math.toRadians(90))
+                            .waitSeconds(.2)
+
+                            // place
+                            .setTangent(Math.toRadians(0))
+                            .splineToLinearHeading(new Pose2d(-2, 36, Math.toRadians(90)), Math.toRadians(270))
+                            .waitSeconds(.2)
+
+
+
+                            //  BELOW == 5 SPECIMEN
+                            .setReversed(true)
+                            .setTangent(Math.toRadians(0))
+                            .splineToLinearHeading(new Pose2d( -37, 50, Math.toRadians(270)), Math.toRadians(90))//position for intaking
+
+                            .setTangent(Math.toRadians(90))
+                            .splineTo(new Vector2d(-37, 57), Math.toRadians(90))
+                            .waitSeconds(.1) // grab
+
+                            .setTangent(Math.toRadians(0))
+                            .splineToLinearHeading(new Pose2d(-2, 36, Math.toRadians(90)), Math.toRadians(270))
+//                        .waitSeconds(.1)
 //
-            waitForStart();
+
+
+
+
+
+
+
+                            .build());
+//                            .setReversed(true)
+//                            .splineTo(new Vector2d(-5, 36), Math.toRadians(270))
+//                            .waitSeconds(.2)
+//                            //action
+//
+//                            .setReversed(false)
+//                            .splineTo(new Vector2d(-35, 28), Math.toRadians(270))
+//
+//                            .splineTo(new Vector2d(-45, 6), Math.toRadians(270)) // align with first sample
+//
+//
+////                            .strafeTo(new Vector2d(-45,53)) // push first sample
+//                            .setReversed(true)
+//                            .splineTo(new Vector2d(-45,53), Math.toRadians(90))
+//                            .setReversed(false)// push first sample
+//
+//                            .splineTo(new Vector2d(-47, 11), Math.toRadians(270))
+//                            .setReversed(true)
+//                            .splineTo(new Vector2d(-55, 25), Math.toRadians(90))
+//                            .splineTo(new Vector2d( -55, 53), Math.toRadians(90))
+//                            .setReversed(false)
+////
+//                            .setReversed(true)
+//                            .splineTo(new Vector2d(-56, 25), Math.toRadians(90)) //waypoint
+//
+//                            .splineTo(new Vector2d( -56, 53), Math.toRadians(90)) //pushed
+////                            .setReversed(false)
+////                        .splineTo(new Vector2d( -57, 11), Math.toRadians(270)) //return for last
+////                            .setReversed(true)
+////                            .splineToLinearHeading(new Pose2d( -37, 50, Math.toRadians(270)), Math.toRadians(90))//position for intaking
+////
+//                            .setReversed(false)
+////                            .waitSeconds(.3)
+//                            .strafeTo(new Vector2d(-37, 57)) //intake
+//
+//                            .setTangent(Math.toRadians(0))
+//                            .splineToLinearHeading(new Pose2d(-2, 36, Math.toRadians(90)), Math.toRadians(270))
+//                            .waitSeconds(.2)
+//
+//                            .setReversed(true)
+//                            .setTangent(Math.toRadians(0))
+//                            .splineToLinearHeading(new Pose2d( -37, 50, Math.toRadians(270)), Math.toRadians(90))//position for intaking
+//                            .setReversed(false)
+//                            .strafeTo(new Vector2d(-37, 57))
+//                            .waitSeconds(.2) // grab
+//
+//
+//                            .setTangent(Math.toRadians(0))
+//                            .splineToLinearHeading(new Pose2d(-2, 36, Math.toRadians(90)), Math.toRadians(270))
+//                            .waitSeconds(.2)
+//
+//
+//                            .setReversed(true)
+//                            .setTangent(Math.toRadians(0))
+//                            .splineToLinearHeading(new Pose2d( -37, 50, Math.toRadians(270)), Math.toRadians(90))//position for intaking
+//                            .setReversed(false)
+//                            .strafeTo(new Vector2d(-37, 57))
+//                            .waitSeconds(.3) // grab
+//
+//                            .setTangent(Math.toRadians(0))
+//                            .splineToLinearHeading(new Pose2d(-2, 36, Math.toRadians(90)), Math.toRadians(270))
+//                            .waitSeconds(.3)
+//
+//                            .setReversed(true)
+//                            .setTangent(Math.toRadians(0))
+//                            .splineToLinearHeading(new Pose2d( -37, 50, Math.toRadians(270)), Math.toRadians(90))//position for intaking
+//                            .setReversed(false)
+//                            .strafeTo(new Vector2d(-37, 57))
+//                            .waitSeconds(.1) // grab
+//
+//                            .setTangent(Math.toRadians(0))
+//                            .splineToLinearHeading(new Pose2d(-2, 36, Math.toRadians(90)), Math.toRadians(270))
+//                        .waitSeconds(.1)
+
+
+
+
+
+//                        .strafeTo(new Vector2d(-61,11))  //align with last sample
+
+//
+
 //
 //            Actions.runBlocking(
 //                    drive.actionBuilder(beginPose)
@@ -65,6 +208,6 @@ public final class SplineTest extends LinearOpMode {
 //        } else {
 //            throw new RuntimeException();
 //        }
+        waitForStart();
         }
     }
-}

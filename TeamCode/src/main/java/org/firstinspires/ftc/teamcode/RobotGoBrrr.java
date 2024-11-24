@@ -117,7 +117,7 @@ public class RobotGoBrrr extends OpMode {
         hSlideMotor = new DcMotorV2("h_slide", hardwareMap);
         hSlideMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         hSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        hSlideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        hSlideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         vSlideMotorOne = new DcMotorV2("v_slide_one", hardwareMap);
         vSlideMotorOne.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -130,13 +130,16 @@ public class RobotGoBrrr extends OpMode {
 
         hSlideMotor.setDirection(FORWARD);
 
-        // TODO: Set PIDF coefficients for hSlideMotor
-        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(0, 0, 0, 0);
-        hSlideMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+//        // TODO: Set PIDF coefficients for hSlideMotor
+//        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(0, 0, 0, 0);
+//        hSlideMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
 
         imu = new IMUV2("imu", hardwareMap);
 
         sequence = new Sequence();
+
+        currentTransferState = TransferState.H_IDLE;
+
 
         sequence.create("transfer")
                 .add(intakePivotServoOne, .59f, 0)
@@ -158,11 +161,20 @@ public class RobotGoBrrr extends OpMode {
                 .add(intakeClawServo, .4f, 0)
                 .build();
 
+        sequence.create("intakeNeutralNoExtendo")
+                .add(intakeWristServoTwo, .5f, 0)
+                .add(outtakePivotServo, .76f, 0)
+                .add(outtakeClawServo, .4f, 0 )
+                .add(intakePivotServoOne, .07f, 0)
+                .add(intakeWristServo, .75f, 0)
+                .add(intakeClawServo, .4f, 0)
+                .build();
+
+
         sequence.create("intakeGrab")
                 .add(intakeClawServo, .9f, 0)
                 .add(intakePivotServoOne, .2f, 300)
                 .build();
-        currentTransferState = TransferState.H_IDLE;
         sequence.create("Idle")
                 .add(intakePivotServoOne, .5f, 0)
                 .add(intakeWristServoTwo, .5f, 0)
@@ -194,7 +206,7 @@ public class RobotGoBrrr extends OpMode {
 
         otosDrive.updatePoseEstimate();
 
-
+//        hSlideMotor.setPower(.5);
 //        odo.update();
 //        Pose2D pos = odo.getPosition();
 //        Pose2D vel = odo.getVelocity();
@@ -234,12 +246,17 @@ public class RobotGoBrrr extends OpMode {
             speed = 1;
         }
 
+        if (gamepad1.square && currentTransferState == TransferState.H_IDLE) {
+            sequence.run("intakeNeutralNoExtendo");
+            currentTransferState = TransferState.H_EXTENDED;
+        }
+
         if (currentTransferState == TransferState.H_IDLE)
             sequence.run("idle");
 
         // Set target positions for slides based on gamepad input
         if (gamepad1.y) {
-            targetSlidePosition = 830; // Example extension position for PIDF
+            targetSlidePosition = 700; // Example extension position for PIDF
         }else if (gamepad1.a) {
             targetSlidePosition = 0;
             outtakePivotServo.setPosition(.7);
@@ -291,7 +308,7 @@ public class RobotGoBrrr extends OpMode {
 
     }
 
-    private double computePIDFOutput(double targetPosition, double currentPosition) {
+    public double computePIDFOutput(double targetPosition, double currentPosition) {
         double error = targetPosition - currentPosition;
         integral += error;
         double derivative = error - lastError;

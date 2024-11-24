@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
@@ -14,20 +15,28 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.hermeshelper.datatypes.TransferState;
+import org.firstinspires.ftc.teamcode.hermeshelper.util.GlobalTelemetry;
 import org.firstinspires.ftc.teamcode.hermeshelper.util.Sequence;
 import org.firstinspires.ftc.teamcode.hermeshelper.util.hardware.DcMotorV2;
 import org.firstinspires.ftc.teamcode.hermeshelper.util.hardware.ServoV2;
+import org.firstinspires.ftc.teamcode.RobotGoBrrr;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.PIDCoefficients;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 @Config
-@Autonomous(name = "BLUE_TEST_AUTO_PIXEL", group = "Autonomous")
+@Autonomous(name = "BLUE_SPECIMEN 4", group = "Autonomous")
 public class BigBoiAuto extends LinearOpMode {
 
-    public class Intake {
+    public static double vSlideTarget = 0 ;
+
+    public class outtake {
         private ServoV2 intakePivotServoOne;
         private ServoV2 intakePivotServoTwo;
         private ServoV2 intakeClawServo;
@@ -42,9 +51,11 @@ public class BigBoiAuto extends LinearOpMode {
 
         private Sequence sequence;
 
+
+
         private TransferState currentTransferState = TransferState.H_IDLE;
 
-        public Intake(HardwareMap hardwareMap) {
+        public outtake(HardwareMap hardwareMap) {
             intakePivotServoOne = new ServoV2("intake_pivot_one", hardwareMap);
             intakePivotServoTwo = new ServoV2("intake_pivot_two", hardwareMap);
 
@@ -64,15 +75,16 @@ public class BigBoiAuto extends LinearOpMode {
             vSlideMotorOne = new DcMotorV2("v_slide_one", hardwareMap);
             vSlideMotorOne.setDirection(DcMotorSimple.Direction.REVERSE);
             vSlideMotorOne.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            vSlideMotorOne.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            vSlideMotorOne.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             vSlideMotorTwo = new DcMotorV2("v_slide_two", hardwareMap);
             vSlideMotorTwo.setDirection(DcMotorSimple.Direction.FORWARD);
             vSlideMotorTwo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            vSlideMotorTwo.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            vSlideMotorTwo.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
             hSlideMotor.setDirection(FORWARD);
 
             sequence = new Sequence();
+
 
             sequence.create("transfer")
                     .add(intakePivotServoOne, .59f, 0)
@@ -95,16 +107,16 @@ public class BigBoiAuto extends LinearOpMode {
                     .build();
 
             sequence.create("intakeGrab")
-                    .add(intakeClawServo, .9f, 0)
-                    .add(intakePivotServoOne, .2f, 300)
+                    .add(outtakeClawServo, .9f, 0)
+                    .add(outtakePivotServo, .2f, 0)
                     .build();
             currentTransferState = TransferState.H_IDLE;
             sequence.create("Idle")
-                    .add(intakePivotServoOne, .5f, 0)
-                    .add(intakeWristServoTwo, .5f, 0)
-                    .add(intakeWristServo, .7f, 0)
-                    .add(outtakePivotServo, .76f, 0)
+
+                    .add(outtakeClawServo, .4f, 0)
+                    .add(outtakePivotServo, .4f, 0)
                     .build();
+
         }
 
         public class Transfer implements Action {
@@ -115,14 +127,56 @@ public class BigBoiAuto extends LinearOpMode {
             }
         }
 
+
         public Action transfer() {
             return new Transfer();
         }
 
+
+
+        class SpecimenScoring implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                vSlideTarget = 200;
+
+                return false;
+            }
+        }
+
+        public Action specimenScoring(){
+            return new SpecimenScoring();
+
+        }
+
+
+        public class vSlidePIDF implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                
+                vSlideMotorOne.setPIDFCoefficients(.01, 0, .02,0);
+                vSlideMotorOne.setPositionWithPIDF(vSlideTarget, vSlideMotorOne.getCurrentPosition());
+                vSlideMotorTwo.setPower(vSlideMotorOne.getPower());
+//                vSlideMotorTwo.setPower(vSlideMotorOne.getPower());
+
+                telemetry.addData("Ticks", "VSlideMotorTwo: " + vSlideMotorTwo.getCurrentPosition());
+                telemetry.addData("Ticks", "vSlideMotorOne: " + vSlideMotorOne.getCurrentPosition());
+                telemetry.update();
+                return true;
+            }
+        }
+
+        public Action SlidePIDF(){
+            return new vSlidePIDF();
+
+        }
+
+
+
         public class IntakeNeutral implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                sequence.run("intakeNeutral");
+                outtakePivotServo.setPosition(.25);
+                outtakeClawServo.setPosition(.68);
                 return false;
             }
         }
@@ -146,7 +200,7 @@ public class BigBoiAuto extends LinearOpMode {
         public class Idle implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                sequence.run("idle");
+                sequence.run("intakeGrab");
                 return false;
             }
         }
@@ -158,35 +212,95 @@ public class BigBoiAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        Pose2d initialPose = new Pose2d(-26, 63, 4.71239);
-        MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
-        Intake claw = new Intake(hardwareMap);
+        Pose2d initialPose = new Pose2d(-23.5, 63, Math.toRadians(90));
+        PinpointDrive drive = new PinpointDrive(hardwareMap, initialPose);
+        outtake claw = new outtake(hardwareMap);
 
         // vision here that outputs position
 //        int initialPosition = 1;
 
+
+        waitForStart();
         TrajectoryActionBuilder tab1 = drive.actionBuilder(initialPose)
-                .splineTo(new Vector2d(-36, 13), 4.71239)
-                //go to starting pos for sample pusher
-                .strafeTo(new Vector2d(-47,13))
-                //align to sample
-                .strafeTo(new Vector2d(-47,52))
-                // push sample
-                .strafeTo(new Vector2d(-47,13))
-                //return to position
-                .strafeTo(new Vector2d(-57, 13))
-                //align to sample
-                .strafeTo(new Vector2d(-57, 52))
-                //push sample
-                .strafeTo(new Vector2d(-57, 13))
-                //return to position
-                .strafeTo(new Vector2d(-61, 13))
-                //align to sample
-                .strafeTo(new Vector2d(-61, 52))
-                //push sample
-                .strafeTo(new Vector2d(-42,54))
-                .waitSeconds(.8);
+
+                // place 1st specimen
+                .setReversed(true)
+                .splineTo(new Vector2d(-5, 36), Math.toRadians(270))
+                // once at -5, 36, open claw
+
+                //pivotservo set to specimen
+                //slides set to specimen
+                .waitSeconds(.2)
+                //action
+
+                // drive to push samples
+                .setReversed(false)
+                .splineTo(new Vector2d(-34, 28), Math.toRadians(270)) //waypoint to first sample
+
+                .splineTo(new Vector2d(-45, 6), Math.toRadians(270)) // align with first sample
+
+
+                .setReversed(true)
+                .splineTo(new Vector2d(-46,53), Math.toRadians(90))// push first sample
+                .setReversed(false)// push first sample
+
+                .splineTo(new Vector2d(-47, 4), Math.toRadians(270))  // return
+                .setReversed(true)
+                .splineTo(new Vector2d(-56, 22), Math.toRadians(90)) // waypoint
+                .splineTo(new Vector2d( -57, 53), Math.toRadians(90))  //push 2nd
+                .setReversed(false)
+
+
+                //cycle 2nd specimen
+                .splineToLinearHeading(new Pose2d( -37, 50, Math.toRadians(270)), Math.toRadians(90))//position for intaking
+                //grab 2nd
+                .waitSeconds(.2)
+                .setTangent(Math.toRadians(90))
+                .splineTo(new Vector2d(-37, 57), Math.toRadians(90)); //intake
+
+
         TrajectoryActionBuilder tab2 = drive.actionBuilder(initialPose)
+
+
+                .setTangent(Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(-2, 36, Math.toRadians(90)), Math.toRadians(270))
+                .waitSeconds(.2)
+
+                .setReversed(true)
+                .setTangent(Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d( -37, 50, Math.toRadians(270)), Math.toRadians(90))//position for intaking
+                .setReversed(false)
+                .strafeTo(new Vector2d(-37, 57))
+                .waitSeconds(.2) // grab
+
+
+                .setTangent(Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(-2, 36, Math.toRadians(90)), Math.toRadians(270))
+                .waitSeconds(.2)
+
+
+                .setReversed(true)
+                .setTangent(Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d( -37, 50, Math.toRadians(270)), Math.toRadians(90))//position for intaking
+                .setReversed(false)
+                .strafeTo(new Vector2d(-37, 57))
+                .waitSeconds(.3) // grab
+
+                .setTangent(Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(-2, 36, Math.toRadians(90)), Math.toRadians(270))
+                .waitSeconds(.3)
+
+                .setReversed(true)
+                .setTangent(Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d( -37, 50, Math.toRadians(270)), Math.toRadians(90))//position for intaking
+
+                .strafeTo(new Vector2d(-37, 57))
+                .waitSeconds(.1) // grab
+
+                .setTangent(Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(-2, 36, Math.toRadians(90)), Math.toRadians(270));
+//                        .waitSeconds(.1)
+        TrajectoryActionBuilder tab3 = drive.actionBuilder(initialPose)
                 .setTangent(0)
                 .splineToLinearHeading(new Pose2d(-5, 37, Math.toRadians(90)), Math.toRadians(0))
                 .setTangent(180)
@@ -196,8 +310,16 @@ public class BigBoiAuto extends LinearOpMode {
                 .setTangent(0)
                 .splineToLinearHeading(new Pose2d(-42, 54, Math.toRadians(90)), Math.toRadians(0));
 
+        //Actions.runBlocking(claw.intakeNeutral());
+        Actions.runBlocking(claw.specimenScoring());
+       // Actions.runBlocking(claw.intakeGrab());
+       // Actions.runBlocking(claw.transfer());
+
+
+
+
         // actions that need to happen on init; for instance, a claw tightening.
-        Actions.runBlocking(claw.idle());
+//        Actions.runBlocking(claw.idle());
 
 
 //        while (!isStopRequested() && !opModeIsActive()) {
@@ -205,7 +327,7 @@ public class BigBoiAuto extends LinearOpMode {
 //            telemetry.addData("Position during Init", position);
 //            telemetry.update();
 //        }
-//
+        waitForStart();
 //        int startPosition = initialPosition;
 //        telemetry.addData("Starting Position", startPosition);
 //        telemetry.update();
@@ -221,15 +343,24 @@ public class BigBoiAuto extends LinearOpMode {
 //        }
 
         Actions.runBlocking(
-                new SequentialAction(
-                        tab1.build(),
-                        claw.intakeGrab(),
-                        claw.transfer(),
-                        claw.intakeNeutral(),
-                        claw.idle(),
-                        tab2.build()
-                        // TODO: add placing the thing
+                new ParallelAction(
+                        new SequentialAction(
+                                claw.specimenScoring(),
+                                tab1.build() // Run the trajectory
+                                 ),
+                        claw.SlidePIDF()// Run the PID loop for the slide
                 )
         );
+//                        claw.intakeGrab(),
+////                        claw.transfer(),
+////
+//                      claw.intakeNeutral(),
+////                        claw.idle(),
+//                        tab2.build(),
+//                        tab3.build()
+                        // TODO: add placing the thing
+
+
+
     }
 }
