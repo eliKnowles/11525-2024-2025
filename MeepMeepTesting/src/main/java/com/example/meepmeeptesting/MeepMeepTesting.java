@@ -14,47 +14,68 @@ public class MeepMeepTesting {
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(85, 57, 70, 70, 14.5)
-                .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(new Pose2d(-23.5, 63, Math.toRadians(90)))
+                .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(new Pose2d(-5, 63, Math.toRadians(90)))
 
-                        // place 1st specimen
                         .setReversed(true)
-                        .splineTo(new Vector2d(-5, 36), Math.toRadians(270))
-                        // once at -5, 36, open claw
+                        .splineTo(new Vector2d(-5, 32), Math.toRadians(270)) //waypoint to first sample
 
-                        //pivotservo set to specimen
-                        //slides set to specimen
-                        .waitSeconds(.2)
-                        //action
+        // once at -5, 36, open claw
 
-                        // drive to push samples
+        //pivotservo set to specimen
+        //slides set to specimen
+        //action
+                        
                         .setReversed(false)
-                        .splineTo(new Vector2d(-34, 28), Math.toRadians(270)) //waypoint to first sample
+                        .splineTo(new Vector2d(-33, 37), Math.toRadians(270)) //waypoint to first sample
 
-                        .splineTo(new Vector2d(-45, 6), Math.toRadians(270)) // align with first sample
+                         .splineTo(new Vector2d(-45, 6), Math.toRadians(270)) // align with first sampleample
 
 
                         .setReversed(true)
-                        .splineTo(new Vector2d(-46,53), Math.toRadians(90))// push first sample
+                         .splineTo(new Vector2d(-46,53), Math.toRadians(90))// push first sample
                         .setReversed(false)// push first sample
 
-                        .splineTo(new Vector2d(-47, 4), Math.toRadians(270))  // return
+                         .splineTo(new Vector2d(-47, 4), Math.toRadians(270))  // return
                         .setReversed(true)
-                        .splineTo(new Vector2d(-56, 22), Math.toRadians(90)) // waypoint
-                        .splineTo(new Vector2d( -57, 53), Math.toRadians(90))  //push 2nd
-                        .setReversed(false)
+                        .splineTo(new Vector2d(-58, 22), Math.toRadians(90)) // waypoint
+                        .splineTo(new Vector2d( -58, 53), Math.toRadians(90)) //push 2nd
 
 
-                        //cycle 2nd specimen
-                        .splineToLinearHeading(new Pose2d( -37, 50, Math.toRadians(270)), Math.toRadians(90))//position for intaking
+        //cycle 2nd specimen
+
+
+                      //  .setTangent(Math.toRadians(90))
+                       // .splineTo(new Vector2d(-37, 58), Math.toRadians(90)) //intake
+                        .strafeTo(new Vector2d(-37,58 ))
+                        .waitSeconds(.5)
+
+                        .strafeTo(new Vector2d(-37, 63))
+                        .waitSeconds(.5)
+
+
+
+
+
+                         .setReversed(false)
+                        .setTangent(Math.toRadians(-90))
+                         .splineToLinearHeading(new Pose2d(-2, 32, Math.toRadians(90)), Math.toRadians(270)) //intak
+
+
+
+
+
+
+
+        //cycle 2nd specimen
+                      /*  .splineToLinearHeading(new Pose2d( -37, 50, Math.toRadians(270)), Math.toRadians(90))//position for intaking
                         //grab 2nd
                         .waitSeconds(.2)
                         .setTangent(Math.toRadians(90))
                         .splineTo(new Vector2d(-37, 57), Math.toRadians(90))
 
-                        //place 2nd
-                        .setTangent(Math.toRadians(0))
-                        .splineToLinearHeading(new Pose2d(-2, 36, Math.toRadians(90)), Math.toRadians(270))
-                        .waitSeconds(.15)
+
+                        .setTangent(Math.toRadians(90))
+                        .splineTo(new Vector2d(-37, 63), Math.toRadians(90)) //intake
 
                         // cycle 3rd specimen
                         .setReversed(true)
@@ -100,8 +121,7 @@ public class MeepMeepTesting {
                         .waitSeconds(.1) // grab
 
                         .setTangent(Math.toRadians(0))
-                        .splineToLinearHeading(new Pose2d(-2, 36, Math.toRadians(90)), Math.toRadians(270))
-//                        .waitSeconds(.1)
+                        .splineToLinearHead*/
 //
 
 
