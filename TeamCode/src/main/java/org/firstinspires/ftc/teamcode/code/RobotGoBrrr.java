@@ -157,6 +157,7 @@ public class RobotGoBrrr extends OpMode {
                 .add(intakeClawServo, .92f, 0)
                 .add(intakePivotServoOne, .2f, 300)
                 .build();
+        
         sequence.create("Idle")
                 .add(intakePivotServoOne, .5f, 0)
                 .add(intakeWristServoTwo, .5f, 0)
@@ -174,11 +175,11 @@ public class RobotGoBrrr extends OpMode {
         wristPos = 0;
         
         otosDrive.setDrivePowers(new PoseVelocity2d(
-                new Vector2d(
-                        -gamepad1.left_stick_y * speed,
-                        -gamepad1.left_stick_x * speed
-                ),
-                -gamepad1.right_stick_x
+            new Vector2d(
+                -gamepad1.left_stick_y * speed,
+                -gamepad1.left_stick_x * speed
+            ),
+            -gamepad1.right_stick_x
         ));
 
         otosDrive.updatePoseEstimate();
