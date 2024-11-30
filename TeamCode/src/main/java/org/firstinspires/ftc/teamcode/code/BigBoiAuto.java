@@ -1,8 +1,9 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.code;
 
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
 
 import androidx.annotation.NonNull;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
@@ -14,17 +15,16 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.hermeshelper.datatypes.TransferState;
 import org.firstinspires.ftc.teamcode.hermeshelper.util.Sequence;
 import org.firstinspires.ftc.teamcode.hermeshelper.util.hardware.DcMotorV2;
 import org.firstinspires.ftc.teamcode.hermeshelper.util.hardware.ServoV2;
-
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
+import org.firstinspires.ftc.teamcode.rr.PinpointDrive;
 
 @Config
 @Autonomous(name = "BLUE_SPECIMEN 4", group = "Autonomous")
@@ -47,8 +47,6 @@ public class BigBoiAuto extends LinearOpMode {
 
         private Sequence sequence;
 
-
-
         private TransferState currentTransferState = TransferState.H_IDLE;
 
         public outtake(HardwareMap hardwareMap) {
@@ -62,13 +60,11 @@ public class BigBoiAuto extends LinearOpMode {
             intakeWristServo = new ServoV2("intake_wrist", hardwareMap);
             intakeWristServoTwo = new ServoV2("intake_wrist_two", hardwareMap);
 
-
             hSlideMotor = new DcMotorV2("h_slide", hardwareMap);
             hSlideMotor.setDirection(DcMotorSimple.Direction.FORWARD);
             hSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             hSlideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             hSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
 
             vSlideMotorOne = new DcMotorV2("v_slide_one", hardwareMap);
             vSlideMotorOne.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -85,19 +81,16 @@ public class BigBoiAuto extends LinearOpMode {
 
             sequence = new Sequence();
 
-
             sequence.create("transfer")
                     .add(intakePivotServoOne, .59f, 0)
                     .add(intakeWristServo, 0f, 0)
                     .add(intakeWristServoTwo, .5f, 0)
-                 //   .add(hSlideMotor, 0f, 300)
                     .add(outtakeClawServo, 0.68f, 500)
                     .add(intakeClawServo, 0.4f, 100)
                     .add(outtakePivotServo, .55f, 0)
                     .build();
 
             sequence.create("intakeNeutral")
-             //       .add(hSlideMotor, 450f, 0)
                     .add(intakeWristServoTwo, .5f, 0)
                     .add(outtakePivotServo, .85f, 0)
                     .add(outtakeClawServo, .75f, 0 )
@@ -110,13 +103,13 @@ public class BigBoiAuto extends LinearOpMode {
                     .add(outtakeClawServo, .9f, 0)
                     .add(outtakePivotServo, .2f, 0)
                     .build();
-            currentTransferState = TransferState.H_IDLE;
-            sequence.create("Idle")
 
+            currentTransferState = TransferState.H_IDLE;
+
+            sequence.create("Idle")
                     .add(outtakeClawServo, .4f, 0)
                     .add(outtakePivotServo, .4f, 0)
                     .build();
-
         }
 
         public class Transfer implements Action {
@@ -127,12 +120,9 @@ public class BigBoiAuto extends LinearOpMode {
             }
         }
 
-
         public Action transfer() {
             return new Transfer();
         }
-
-
 
         class SpecimenScoring implements Action {
             @Override
@@ -165,9 +155,6 @@ public class BigBoiAuto extends LinearOpMode {
             return new outtakeClawOpen();
 
         }
-
-
-
 
         public class vSlidePIDF implements Action {
             @Override
