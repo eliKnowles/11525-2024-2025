@@ -205,6 +205,16 @@ public class RobotGoBrrr extends OpMode {
         if(hSlideMotor.getCurrentPosition() == 0) {
             hSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
+        
+        if(gamepad2.a) {
+            vSlideMotorOne.stopAndReset();
+            vSlideMotorTwo.stopAndReset();
+        }
+        
+        if(gamepad2.right_stick_y > 0.25) {
+            vSlideMotorOne.setPower(gamepad2.right_stick_y);
+            vSlideMotorTwo.setPower(gamepad2.right_stick_y);
+        }
 
         // Wrist Servo Control
         if(gamepad1.left_bumper) wristPos -= 1;
