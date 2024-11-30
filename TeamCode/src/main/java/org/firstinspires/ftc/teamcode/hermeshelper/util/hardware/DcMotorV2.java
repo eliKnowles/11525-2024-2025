@@ -83,7 +83,7 @@ public class DcMotorV2 implements DcMotorEx{
         setPower(computePIDFOutput(targetPosition, currentPosition));
     }
 
-    public double computePIDFOutput(double targetPosition, double currentPosition) {
+    private double computePIDFOutput(double targetPosition, double currentPosition) {
         double error = targetPosition - currentPosition;
         integral += error;
         double derivative = error - lastError;
