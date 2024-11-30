@@ -93,13 +93,13 @@ public class BigBoiAuto extends LinearOpMode {
                  //   .add(hSlideMotor, 0f, 300)
                     .add(outtakeClawServo, 0.68f, 500)
                     .add(intakeClawServo, 0.4f, 100)
-                    .add(outtakePivotServo, .35f, 0)
+                    .add(outtakePivotServo, .55f, 0)
                     .build();
 
             sequence.create("intakeNeutral")
              //       .add(hSlideMotor, 450f, 0)
                     .add(intakeWristServoTwo, .5f, 0)
-                    .add(outtakePivotServo, 1f, 0)
+                    .add(outtakePivotServo, .85f, 0)
                     .add(outtakeClawServo, .75f, 0 )
                     .add(intakePivotServoOne, .07f, 0)
                     .add(intakeWristServo, .75f, 0)
@@ -137,9 +137,9 @@ public class BigBoiAuto extends LinearOpMode {
         class SpecimenScoring implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                outtakeClawServo.setPosition(.62);
-                outtakePivotServo.setPosition(.11);
-                vSlideTarget = 240;
+                outtakeClawServo.setPosition(.6);
+                outtakePivotServo.setPosition(.38);
+                vSlideTarget = 255;
 
 
 
@@ -209,7 +209,7 @@ public class BigBoiAuto extends LinearOpMode {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 vSlideTarget = 0;
-                outtakePivotServo.setPosition(0);
+                outtakePivotServo.setPosition(.20);
                 outtakeClawServo.setPosition(.75);
                 return false;
             }
@@ -294,34 +294,72 @@ public class BigBoiAuto extends LinearOpMode {
 
 
                 .setReversed(true)
-                .splineTo(new Vector2d(-46,53), Math.toRadians(90))// push first sample
-                .setReversed(false)// push first sample
+                .splineTo(new Vector2d(-46,53), Math.toRadians(90));// push first sample
+                //.setReversed(false) ;// push first sample
 
-                .splineTo(new Vector2d(-47, 4), Math.toRadians(270))  // return
-                .setReversed(true)
-                .splineTo(new Vector2d(-58, 22), Math.toRadians(90)) // waypoint
-                .splineTo(new Vector2d( -58, 53), Math.toRadians(90)); //push 2nd  //push 2nd
+        //        .splineTo(new Vector2d(-47, 4), Math.toRadians(270))  // return
+       //         .setReversed(true)
+       //         .splineTo(new Vector2d(-58, 22), Math.toRadians(90)) // waypoint
+       //         .splineTo(new Vector2d( -58, 53), Math.toRadians(90)); //push 2nd  //push 2nd
 
 
                 //cycle 2nd specimen
 
         TrajectoryActionBuilder tab3 = drive.actionBuilder(new Pose2d(-58, 53, Math.toRadians(270)))
-
-                .strafeTo(new Vector2d(-37,58 ))
-                .waitSeconds(.5)
-
-                .strafeTo(new Vector2d(-37, 63))
-                .waitSeconds(.5);
+                .waitSeconds(0.1)
+                .strafeTo(new Vector2d(-46, 61))
+                .waitSeconds(.3);
 
 
 
 
-        TrajectoryActionBuilder tab4 = drive.actionBuilder(new Pose2d(-37, 63, Math.toRadians(90)))
+        TrajectoryActionBuilder tab4 = drive.actionBuilder(new Pose2d(-37, 61, Math.toRadians(90)))
 
 
                 .setReversed(false)
                 .setTangent(Math.toRadians(-90))
-                .splineToLinearHeading(new Pose2d(-2, 31.5, Math.toRadians(90)), Math.toRadians(270)) ;//intak
+                .splineToLinearHeading(new Pose2d(-2, 50, Math.toRadians(90)), Math.toRadians(270)) //intak
+                .waitSeconds(.05)
+                .strafeTo(new Vector2d(-2, 31)); // place
+
+        TrajectoryActionBuilder tab5 = drive.actionBuilder(new Pose2d(-2, 32.5, Math.toRadians(90)))
+                .setTangent(90)
+                .splineToLinearHeading(new Pose2d( -37, 50, Math.toRadians(270)), Math.toRadians(90))//position for intaking
+                //grab 2nd
+                .waitSeconds(.4);
+        TrajectoryActionBuilder tab6 = drive.actionBuilder(new Pose2d(-37,50, Math.toRadians(270)))
+                .strafeTo(new Vector2d(-37, 60.5))
+                .waitSeconds(.4);
+
+        TrajectoryActionBuilder tab7 = drive.actionBuilder(new Pose2d(-37, 63, Math.toRadians(90)))
+                .setTangent(Math.toRadians(-90))
+                .splineToLinearHeading(new Pose2d(1, 50, Math.toRadians(90)), Math.toRadians(270)) //intak
+                .waitSeconds(.1)
+                .strafeTo(new Vector2d(1, 30.7)) // place 3rd specimen
+                .waitSeconds(.2);
+        TrajectoryActionBuilder tabIntakePosition4th = drive.actionBuilder(new Pose2d(-2, 32.5, Math.toRadians(90)))
+                .setTangent(90)
+                .splineToLinearHeading(new Pose2d( -37, 50, Math.toRadians(270)), Math.toRadians(90))//position for intaking
+                //grab 2nd
+                .waitSeconds(.4);
+        TrajectoryActionBuilder tabIntake4th = drive.actionBuilder(new Pose2d(-37,50, Math.toRadians(270)))
+                .strafeTo(new Vector2d(-37, 60.5))
+                .waitSeconds(.4);
+        TrajectoryActionBuilder tabPlace4th = drive.actionBuilder(new Pose2d(-37, 63, Math.toRadians(90)))
+                .setTangent(Math.toRadians(-90))
+                .splineToLinearHeading(new Pose2d(-2, 50, Math.toRadians(90)), Math.toRadians(270)) //intak
+                .waitSeconds(.1)
+                .strafeTo(new Vector2d(-8, 31)) // place 3rd specimen
+                .waitSeconds(.2)
+                .strafeTo(new Vector2d(-8, 30.5)); // place 3rd specimen
+
+
+
+
+
+
+
+
 
 
               /*  .setReversed(true)
@@ -413,11 +451,38 @@ public class BigBoiAuto extends LinearOpMode {
                                         claw.outtakeNeutral()
                                 ),
                                 tab2.build(),
-                                claw.OuttakeIntake()
-                             //   tab3.build(),
-                               // claw.OuttakeClawClose()
-                              //  claw.specimenScoring()
-                              //  tab3.build()
+                                claw.OuttakeIntake(),
+                                tab3.build(),
+                                claw.OuttakeClawClose(),
+                                claw.specimenScoring(),
+                                tab4.build(),
+                                claw.OuttakeClawOpen(),
+                                new ParallelAction(
+                                    claw.outtakeNeutral()
+                                ),
+                                tab5.build(),
+                                claw.OuttakeIntake(),
+                                tab6.build(),
+                                claw.OuttakeClawClose(),
+                                claw.specimenScoring(),
+                                tab7.build(),
+                                claw.OuttakeClawOpen(),
+
+                                new ParallelAction(
+                                    claw.outtakeNeutral()
+                                 ),
+                                tabIntakePosition4th.build(),
+                                claw.OuttakeIntake(),
+                                tabIntake4th.build(),
+                                claw.OuttakeClawClose(),
+                                claw.specimenScoring(),
+                                tabPlace4th.build(),
+                                claw.outtakeNeutral()
+
+
+
+
+                                //  tab3.build()
                                  )
                        // Run the PID loop for the slide
                 )

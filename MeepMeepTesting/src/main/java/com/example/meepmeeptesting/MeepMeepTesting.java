@@ -35,10 +35,10 @@ public class MeepMeepTesting {
                          .splineTo(new Vector2d(-46,53), Math.toRadians(90))// push first sample
                         .setReversed(false)// push first sample
 
-                         .splineTo(new Vector2d(-47, 4), Math.toRadians(270))  // return
-                        .setReversed(true)
-                        .splineTo(new Vector2d(-58, 22), Math.toRadians(90)) // waypoint
-                        .splineTo(new Vector2d( -58, 53), Math.toRadians(90)) //push 2nd
+                     //    .splineTo(new Vector2d(-47, 4), Math.toRadians(270))  // return
+                   //     .setReversed(true)
+                    //    .splineTo(new Vector2d(-58, 22), Math.toRadians(90)) //waypoint
+                   //     .splineTo(new Vector2d( -58, 53), Math.toRadians(90)) //push 2nd
 
 
         //cycle 2nd specimen
@@ -58,7 +58,8 @@ public class MeepMeepTesting {
 
                          .setReversed(false)
                         .setTangent(Math.toRadians(-90))
-                         .splineToLinearHeading(new Pose2d(-2, 32, Math.toRadians(90)), Math.toRadians(270)) //intak
+                         .splineToLinearHeading(new Pose2d(-2, 50, Math.toRadians(90)), Math.toRadians(270)) //place 2nd
+                        .strafeTo(new Vector2d(-2, 32.5))
 
 
 
@@ -67,13 +68,33 @@ public class MeepMeepTesting {
 
 
         //cycle 2nd specimen
-                      /*  .splineToLinearHeading(new Pose2d( -37, 50, Math.toRadians(270)), Math.toRadians(90))//position for intaking
+                        .setTangent(90)
+                        .splineToLinearHeading(new Pose2d( -37, 50, Math.toRadians(270)), Math.toRadians(90))//position for intaking
                         //grab 2nd
                         .waitSeconds(.2)
                         .setTangent(Math.toRadians(90))
                         .splineTo(new Vector2d(-37, 57), Math.toRadians(90))
+                        .strafeTo(new Vector2d(-37, 63)) // intake
+
+                        .setTangent(Math.toRadians(-90))
+                        .splineToLinearHeading(new Pose2d(-2, 50, Math.toRadians(90)), Math.toRadians(270)) //intak
+                        .strafeTo(new Vector2d(-2, 32.5))
+
+                        .setTangent(90)
+                        .splineToLinearHeading(new Pose2d( -37, 50, Math.toRadians(270)), Math.toRadians(90))//position for intaking
+                        //grab 2nd
+                        .waitSeconds(.2)
+                        .setTangent(Math.toRadians(90))
+                        .splineTo(new Vector2d(-37, 57), Math.toRadians(90))
+                        .strafeTo(new Vector2d(-37, 63))
+
+                        .setTangent(Math.toRadians(-90))
+                        .splineToLinearHeading(new Pose2d(-2, 50, Math.toRadians(90)), Math.toRadians(270)) //intak
+                        .strafeTo(new Vector2d(-2, 32.5))
 
 
+
+/*
                         .setTangent(Math.toRadians(90))
                         .splineTo(new Vector2d(-37, 63), Math.toRadians(90)) //intake
 
@@ -121,7 +142,7 @@ public class MeepMeepTesting {
                         .waitSeconds(.1) // grab
 
                         .setTangent(Math.toRadians(0))
-                        .splineToLinearHead*/
+                        .splineToLinearHead */
 //
 
 
