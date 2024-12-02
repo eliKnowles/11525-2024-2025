@@ -233,8 +233,9 @@ public class BigBoiAuto extends LinearOpMode {
         public class hSlideIdle implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                    hSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
+                hSlideMotor.setTargetPosition(0);
+                hSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                hSlideMotor.setPower(.5);
                 return false;
             }
         }
@@ -263,7 +264,7 @@ public class BigBoiAuto extends LinearOpMode {
         TrajectoryActionBuilder tab1 = drive.actionBuilder(initialPose)
 
                 .setReversed(true)
-                .splineTo(new Vector2d(8, 31.5), Math.toRadians(270)) ; //waypoint to first sample
+                .splineTo(new Vector2d(-5, 30.5), Math.toRadians(270)) ; //waypoint to first sample
 
         // once at -5, 36, open claw
 
@@ -275,11 +276,11 @@ public class BigBoiAuto extends LinearOpMode {
                 .setReversed(false)
                 .splineTo(new Vector2d(-35,37 ), Math.toRadians(270)) //waypoint to first sample
 
-                .splineTo(new Vector2d(-50, 6), Math.toRadians(270)) // align with first sampleample
+                .splineTo(new Vector2d(-50, 1), Math.toRadians(270)) // align with first sampleample
 
 
                 .setReversed(true)
-                .splineTo(new Vector2d(-46,53), Math.toRadians(90));// push first sample
+                .splineTo(new Vector2d(-45,53), Math.toRadians(90));// push first sample
                 //.setReversed(false) ;// push first sample
 
         //        .splineTo(new Vector2d(-47, 4), Math.toRadians(270))  // return
@@ -292,7 +293,7 @@ public class BigBoiAuto extends LinearOpMode {
 
         TrajectoryActionBuilder tab3 = drive.actionBuilder(new Pose2d(-46, 53, Math.toRadians(270)))
                 .waitSeconds(0.1)
-                .strafeTo(new Vector2d(-46, 61))// position for intaking 2nd
+                .strafeTo(new Vector2d(-45, 61))// position for intaking 2nd
                 .waitSeconds(.3);
 
 
@@ -300,24 +301,24 @@ public class BigBoiAuto extends LinearOpMode {
 
         TrajectoryActionBuilder tab4 = drive.actionBuilder(new Pose2d(-37, 61, Math.toRadians(90)))
                 .setTangent(Math.toRadians(-90))
-                .splineToLinearHeading(new Pose2d(-12, 50, Math.toRadians(90)), Math.toRadians(270)) //intak
-                .waitSeconds(.1)
+                .splineTo(new Vector2d(-37, 50), Math.toRadians(270))
+                .splineToLinearHeading(new Pose2d(-5, 50, Math.toRadians(90)), Math.toRadians(270))
                 .strafeTo(new Vector2d(2, 30.7))
                 .waitSeconds(.2); // place 2nd specimen
 
         TrajectoryActionBuilder tab5 = drive.actionBuilder(new Pose2d(-2, 30.7, Math.toRadians(90)))
                 .setTangent(90)
-                .splineToLinearHeading(new Pose2d( -37, 50, Math.toRadians(270)), Math.toRadians(90))//position for intaking 2nd
+                .splineToLinearHeading(new Pose2d( -45, 50, Math.toRadians(270)), Math.toRadians(90))//position for intaking 2nd
 
-                .waitSeconds(.4);
+                .waitSeconds(.3);
         TrajectoryActionBuilder tab6 = drive.actionBuilder(new Pose2d(-37,50, Math.toRadians(270)))
-                .strafeTo(new Vector2d(-37, 61))
+                .strafeTo(new Vector2d(-45, 61))
                 .waitSeconds(.4);                //grab 3rd
 
 
         TrajectoryActionBuilder tab7 = drive.actionBuilder(new Pose2d(-37, 61, Math.toRadians(90)))
                 .setTangent(Math.toRadians(-90))
-                .splineToLinearHeading(new Pose2d(-12, 50, Math.toRadians(90)), Math.toRadians(270)) //intak
+                .splineToLinearHeading(new Pose2d(5, 50, Math.toRadians(90)), Math.toRadians(270)) //intak
                 .waitSeconds(.1)
                 .strafeTo(new Vector2d(5, 30.7));
         TrajectoryActionBuilder tabIntakePosition4th = drive.actionBuilder(new Pose2d(1, 30.7, Math.toRadians(90)))
@@ -330,11 +331,11 @@ public class BigBoiAuto extends LinearOpMode {
                 .waitSeconds(.4);
         TrajectoryActionBuilder tabPlace4th = drive.actionBuilder(new Pose2d(-37, 61, Math.toRadians(90)))
                 .setTangent(Math.toRadians(-90))
-                .splineToLinearHeading(new Pose2d(-12, 50, Math.toRadians(90)), Math.toRadians(270)) //intak
+                .splineToLinearHeading(new Pose2d(-8, 50, Math.toRadians(90)), Math.toRadians(270)) //intak
                 .waitSeconds(.1)
-                .strafeTo(new Vector2d(-12, 30.7))
+                .strafeTo(new Vector2d(-8, 30.7))
                 .waitSeconds(.2)
-                .strafeTo(new Vector2d(-12, 30.5)); // place 4th specimen // 4th cycle
+                .strafeTo(new Vector2d(-8, 30.5)); // place 4th specimen // 4th cycle
 
 
 
@@ -357,7 +358,7 @@ public class BigBoiAuto extends LinearOpMode {
 //        int startPosition = initialPosition;
 //        telemetry.addData("Starting Position", startPosition);
 //        telemetry.update();
-//        waitForStart();
+//        waitForStart(); mnm
 //
 //        if (isStopRequested()) return;
 //
@@ -372,7 +373,7 @@ public class BigBoiAuto extends LinearOpMode {
                 new ParallelAction(
                         claw.SlidePIDF(),
                         claw.HSlideIdle(),
-                        new SequentialAction(
+                         new SequentialAction(
                                 claw.specimenScoring(),
                                 tab1.build(),
                                 claw.OuttakeClawOpen(),
