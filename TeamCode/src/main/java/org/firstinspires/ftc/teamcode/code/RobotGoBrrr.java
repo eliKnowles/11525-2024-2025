@@ -129,7 +129,7 @@ public class RobotGoBrrr extends OpMode {
                 .add(intakeWristServo, .15f, 0)
                 .add(intakeWristServoTwo, .5f, 0)
                 .add(hSlideMotor, 0f, 300)
-                .add(outtakeClawServo, 0.60f, 500)
+                .add(outtakeClawServo, 0.56f, 500)
                 .add(intakeClawServo, 0.4f, 100)
                 .add(outtakePivotServo, .45f, 0)
                 .build();

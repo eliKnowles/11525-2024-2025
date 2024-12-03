@@ -1,14 +1,10 @@
 package org.firstinspires.ftc.teamcode.code;
 
-import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
-
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.InstantAction;
-import com.acmerobotics.roadrunner.InstantFunction;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
@@ -30,7 +26,7 @@ import org.firstinspires.ftc.teamcode.rr.PinpointDrive;
 
 @Config
 @Autonomous(name = "BLUE_SPECIMEN 4", group = "Autonomous")
-public class BigBoiAuto extends LinearOpMode {
+public class four_spec_auton_blue extends LinearOpMode {
 
     public static double vSlideTarget = 0 ;
 
@@ -157,7 +153,7 @@ public class BigBoiAuto extends LinearOpMode {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 
-                vSlideMotorOne.setPIDFCoefficients(.03, 0, .02,0);
+                vSlideMotorOne.setPIDFCoefficients(.01, 0, .02,0);
                 vSlideMotorOne.setPositionWithPIDF(vSlideTarget, vSlideMotorOne.getCurrentPosition());
                 vSlideMotorTwo.setPower(vSlideMotorOne.getPower());
 //                vSlideMotorTwo.setPower(vSlideMotorOne.getPower());
@@ -271,7 +267,7 @@ public class BigBoiAuto extends LinearOpMode {
                 //pivotservo set to specimen
                 //slides set to specimen
                 //action
-        TrajectoryActionBuilder tab2 = drive.actionBuilder(new Pose2d(-5, 31.5, Math.toRadians(90 )))
+        TrajectoryActionBuilder tab2 = drive.actionBuilder(new Pose2d(-5, 30.5, Math.toRadians(90 )))
 
                 .setReversed(false)
                 .splineTo(new Vector2d(-35,37 ), Math.toRadians(270)) //waypoint to first sample
@@ -291,7 +287,7 @@ public class BigBoiAuto extends LinearOpMode {
 
                 //cycle 2nd specimen
 
-        TrajectoryActionBuilder tab3 = drive.actionBuilder(new Pose2d(-46, 53, Math.toRadians(270)))
+        TrajectoryActionBuilder tab3 = drive.actionBuilder(new Pose2d(-45, 53, Math.toRadians(270)))
                 .waitSeconds(0.1)
                 .strafeTo(new Vector2d(-45, 61))// position for intaking 2nd
                 .waitSeconds(.3);
@@ -299,19 +295,20 @@ public class BigBoiAuto extends LinearOpMode {
 
 
 
-        TrajectoryActionBuilder tab4 = drive.actionBuilder(new Pose2d(-37, 61, Math.toRadians(90)))
+        TrajectoryActionBuilder tab4 = drive.actionBuilder(new Pose2d(-45, 61, Math.toRadians(90)))
                 .setTangent(Math.toRadians(-90))
-                .splineTo(new Vector2d(-37, 50), Math.toRadians(270))
+                .splineTo(new Vector2d(-45, 50), Math.toRadians(270))
+                .setTangent(Math.toRadians(-90))
                 .splineToLinearHeading(new Pose2d(-5, 50, Math.toRadians(90)), Math.toRadians(270))
                 .strafeTo(new Vector2d(2, 30.7))
                 .waitSeconds(.2); // place 2nd specimen
 
-        TrajectoryActionBuilder tab5 = drive.actionBuilder(new Pose2d(-2, 30.7, Math.toRadians(90)))
+        TrajectoryActionBuilder tab5 = drive.actionBuilder(new Pose2d(2, 30.7, Math.toRadians(90)))
                 .setTangent(90)
                 .splineToLinearHeading(new Pose2d( -45, 50, Math.toRadians(270)), Math.toRadians(90))//position for intaking 2nd
 
                 .waitSeconds(.3);
-        TrajectoryActionBuilder tab6 = drive.actionBuilder(new Pose2d(-37,50, Math.toRadians(270)))
+        TrajectoryActionBuilder tab6 = drive.actionBuilder(new Pose2d(-37,61, Math.toRadians(270)))
                 .strafeTo(new Vector2d(-45, 61))
                 .waitSeconds(.4);                //grab 3rd
 
@@ -321,7 +318,7 @@ public class BigBoiAuto extends LinearOpMode {
                 .splineToLinearHeading(new Pose2d(5, 50, Math.toRadians(90)), Math.toRadians(270)) //intak
                 .waitSeconds(.1)
                 .strafeTo(new Vector2d(5, 30.7));
-        TrajectoryActionBuilder tabIntakePosition4th = drive.actionBuilder(new Pose2d(1, 30.7, Math.toRadians(90)))
+        TrajectoryActionBuilder tabIntakePosition4th = drive.actionBuilder(new Pose2d(5, 30.7, Math.toRadians(90)))
                 .setTangent(90)
                 .splineToLinearHeading(new Pose2d( -37, 50, Math.toRadians(270)), Math.toRadians(90))//position for intaking
                 //grab 2nd
