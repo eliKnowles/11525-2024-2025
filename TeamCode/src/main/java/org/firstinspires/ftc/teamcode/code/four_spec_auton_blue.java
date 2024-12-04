@@ -59,7 +59,7 @@ public class four_spec_auton_blue extends LinearOpMode {
             intakeWristServoTwo = new ServoV2("intake_wrist_two", hardwareMap);
 
             hSlideMotor = new DcMotorV2("h_slide", hardwareMap);
-            hSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            hSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
             vSlideMotorOne = new DcMotorV2("v_slide_one", hardwareMap);
             vSlideMotorOne.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -78,7 +78,7 @@ public class four_spec_auton_blue extends LinearOpMode {
                     .add(intakePivotServoOne, .59f, 0)
                     .add(intakeWristServo, 0f, 0)
                     .add(intakeWristServoTwo, .5f, 0)
-                    .add(outtakeClawServo, 0.68f, 500)
+                    .add(outtakeClawServo, 0.8f, 500)
                     .add(intakeClawServo, 0.4f, 100)
                     .add(outtakePivotServo, .55f, 0)
                     .build();
@@ -86,7 +86,7 @@ public class four_spec_auton_blue extends LinearOpMode {
             sequence.create("intakeNeutral")
                     .add(intakeWristServoTwo, .5f, 0)
                     .add(outtakePivotServo, .85f, 0)
-                    .add(outtakeClawServo, .75f, 0 )
+                    .add(outtakeClawServo, .98f, 0 )
                     .add(intakePivotServoOne, .07f, 0)
                     .add(intakeWristServo, .75f, 0)
                     .add(intakeClawServo, .4f, 0)
@@ -120,8 +120,8 @@ public class four_spec_auton_blue extends LinearOpMode {
         class SpecimenScoring implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                outtakeClawServo.setPosition(.6);
-                vSlideTarget = 260;
+                outtakeClawServo.setPosition(.8);
+                vSlideTarget = 270;
                 outtakePivotServo.setPosition(.38);
 
 
@@ -138,7 +138,7 @@ public class four_spec_auton_blue extends LinearOpMode {
         class outtakeClawOpen implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                outtakeClawServo.setPosition(.75); // open servo
+                outtakeClawServo.setPosition(.98); // open servo
 
                 return false;
             }
@@ -190,7 +190,7 @@ public class four_spec_auton_blue extends LinearOpMode {
             public boolean run(@NonNull TelemetryPacket packet) {
                 vSlideTarget = 0;
                 outtakePivotServo.setPosition(.20);
-                outtakeClawServo.setPosition(.75);
+                outtakeClawServo.setPosition(.98);
                 return false;
             }
         }
@@ -202,7 +202,7 @@ public class four_spec_auton_blue extends LinearOpMode {
         public class outtakeClawClose implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                outtakeClawServo.setPosition(.6);
+                outtakeClawServo.setPosition(.8);
 
                 return false;
             }

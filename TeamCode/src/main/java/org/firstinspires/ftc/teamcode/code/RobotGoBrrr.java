@@ -125,11 +125,11 @@ public class RobotGoBrrr extends OpMode {
         currentTransferState = TransferState.H_IDLE;
 
         sequence.create("transfer")
-                .add(intakePivotServoOne, .59f, 0)
-                .add(intakeWristServo, .15f, 0)
+                .add(intakePivotServoOne, .55f, 0)
+                .add(intakeWristServo, .14f, 0)
                 .add(intakeWristServoTwo, .5f, 0)
                 .add(hSlideMotor, 0f, 300)
-                .add(outtakeClawServo, 0.56f, 500)
+                .add(outtakeClawServo, 0.85f, 500)
                 .add(intakeClawServo, 0.4f, 100)
                 .add(outtakePivotServo, .45f, 0)
                 .build();
@@ -137,8 +137,8 @@ public class RobotGoBrrr extends OpMode {
         sequence.create("intakeNeutral")
                 .add(hSlideMotor, 450f, 0)
                 .add(intakeWristServoTwo, .5f, 0)
-                .add(outtakePivotServo, .94f, 0)
-                .add(outtakeClawServo, .75f, 0)
+                .add(outtakePivotServo, .91f, 0)
+                .add(outtakeClawServo, .98f, 0)
                 .add(intakePivotServoOne, .07f, 0)
                 .add(intakeWristServo, .73f, 0)
                 .add(intakeClawServo, .4f, 0)
@@ -146,8 +146,8 @@ public class RobotGoBrrr extends OpMode {
 
         sequence.create("intakeNeutralNoExtendo")
                 .add(intakeWristServoTwo, .5f, 0)
-                .add(outtakePivotServo, .92f, 0)
-                .add(outtakeClawServo, .75, 0)
+                .add(outtakePivotServo, .91f, 0)
+                .add(outtakeClawServo, .98, 0)
                 .add(intakePivotServoOne, .07f, 0)
                 .add(intakeWristServo, .73f, 0)
                 .add(intakeClawServo, .4f, 0)
@@ -292,7 +292,7 @@ public class RobotGoBrrr extends OpMode {
         }
         
         if (gamepad1.dpad_up && currentTransferState == TransferState.TRANSFERED) {
-            outtakeClawServo.setPosition(.7f);
+            outtakeClawServo.setPosition(.98f);
             currentTransferState = TransferState.H_IDLE;
             speed = 1;
         }
