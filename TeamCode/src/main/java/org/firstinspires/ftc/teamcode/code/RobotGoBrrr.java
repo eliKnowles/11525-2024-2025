@@ -137,7 +137,7 @@ public class RobotGoBrrr extends OpMode {
         sequence.create("intakeNeutral")
                 .add(hSlideMotor, 450f, 0)
                 .add(intakeWristServoTwo, .5f, 0)
-                .add(outtakePivotServo, .91f, 0)
+                .add(outtakePivotServo, .89f, 0)
                 .add(outtakeClawServo, .98f, 0)
                 .add(intakePivotServoOne, .07f, 0)
                 .add(intakeWristServo, .73f, 0)
@@ -146,7 +146,7 @@ public class RobotGoBrrr extends OpMode {
 
         sequence.create("intakeNeutralNoExtendo")
                 .add(intakeWristServoTwo, .5f, 0)
-                .add(outtakePivotServo, .91f, 0)
+                .add(outtakePivotServo, .89f, 0)
                 .add(outtakeClawServo, .98, 0)
                 .add(intakePivotServoOne, .07f, 0)
                 .add(intakeWristServo, .73f, 0)
@@ -154,7 +154,9 @@ public class RobotGoBrrr extends OpMode {
                 .build();
 
         sequence.create("intakeGrab")
-                .add(intakeClawServo, .92f, 0)
+                .add(intakePivotServoOne, .02, 0)
+                .add(intakeWristServo, .72f, 0)
+                .add(intakeClawServo, .92f, 100)
                 .add(intakePivotServoOne, .2f, 300)
                 .build();
         
@@ -193,7 +195,7 @@ public class RobotGoBrrr extends OpMode {
         // Set target positions for slides based on gamepad input
         if(gamepad1.y) {
             targetSlidePosition = 800; // Example extension position for PIDF
-            speed = 0.4;
+            speed = 0.7;
         } else if(gamepad1.a) {
             targetSlidePosition = 0;
             outtakePivotServo.setPosition(.85);
@@ -283,7 +285,7 @@ public class RobotGoBrrr extends OpMode {
             sequence.run("intakeNeutral");
             
             if (currentTransferState != TransferState.H_IDLE) {
-                speed = 0.4;
+                speed = 0.7;
             } else {
                 speed = 1;
             }
