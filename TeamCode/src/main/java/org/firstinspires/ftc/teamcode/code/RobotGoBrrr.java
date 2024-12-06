@@ -4,12 +4,13 @@ import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
+import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -25,7 +26,9 @@ import org.firstinspires.ftc.teamcode.rr.PinpointDrive;
 @TeleOp(name = "Robot Go Brrr", group = "Linear OpMode")
 public class RobotGoBrrr extends OpMode {
 
-    private static PinpointDrive otosDrive;
+    private static PinpointDrive drive;
+    
+    private TrajectoryActionBuilder spec;
 
     // Declare OpMode members.
     private final ElapsedTime runtime = new ElapsedTime();
@@ -76,8 +79,11 @@ public class RobotGoBrrr extends OpMode {
 
     @Override
     public void init ( ) {
-
-        otosDrive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
+        
+        spec = drive.actionBuilder(new Pose2d(-45, 53, Math.toRadians(270)))
+            .strafeTo(new Vector2d(-45, 61));// position for intaking 2nd
+        
+        drive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
 
         Pose2d beginPose = new Pose2d(0, 0, 0);
 
@@ -174,9 +180,14 @@ public class RobotGoBrrr extends OpMode {
 
     @Override
     public void loop ( ) {
+        
+        if(gamepad2.a) {
+            Actions.runBlocking(spec.build());
+        }
+        
         wristPos = 0;
         
-        otosDrive.setDrivePowers(new PoseVelocity2d(
+        drive.setDrivePowers(new PoseVelocity2d(
             new Vector2d(
                 -gamepad1.left_stick_y * speed,
                 -gamepad1.left_stick_x * speed
@@ -184,7 +195,7 @@ public class RobotGoBrrr extends OpMode {
             -gamepad1.right_stick_x
         ));
 
-        otosDrive.updatePoseEstimate();
+        drive.updatePoseEstimate();
 
         if(gamepad1.options) imu.resetYaw();
 
