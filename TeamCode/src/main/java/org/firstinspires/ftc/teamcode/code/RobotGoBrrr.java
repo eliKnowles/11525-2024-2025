@@ -21,6 +21,8 @@ import org.firstinspires.ftc.teamcode.hermeshelper.util.Sequence;
 import org.firstinspires.ftc.teamcode.hermeshelper.util.hardware.DcMotorV2;
 import org.firstinspires.ftc.teamcode.hermeshelper.util.hardware.IMUV2;
 import org.firstinspires.ftc.teamcode.hermeshelper.util.hardware.ServoV2;
+import org.firstinspires.ftc.teamcode.hermeshelper.util.mechanum_drive.MechanumDrive;
+import org.firstinspires.ftc.teamcode.rr.MecanumDrive;
 import org.firstinspires.ftc.teamcode.rr.PinpointDrive;
 
 @TeleOp(name = "Robot Go Brrr", group = "Linear OpMode")
@@ -79,12 +81,8 @@ public class RobotGoBrrr extends OpMode {
 
     @Override
     public void init ( ) {
-        
-        spec = drive.actionBuilder(new Pose2d(-45, 53, Math.toRadians(270)))
-            .strafeTo(new Vector2d(-45, 61));// position for intaking 2nd
-        
         drive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
-
+        
         Pose2d beginPose = new Pose2d(0, 0, 0);
 
         GlobalTelemetry.init(telemetry);
@@ -182,6 +180,9 @@ public class RobotGoBrrr extends OpMode {
     public void loop ( ) {
         
         if(gamepad2.a) {
+            spec = drive.actionBuilder(new Pose2d(drive.pinpoint.getPosX(), drive.pinpoint.getPosY(), drive.pinpoint.getHeading()))
+                .strafeTo(new Vector2d(-45, 61));// position for intaking 2nd
+            
             Actions.runBlocking(spec.build());
         }
         
