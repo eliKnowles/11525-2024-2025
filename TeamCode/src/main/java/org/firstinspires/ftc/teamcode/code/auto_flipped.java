@@ -25,7 +25,7 @@ import org.firstinspires.ftc.teamcode.hermeshelper.util.hardware.ServoV2;
 import org.firstinspires.ftc.teamcode.rr.PinpointDrive;
 
 @Config
-@Autonomous(name = "BLUE_SPECIMEN 4", group = "Autonomous")
+@Autonomous(name = "BLUE_SPECIMEN 4 flipped", group = "Autonomous")
 public class auto_flipped extends LinearOpMode {
 	
 	public static double vSlideTarget = 0 ;

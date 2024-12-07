@@ -2,16 +2,15 @@ package org.firstinspires.ftc.teamcode.code;
 
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
 
-import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
-import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -22,8 +21,6 @@ import org.firstinspires.ftc.teamcode.hermeshelper.util.Sequence;
 import org.firstinspires.ftc.teamcode.hermeshelper.util.hardware.DcMotorV2;
 import org.firstinspires.ftc.teamcode.hermeshelper.util.hardware.IMUV2;
 import org.firstinspires.ftc.teamcode.hermeshelper.util.hardware.ServoV2;
-import org.firstinspires.ftc.teamcode.hermeshelper.util.mechanum_drive.MechanumDrive;
-import org.firstinspires.ftc.teamcode.rr.MecanumDrive;
 import org.firstinspires.ftc.teamcode.rr.PinpointDrive;
 
 @TeleOp(name = "Robot Go Brrr", group = "Linear OpMode")
@@ -120,8 +117,8 @@ public class RobotGoBrrr extends OpMode {
         hSlideMotor.setDirection(FORWARD);
 
         // TODO: Set PIDF coefficients for hSlideMotor
-        // PIDFCoefficients pidfCoefficients = new PIDFCoefficients(0, 0, 0, 0);
-        // hSlideMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+        PIDFCoefficients hpidfCoefficients = new PIDFCoefficients(0.01, 0, 0.02, 0);
+        hSlideMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, hpidfCoefficients);
 
         imu = new IMUV2("imu", hardwareMap);
 
@@ -179,12 +176,24 @@ public class RobotGoBrrr extends OpMode {
 
     @Override
     public void loop ( ) {
-        
-        if(gamepad2.a) {
-            spec = drive.actionBuilder(new Pose2d(drive.pinpoint.getPosX(), drive.pinpoint.getPosY(), drive.pinpoint.getHeading()))
-                .strafeTo(new Vector2d(-45, 61));// position for intaking 2nd
-            
-            Actions.runBlocking(spec.build());
+
+        if(gamepad2.a){
+            outtakePivotServo.setPosition(.2);
+            outtakeClawServo.setPosition(.98);
+            targetSlidePosition = 0;
+        }
+
+        if(gamepad2.b) {
+            outtakeClawServo.setPosition(.83);
+
+        }
+        if(gamepad2.triangle) {
+            targetSlidePosition = 255;
+            outtakePivotServo.setPosition(.36);
+        }
+
+        if(gamepad2.square) {
+            outtakeClawServo.setPosition(.98);
         }
         
         wristPos = 0;
@@ -221,7 +230,7 @@ public class RobotGoBrrr extends OpMode {
             hSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
         
-        if(gamepad2.a) {
+        if(gamepad2.dpad_up) {
             vSlideMotorOne.stopAndReset();
             vSlideMotorTwo.stopAndReset();
         }
