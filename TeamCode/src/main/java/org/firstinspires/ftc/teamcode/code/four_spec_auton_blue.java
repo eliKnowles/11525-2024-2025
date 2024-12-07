@@ -121,8 +121,8 @@ public class four_spec_auton_blue extends LinearOpMode {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 outtakeClawServo.setPosition(.8);
-                vSlideTarget = 270;
-                outtakePivotServo.setPosition(.38);
+                vSlideTarget = 265;
+                outtakePivotServo.setPosition(.36);
 
 
 
@@ -175,7 +175,7 @@ public class four_spec_auton_blue extends LinearOpMode {
         public class OuttakeNeutral implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                vSlideTarget = 150;
+                vSlideTarget = 0;
                 outtakePivotServo.setPosition(.5);
                 return false;
             }
@@ -189,7 +189,7 @@ public class four_spec_auton_blue extends LinearOpMode {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 vSlideTarget = 0;
-                outtakePivotServo.setPosition(.20);
+                outtakePivotServo.setPosition(.2);
                 outtakeClawServo.setPosition(.98);
                 return false;
             }
@@ -203,6 +203,11 @@ public class four_spec_auton_blue extends LinearOpMode {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 outtakeClawServo.setPosition(.8);
+                try {
+                    Thread.sleep(150);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }// open servo
 
                 return false;
             }
@@ -220,6 +225,29 @@ public class four_spec_auton_blue extends LinearOpMode {
                 sequence.run("intakeGrab");
                 return false;
             }
+        }
+
+        public class Sleep implements Action {
+
+            private int time;
+
+            public Sleep(int timeMS) {
+                time = timeMS;
+            }
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                try {
+                    Thread.sleep(time);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                return false;
+            }
+        }
+
+        public Action sleep(int timeMS) {
+            return new Sleep(timeMS);
         }
 
         public Action intakeGrab() {
@@ -242,6 +270,7 @@ public class four_spec_auton_blue extends LinearOpMode {
     }
 
 
+
     @Override
     public void runOpMode() {
         Pose2d initialPose = new Pose2d(-5, 65, Math.toRadians(90));
@@ -260,14 +289,14 @@ public class four_spec_auton_blue extends LinearOpMode {
         TrajectoryActionBuilder tab1 = drive.actionBuilder(initialPose)
 
                 .setReversed(true)
-                .splineTo(new Vector2d(-5, 30.5), Math.toRadians(270)) ; //waypoint to first sample
+                .splineTo(new Vector2d(-5, 30.4), Math.toRadians(270)) ; //waypoint to first sample
 
         // once at -5, 36, open claw
 
                 //pivotservo set to specimen
                 //slides set to specimen
                 //action
-        TrajectoryActionBuilder tab2 = drive.actionBuilder(new Pose2d(-5, 30.5, Math.toRadians(90 )))
+        TrajectoryActionBuilder tab2 = drive.actionBuilder(new Pose2d(-5, 30.4, Math.toRadians(90)))
 
                 .setReversed(false)
                 .splineTo(new Vector2d(-35,37 ), Math.toRadians(270)) //waypoint to first sample
@@ -289,50 +318,48 @@ public class four_spec_auton_blue extends LinearOpMode {
 
         TrajectoryActionBuilder tab3 = drive.actionBuilder(new Pose2d(-45, 53, Math.toRadians(270)))
                 .waitSeconds(0.1)
-                .strafeTo(new Vector2d(-45, 61))// position for intaking 2nd
+                .strafeTo(new Vector2d(-45, 60.5))// position for intaking 2nd
                 .waitSeconds(.3);
 
 
 
 
-        TrajectoryActionBuilder tab4 = drive.actionBuilder(new Pose2d(-45, 61, Math.toRadians(90)))
+        TrajectoryActionBuilder tab4 = drive.actionBuilder(new Pose2d(-45, 60.5, Math.toRadians(90)))
+                .setReversed(false)
+                .strafeTo(new Vector2d(-40, 50))
+                .setReversed(true)
                 .setTangent(Math.toRadians(-90))
-                .splineTo(new Vector2d(-45, 50), Math.toRadians(270))
-                .setTangent(Math.toRadians(-90))
-                .splineToLinearHeading(new Pose2d(-5, 50, Math.toRadians(90)), Math.toRadians(270))
-                .strafeTo(new Vector2d(2, 30.7))
+                .splineToLinearHeading(new Pose2d(2, 55, Math.toRadians(90)), Math.toRadians(270))
+                .strafeTo(new Vector2d(2, 30.4))
                 .waitSeconds(.2); // place 2nd specimen
 
-        TrajectoryActionBuilder tab5 = drive.actionBuilder(new Pose2d(2, 30.7, Math.toRadians(90)))
+        TrajectoryActionBuilder tab5 = drive.actionBuilder(new Pose2d(2, 30.4, Math.toRadians(90)))
                 .setTangent(90)
                 .splineToLinearHeading(new Pose2d( -45, 50, Math.toRadians(270)), Math.toRadians(90))//position for intaking 2nd
 
                 .waitSeconds(.3);
-        TrajectoryActionBuilder tab6 = drive.actionBuilder(new Pose2d(-37,61, Math.toRadians(270)))
-                .strafeTo(new Vector2d(-45, 61))
-                .waitSeconds(.4);                //grab 3rd
+        TrajectoryActionBuilder tab6 = drive.actionBuilder(new Pose2d(-45,50, Math.toRadians(270)))
+                .strafeTo(new Vector2d(-45, 60.5))
+                .waitSeconds(.3);                //grab 3rd
 
 
-        TrajectoryActionBuilder tab7 = drive.actionBuilder(new Pose2d(-37, 61, Math.toRadians(90)))
+        TrajectoryActionBuilder tab7 = drive.actionBuilder(new Pose2d(-45, 60.5, Math.toRadians(90)))
                 .setTangent(Math.toRadians(-90))
                 .splineToLinearHeading(new Pose2d(5, 50, Math.toRadians(90)), Math.toRadians(270)) //intak
                 .waitSeconds(.1)
-                .strafeTo(new Vector2d(5, 30.7));
-        TrajectoryActionBuilder tabIntakePosition4th = drive.actionBuilder(new Pose2d(5, 30.7, Math.toRadians(90)))
+                .strafeTo(new Vector2d(5, 30.4));
+        TrajectoryActionBuilder tabIntakePosition4th = drive.actionBuilder(new Pose2d(5, 30.4, Math.toRadians(90)))
                 .setTangent(90)
-                .splineToLinearHeading(new Pose2d( -37, 50, Math.toRadians(270)), Math.toRadians(90))//position for intaking
+                .splineToLinearHeading(new Pose2d( -45, 50, Math.toRadians(270)), Math.toRadians(90))//position for intaking
                 //grab 2nd
                 .waitSeconds(.4);
-        TrajectoryActionBuilder tabIntake4th = drive.actionBuilder(new Pose2d(-37,50, Math.toRadians(270)))
-                .strafeTo(new Vector2d(-37, 61))
-                .waitSeconds(.4);
-        TrajectoryActionBuilder tabPlace4th = drive.actionBuilder(new Pose2d(-37, 61, Math.toRadians(90)))
+        TrajectoryActionBuilder tabIntake4th = drive.actionBuilder(new Pose2d(-45,50, Math.toRadians(270)))
+                .strafeTo(new Vector2d(-45, 60.5))
+                .waitSeconds(.3);
+        TrajectoryActionBuilder tabPlace4th = drive.actionBuilder(new Pose2d(-45, 60.5, Math.toRadians(90)))
                 .setTangent(Math.toRadians(-90))
                 .splineToLinearHeading(new Pose2d(-8, 50, Math.toRadians(90)), Math.toRadians(270)) //intak
-                .waitSeconds(.1)
-                .strafeTo(new Vector2d(-8, 30.7))
-                .waitSeconds(.2)
-                .strafeTo(new Vector2d(-8, 30.5)); // place 4th specimen // 4th cycle
+                .strafeTo(new Vector2d(-8, 30.4)); // place 4th specimen // 4th cycle
 
 
 
@@ -404,6 +431,8 @@ public class four_spec_auton_blue extends LinearOpMode {
                                 claw.OuttakeClawClose(),
                                 claw.specimenScoring(),
                                 tabPlace4th.build(),
+                                claw.sleep(200),
+                                claw.OuttakeClawOpen(),
                                 claw.outtakeNeutral()
 
 

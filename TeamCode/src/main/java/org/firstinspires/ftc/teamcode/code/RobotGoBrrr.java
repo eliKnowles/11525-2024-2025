@@ -130,13 +130,13 @@ public class RobotGoBrrr extends OpMode {
         currentTransferState = TransferState.H_IDLE;
 
         sequence.create("transfer")
-                .add(intakePivotServoOne, .55f, 0)
                 .add(intakeWristServo, .14f, 0)
+                .add(intakePivotServoOne, .55f, 100)
                 .add(intakeWristServoTwo, .5f, 0)
-                .add(hSlideMotor, 0f, 300)
-                .add(outtakeClawServo, 0.85f, 500)
+                .add(hSlideMotor, 0f, 0)
+                .add(outtakeClawServo, 0.85f, 700)
                 .add(intakeClawServo, 0.4f, 100)
-                .add(outtakePivotServo, .45f, 0)
+                .add(outtakePivotServo, .38f, 0)
                 .build();
 
         sequence.create("intakeNeutral")
@@ -207,7 +207,7 @@ public class RobotGoBrrr extends OpMode {
 
         // Set target positions for slides based on gamepad input
         if(gamepad1.y) {
-            targetSlidePosition = 800; // Example extension position for PIDF
+            targetSlidePosition = 850; // Example extension position for PIDF
             speed = 0.7;
         } else if(gamepad1.a) {
             targetSlidePosition = 0;

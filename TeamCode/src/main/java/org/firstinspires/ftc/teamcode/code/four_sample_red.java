@@ -7,10 +7,8 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.Pose2dDual;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
-import com.acmerobotics.roadrunner.TrajectoryBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -78,8 +76,9 @@ public class four_sample_red extends LinearOpMode {
             sequence = new Sequence();
 
             sequence.create("intakeGrab")
-                    .add(intakePivotServoOne, .02, 500)
-                    .add(intakeClawServo, .92f, 0)
+
+                    .add(intakePivotServoOne, .02, 0)
+                    .add(intakeClawServo, .92f, 300)
                     .add(intakePivotServoOne, .2f, 300)
                     .build();
 
@@ -87,10 +86,10 @@ public class four_sample_red extends LinearOpMode {
                     .add(intakePivotServoOne, .02, 300)
                     .add(intakeClawServo, .92f, 0)
                     .add(intakePivotServoOne, .55f, 500)
-                    .add(intakeWristServo, .14f, 0)
+                    .add(intakeWristServo, .16f, 0)
                     .add(intakeWristServoTwo, .5f, 0)
                     .add(hSlideMotor, 0f, 300)
-                    .add(outtakeClawServo, 0.85f, 500)
+                    .add(outtakeClawServo, 0.86f, 500)
                     .add(intakeClawServo, 0.4f, 100)
                     .add(outtakePivotServo, .45f, 0)
                     .build();
@@ -98,7 +97,7 @@ public class four_sample_red extends LinearOpMode {
             sequence.create("intakeNeutral")
                     .add(hSlideMotor, 450f, 0)
                     .add(intakeWristServoTwo, .5f, 0)
-                    .add(outtakePivotServo, .94f, 0)
+                    .add(outtakePivotServo, .89f, 0)
                     .add(outtakeClawServo, .98f, 0)
                     .add(intakePivotServoOne, .07f, 0)
                     .add(intakeWristServo, .73f, 0)
@@ -107,7 +106,7 @@ public class four_sample_red extends LinearOpMode {
 
             sequence.create("intakeNeutralNoExtendo")
                     .add(intakeWristServoTwo, .5f, 0)
-                    .add(outtakePivotServo, .93f, 0)
+                    .add(outtakePivotServo, .89f, 0)
                     .add(outtakeClawServo, .98, 0)
                     .add(intakePivotServoOne, .07f, 0)
                     .add(intakeWristServo, .73f, 0)
@@ -116,7 +115,7 @@ public class four_sample_red extends LinearOpMode {
 
             sequence.create("intakeNeutralNoExtendoFourthSpec")
                     .add(intakeWristServoTwo, 1f, 0)
-                    .add(outtakePivotServo, .93f, 0)
+                    .add(outtakePivotServo, .89f, 0)
                     .add(outtakeClawServo, .98, 0)
                     .add(intakePivotServoOne, .07f, 0)
                     .add(intakeWristServo, .73f, 0)
@@ -138,8 +137,8 @@ public class four_sample_red extends LinearOpMode {
         class slidesNeutral implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                outtakePivotServo.setPosition(.8
-                );
+                outtakePivotServo.setPosition(.89);
+                intakeWristServo.setPosition(.73);
                 vSlideTarget = 0;
                 return false;
             }
@@ -149,6 +148,14 @@ public class four_sample_red extends LinearOpMode {
             return new slidesNeutral();
 
         }
+
+
+
+
+
+
+
+
 
 
         class SampleScoring implements Action {
@@ -171,7 +178,7 @@ public class four_sample_red extends LinearOpMode {
             public boolean run(@NonNull TelemetryPacket packet) {
                 outtakeClawServo.setPosition(.98);
                 try {
-                    Thread.sleep(300);
+                    Thread.sleep(500);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }// open servo
@@ -207,6 +214,7 @@ public class four_sample_red extends LinearOpMode {
         }
 
 
+
         public class outtakeClawClose implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
@@ -229,7 +237,6 @@ public class four_sample_red extends LinearOpMode {
                 return false;
             }
         }
-
         public Action intakeGrabPosition() {
             return new IntakeGrabPosition();
         }
@@ -255,7 +262,6 @@ public class four_sample_red extends LinearOpMode {
                 return false; // Done when the sequence finishes
             }
         }
-
         public Action intakeGrab() {
             return new IntakeGrab();
         }
@@ -270,6 +276,7 @@ public class four_sample_red extends LinearOpMode {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 if (!started) {
+                    vSlideTarget = 0;
                     sequence.run("intakeNeutralNoExtendoFourthSpec"); // Start the sequence
                     started = true;
                 }
@@ -284,10 +291,11 @@ public class four_sample_red extends LinearOpMode {
                 return false; // Done when the sequence finishes
             }
         }
-
         public Action intakeGrabPositionFourth() {
             return new IntakeGrabPositionFourth();
         }
+
+
 
 
         class transfer implements Action {
@@ -296,6 +304,7 @@ public class four_sample_red extends LinearOpMode {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 if (!started) {
+                    vSlideTarget = 0;
                     sequence.run("transfer"); // Start the sequence
                     started = true;
                 }
@@ -310,7 +319,6 @@ public class four_sample_red extends LinearOpMode {
                 return false; // Done when the sequence finishes
             }
         }
-
         public Action Transfer() {
             return new transfer();
 
@@ -331,7 +339,6 @@ public class four_sample_red extends LinearOpMode {
                 return false; // Done when the sequence finishes
             }
         }
-
         public Action TransferFourth() {
             return new transferFourth();
 
@@ -359,6 +366,8 @@ public class four_sample_red extends LinearOpMode {
         public Action Sleep(int timeMS) {
             return new Sleep(timeMS);
         }
+
+
 
 
         public class SequenceUpdater implements Action {
@@ -391,51 +400,52 @@ public class four_sample_red extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        Pose2d initialPose = new Pose2d(37, 65, Math.toRadians(270));
+        Pose2d initialPose = new Pose2d(-37, -65, Math.toRadians(90));
 
         PinpointDrive drive = new PinpointDrive(hardwareMap, initialPose);
         outtake claw = new outtake(hardwareMap);
 
+
         // vision here that outputs position
 //        int initialPosition = 1;
 
-        TrajectoryActionBuilder score_first_sample_position = drive.actionBuilder(new Pose2d(37, 65, Math.toRadians(270)))
-                .strafeTo(new Vector2d(37, 50))
+        TrajectoryActionBuilder score_first_sample_position = drive.actionBuilder(new Pose2d(-37, -65, Math.toRadians(90)))
+                .strafeTo(new Vector2d(-37,-50))
                 .setReversed(true)
-                .setTangent(Math.toRadians(45))
-                .splineTo(new Vector2d(56, 56), Math.toRadians(0));
-        TrajectoryActionBuilder grab_second_sample = drive.actionBuilder(new Pose2d(56, 56, Math.toRadians(315)))
-                .waitSeconds(.3)
-                .setReversed(false)
-                .strafeToLinearHeading(new Vector2d(49, 50), Math.toRadians(270))
-                .strafeTo(new Vector2d(49, 37));
-        TrajectoryActionBuilder score_second_sample = drive.actionBuilder(new Pose2d(49, 37, Math.toRadians(270)))
-                .waitSeconds(.3)
-                .strafeToLinearHeading(new Vector2d(56, 56), Math.toRadians(225));
-        TrajectoryActionBuilder grab_third_sample = drive.actionBuilder(new Pose2d(56, 56, Math.toRadians(315)))
-                .waitSeconds(.3)
-                .setReversed(false)
-                .strafeToLinearHeading(new Vector2d(58, 50), Math.toRadians(270))
-                .strafeTo(new Vector2d(60, 37));
-        TrajectoryActionBuilder score_third_sample = drive.actionBuilder(new Pose2d(60, 37, Math.toRadians(270)))
-                .waitSeconds(.3)
-                .strafeToLinearHeading(new Vector2d(56, 56), Math.toRadians(225));
-        TrajectoryActionBuilder grab_fourth_sample = drive.actionBuilder(new Pose2d(56, 56, Math.toRadians(225)))
-                .waitSeconds(.3)
-                .strafeToLinearHeading(new Vector2d(45, 26.5), Math.toRadians(0))
-                .strafeTo(new Vector2d(59, 26.75));
-        TrajectoryActionBuilder score_fourth_sample_drive_away = drive.actionBuilder(new Pose2d(59, 26.75, Math.toRadians(0)))
-                .strafeToLinearHeading(new Vector2d(44, 26.5), Math.toRadians(0));
+                .setTangent(Math.toRadians(225))
+                .splineTo(new Vector2d(-56.5, -56.5), Math.toRadians(180));
 
-        TrajectoryActionBuilder score_fourth_sample = drive.actionBuilder(new Pose2d(45, 26.5, Math.toRadians(-135)))
+        TrajectoryActionBuilder grab_second_sample = drive.actionBuilder(new Pose2d(-56.5, -56.5, Math.toRadians(225)))
                 .waitSeconds(.3)
-                .strafeTo(new Vector2d(45, 26.75))
-                .strafeToLinearHeading(new Vector2d(56, 56), Math.toRadians(225))
-                .waitSeconds(.3);
-        TrajectoryActionBuilder drive_forward = drive.actionBuilder(new Pose2d(56, 56, Math.toRadians(225)))
+                .setReversed(false)
+                .strafeToLinearHeading(new Vector2d(-49, -50), Math.toRadians(90))
+                .strafeTo(new Vector2d(-49,-37 ));
+        TrajectoryActionBuilder score_second_sample =  drive.actionBuilder(new Pose2d(-49, -37, Math.toRadians(90)))
                 .waitSeconds(.3)
-                .strafeToLinearHeading(new Vector2d(50, 50), Math.toRadians(225))
-                .waitSeconds(.3);
+                .strafeToLinearHeading(new Vector2d(-56.5, -56.5), Math.toRadians(45));
+        TrajectoryActionBuilder grab_third_sample = drive.actionBuilder(new Pose2d(-56.5, -56.5, Math.toRadians(135)))
+                .waitSeconds(.3)
+                .setReversed(false)
+                .strafeToLinearHeading(new Vector2d(-58, -50), Math.toRadians(90))
+                .strafeTo(new Vector2d(-60,-37 ));
+        TrajectoryActionBuilder score_third_sample =  drive.actionBuilder(new Pose2d(-60, -37, Math.toRadians(90)))
+                .waitSeconds(.3)
+                .strafeToLinearHeading(new Vector2d(-56.5, -56.5), Math.toRadians(45));
+        TrajectoryActionBuilder grab_fourth_sample = drive.actionBuilder(new Pose2d(-56.5, -56.5,Math.toRadians(45)))
+                .waitSeconds(.3)
+                .strafeToLinearHeading(new Vector2d(-45, -26.5), Math.toRadians(180))
+                .strafeTo(new Vector2d(-59,-26.75 ));
+        TrajectoryActionBuilder score_fourth_sample_drive_away = drive.actionBuilder(new Pose2d(-59, -26.75,Math.toRadians(180)))
+                .waitSeconds(.2)
+                .strafeToLinearHeading(new Vector2d(-44, -26.5), Math.toRadians(180));
+
+        TrajectoryActionBuilder score_fourth_sample = drive.actionBuilder(new Pose2d(-44, -26.5,Math.toRadians(45)))
+                .waitSeconds(.3)
+                .strafeToLinearHeading(new Vector2d(-56.5, -56.5), Math.toRadians(45));
+        TrajectoryActionBuilder score_fourth_sample_drive_away2 = drive.actionBuilder(new Pose2d(-56.5, -56.5,Math.toRadians(45)))
+                .strafeToLinearHeading(new Vector2d(-50, -50), Math.toRadians(45));
+
+
 
 
         // actions that need to happen on init; for instance, a claw tightening.
@@ -485,14 +495,12 @@ public class four_sample_red extends LinearOpMode {
                                 claw.IntakeGrabPositionFourth(),
                                 claw.intakeGrab(),
                                 score_fourth_sample_drive_away.build(),
-                                new ParallelAction(
-                                        claw.Transfer()
-
-                                ),
+                                claw.Transfer(),
                                 claw.sampleScoring(),
                                 score_fourth_sample.build(),
+                                claw.Sleep(300),
                                 claw.OuttakeClawOpen(),
-                                drive_forward.build(),
+                                score_fourth_sample_drive_away2.build(),
                                 claw.SlidesNeutral()
 
 
@@ -506,5 +514,4 @@ public class four_sample_red extends LinearOpMode {
 
 
     }
-
 }
