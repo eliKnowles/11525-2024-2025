@@ -40,6 +40,8 @@ public class RobotGoBrrr extends OpMode {
     private static final double kF = 0.0;
 
     // PIDF control variables for vertical slides
+    private boolean force = false;
+    private double targetSlideReset = 0;
     private double targetSlidePosition = 0;
     private double lastError = 0;
     private double integral = 0;
@@ -105,7 +107,7 @@ public class RobotGoBrrr extends OpMode {
         vSlideMotorOne = new DcMotorV2("v_slide_one", hardwareMap);
         vSlideMotorOne.setDirection(DcMotorSimple.Direction.REVERSE);
         vSlideMotorOne.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        vSlideMotorOne.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        vSlideMotorOne.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         vSlideMotorTwo = new DcMotorV2("v_slide_two", hardwareMap);
         vSlideMotorTwo.setDirection(DcMotorSimple.Direction.FORWARD);
         vSlideMotorTwo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -117,8 +119,7 @@ public class RobotGoBrrr extends OpMode {
         hSlideMotor.setDirection(FORWARD);
 
         // TODO: Set PIDF coefficients for hSlideMotor
-        PIDFCoefficients hpidfCoefficients = new PIDFCoefficients(0.01, 0, 0.02, 0);
-        hSlideMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, hpidfCoefficients);
+
 
         imu = new IMUV2("imu", hardwareMap);
 
@@ -216,7 +217,7 @@ public class RobotGoBrrr extends OpMode {
 
         // Set target positions for slides based on gamepad input
         if(gamepad1.y) {
-            targetSlidePosition = 850; // Example extension position for PIDF
+            targetSlidePosition = 880; // Example extension position for PIDF
             speed = 0.7;
         } else if(gamepad1.a) {
             targetSlidePosition = 0;
@@ -231,13 +232,15 @@ public class RobotGoBrrr extends OpMode {
         }
         
         if(gamepad2.dpad_up) {
-            vSlideMotorOne.stopAndReset();
-            vSlideMotorTwo.stopAndReset();
+            targetSlideReset = targetSlidePosition - vSlideMotorOne.getCurrentPosition();
         }
         
-        if(gamepad2.right_stick_y > 0.25) {
+        if(Math.abs(gamepad2.right_stick_y) > 0.25) {
             vSlideMotorOne.setPower(gamepad2.right_stick_y);
             vSlideMotorTwo.setPower(gamepad2.right_stick_y);
+            force = true;
+        } else if (gamepad2.right_stick_y < 0.05) {
+            force = false;
         }
 
         // Wrist Servo Control
@@ -251,7 +254,7 @@ public class RobotGoBrrr extends OpMode {
         runWrist();
 
         // PIDF Control for Vertical Slides
-        vSlidePIDF();
+        if (!force) vSlidePIDF();
 
         // Show the elapsed game time and wheel power.
         GlobalTelemetry.get().addData("Status", "Run Time: " + runtime.toString());
@@ -307,7 +310,7 @@ public class RobotGoBrrr extends OpMode {
             sequence.run("intakeNeutral");
             
             if (currentTransferState != TransferState.H_IDLE) {
-                speed = 0.7;
+                speed = 0.5;
             } else {
                 speed = 1;
             }
@@ -373,7 +376,7 @@ public class RobotGoBrrr extends OpMode {
 
     public void vSlidePIDF ( ) {
         double currentSlidePosition = (vSlideMotorOne.getCurrentPosition());
-        double pidfOutput = computePIDFOutput(targetSlidePosition, currentSlidePosition);
+        double pidfOutput = computePIDFOutput(targetSlidePosition - targetSlideReset, currentSlidePosition);
         vSlideMotorOne.setPower(pidfOutput);
         vSlideMotorTwo.setPower(pidfOutput);
 

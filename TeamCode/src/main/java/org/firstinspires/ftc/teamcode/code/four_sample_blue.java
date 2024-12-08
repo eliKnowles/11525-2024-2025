@@ -137,7 +137,14 @@ public class four_sample_blue extends LinearOpMode {
         class slidesNeutral implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
+
                 outtakePivotServo.setPosition(.89);
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }// open servo
+
                 intakeWristServo.setPosition(.73);
                 vSlideTarget = 0;
                 return false;
@@ -162,10 +169,26 @@ public class four_sample_blue extends LinearOpMode {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 outtakeClawServo.setPosition(.8);
+
+
                 vSlideTarget = 870;
-                outtakePivotServo.setPosition(.42);
+                outtakePivotServo.setPosition(.39);
                 return false;
             }
+        }
+
+
+        class servoPivotNeutral implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                outtakePivotServo.setPosition(.89);
+                return false;
+            }
+        }
+
+        public Action ServoPivotNeutral() {
+            return new servoPivotNeutral();
+
         }
 
         public Action sampleScoring() {
@@ -474,21 +497,28 @@ public class four_sample_blue extends LinearOpMode {
                                 claw.sampleScoring(),
                                 score_first_sample_position.build(),
                                 claw.OuttakeClawOpen(),
-                                claw.intakeGrabPosition(),
+                                claw.ServoPivotNeutral(),
+                                claw.Sleep(200),
 
+                                claw.intakeGrabPosition(),
                                 grab_second_sample.build(),
                                 claw.Transfer(),
                                 claw.Sleep(1000),
                                 claw.sampleScoring(),
                                 score_second_sample.build(),
                                 claw.OuttakeClawOpen(),
+                                claw.ServoPivotNeutral(),
+                                claw.Sleep(200),
+
                                 claw.intakeGrabPosition(),
                                 grab_third_sample.build(),
                                 claw.Transfer(),
-                                claw.Sleep(1000),
+                                claw.Sleep(800),
                                 claw.sampleScoring(),
                                 score_third_sample.build(),
                                 claw.OuttakeClawOpen(),
+                                claw.ServoPivotNeutral(),
+                                claw.Sleep(200),
                                 claw.intakeGrabPosition(),
                                 grab_fourth_sample.build(),
                                 claw.IntakeGrabPositionFourth(),
@@ -500,6 +530,7 @@ public class four_sample_blue extends LinearOpMode {
                                 claw.Sleep(300),
                                 claw.OuttakeClawOpen(),
                                 score_fourth_sample_drive_away2.build(),
+                                claw.ServoPivotNeutral(),
                                 claw.SlidesNeutral()
 
 
