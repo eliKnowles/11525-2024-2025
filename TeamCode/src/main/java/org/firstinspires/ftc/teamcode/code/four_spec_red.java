@@ -25,7 +25,7 @@ import org.firstinspires.ftc.teamcode.hermeshelper.util.hardware.ServoV2;
 import org.firstinspires.ftc.teamcode.rr.PinpointDrive;
 
 @Config
-@Autonomous(name = "RED_SPECIMEN 4", group = "Autonomous")
+@Autonomous(name = "RED_SPECIMEN 4", group = "DONT_RUN")
 public class four_spec_red extends LinearOpMode {
 
     public static double vSlideTarget = 0 ;
@@ -320,7 +320,6 @@ public class four_spec_red extends LinearOpMode {
                 .waitSeconds(0.1)
                 .strafeTo(new Vector2d(45, -60.5))// position for intaking 2nd
                 .waitSeconds(.3);
-
 
 
 

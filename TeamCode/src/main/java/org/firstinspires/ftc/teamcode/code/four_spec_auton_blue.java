@@ -270,7 +270,6 @@ public class four_spec_auton_blue extends LinearOpMode {
     }
 
 
-
     @Override
     public void runOpMode() {
         Pose2d initialPose = new Pose2d(-5, 65, Math.toRadians(90));

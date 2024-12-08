@@ -170,7 +170,6 @@ public class four_sample_red extends LinearOpMode {
 
 
 
-
         class SampleScoring implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {

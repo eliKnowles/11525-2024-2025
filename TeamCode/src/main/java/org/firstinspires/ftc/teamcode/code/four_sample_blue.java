@@ -488,7 +488,6 @@ public class four_sample_blue extends LinearOpMode {
 //        } else {
 //            trajectoryActionChosen = tab2.build();
 //        }
-
         Actions.runBlocking(
                 new ParallelAction(
                         claw.SlidePIDF(),

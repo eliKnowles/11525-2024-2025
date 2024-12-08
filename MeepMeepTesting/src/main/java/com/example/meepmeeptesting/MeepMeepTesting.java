@@ -24,8 +24,7 @@ public class MeepMeepTesting {
         //pivotservo set to specimen
         //slides set to specimen
         //action
-
-                    .setReversed(false)
+                        .setReversed(false)
                      .splineTo(new Vector2d(35,-37 ), Math.toRadians(90)) //waypoint to first sample
 
                          .splineTo(new Vector2d(50, -1), Math.toRadians(90)) // align with first sampleample

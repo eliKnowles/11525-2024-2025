@@ -224,7 +224,6 @@ public class RobotGoBrrr extends OpMode {
             outtakePivotServo.setPosition(.85);
             speed = 1;
         }
-        
         runTransfer();
 
         if(hSlideMotor.getCurrentPosition() == 0) {
