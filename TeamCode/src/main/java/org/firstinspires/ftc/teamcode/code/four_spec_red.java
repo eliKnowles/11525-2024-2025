@@ -296,7 +296,7 @@ public class four_spec_red extends LinearOpMode {
         //pivotservo set to specimen
         //slides set to specimen
         //action
-        TrajectoryActionBuilder tab2 = drive.actionBuilder(new Pose2d(5, -30.4, Math.toRadians(90)))
+        TrajectoryActionBuilder tab2 = drive.actionBuilder(new Pose2d(5, -30.4, Math.toRadians(270)))
 
                 .setReversed(false)
                 .splineTo(new Vector2d(35,-37 ), Math.toRadians(90)) //waypoint to first sample
@@ -316,7 +316,7 @@ public class four_spec_red extends LinearOpMode {
 
         //cycle 2nd specimen
 
-        TrajectoryActionBuilder tab3 = drive.actionBuilder(new Pose2d(45, -53, Math.toRadians(270)))
+        TrajectoryActionBuilder tab3 = drive.actionBuilder(new Pose2d(45, -53, Math.toRadians(90)))
                 .waitSeconds(0.1)
                 .strafeTo(new Vector2d(45, -60.5))// position for intaking 2nd
                 .waitSeconds(.3);
@@ -334,31 +334,37 @@ public class four_spec_red extends LinearOpMode {
 
         TrajectoryActionBuilder tab5 = drive.actionBuilder(new Pose2d(-2, -30.4, Math.toRadians(270)))
                 .setTangent(90)
-                .splineToLinearHeading(new Pose2d( 45, -50, Math.toRadians(270)), Math.toRadians(90))//position for intaking 2nd
+                .splineToLinearHeading(new Pose2d( 45, -50, Math.toRadians(90)), Math.toRadians(270))//position for intaking 2nd
 
                 .waitSeconds(.3);
-        TrajectoryActionBuilder tab6 = drive.actionBuilder(new Pose2d(-45,50, Math.toRadians(270)))
-                .strafeTo(new Vector2d(-45, 60.5))
+        TrajectoryActionBuilder tab6 = drive.actionBuilder(new Pose2d(45,-50, Math.toRadians(90)))
+                .strafeTo(new Vector2d(45, -60.5))
                 .waitSeconds(.3);                //grab 3rd
 
 
-        TrajectoryActionBuilder tab7 = drive.actionBuilder(new Pose2d(-45, 60.5, Math.toRadians(90)))
-                .setTangent(Math.toRadians(-90))
-                .splineToLinearHeading(new Pose2d(5, 50, Math.toRadians(90)), Math.toRadians(270)) //intak
+        TrajectoryActionBuilder tab7 = drive.actionBuilder(new Pose2d(45, -60.5, Math.toRadians(270)))
+                .setTangent(Math.toRadians(90))
+                .splineToLinearHeading(new Pose2d(-5, -50, Math.toRadians(270)), Math.toRadians(90)) //intak
                 .waitSeconds(.1)
-                .strafeTo(new Vector2d(5, 30.4));
-        TrajectoryActionBuilder tabIntakePosition4th = drive.actionBuilder(new Pose2d(5, 30.4, Math.toRadians(90)))
+
+                .strafeTo(new Vector2d(-5, -30.4));
+
+
+
+
+
+        TrajectoryActionBuilder tabIntakePosition4th = drive.actionBuilder(new Pose2d(-5, -30.4, Math.toRadians(270)))
                 .setTangent(90)
-                .splineToLinearHeading(new Pose2d( -45, 50, Math.toRadians(270)), Math.toRadians(90))//position for intaking
+                .splineToLinearHeading(new Pose2d( -45, 50, Math.toRadians(90)), Math.toRadians(270))//position for intaking
                 //grab 2nd
                 .waitSeconds(.4);
-        TrajectoryActionBuilder tabIntake4th = drive.actionBuilder(new Pose2d(-45,50, Math.toRadians(270)))
-                .strafeTo(new Vector2d(-45, 60.5))
+        TrajectoryActionBuilder tabIntake4th = drive.actionBuilder(new Pose2d(45,-50, Math.toRadians(90)))
+                .strafeTo(new Vector2d(45, -60.5))
                 .waitSeconds(.3);
-        TrajectoryActionBuilder tabPlace4th = drive.actionBuilder(new Pose2d(-45, 60.5, Math.toRadians(90)))
-                .setTangent(Math.toRadians(-90))
-                .splineToLinearHeading(new Pose2d(-8, 50, Math.toRadians(90)), Math.toRadians(270)) //intak
-                .strafeTo(new Vector2d(-8, 30.4)); // place 4th specimen // 4th cycle
+        TrajectoryActionBuilder tabPlace4th = drive.actionBuilder(new Pose2d(45, -60.5, Math.toRadians(270)))
+                .setTangent(Math.toRadians(90))
+                .splineToLinearHeading(new Pose2d(8, -50, Math.toRadians(270)), Math.toRadians(90)) //intak
+                .strafeTo(new Vector2d(8, -30.4)); // place 4th specimen // 4th cycle
 
 
 
@@ -423,7 +429,7 @@ public class four_spec_red extends LinearOpMode {
 
                                 new ParallelAction(
                                         claw.outtakeNeutral()
-                                ),
+                                )/*,
                                 tabIntakePosition4th.build(),
                                 claw.OuttakeIntake(),
                                 tabIntake4th.build(),
@@ -432,7 +438,15 @@ public class four_spec_red extends LinearOpMode {
                                 tabPlace4th.build(),
                                 claw.sleep(200),
                                 claw.OuttakeClawOpen(),
-                                claw.outtakeNeutral()
+                                claw.outtakeNeutral()*/
+
+                                /* tabIntake4th.build(),
+                                claw.OuttakeClawClose(),
+                                claw.specimenScoring(),
+                                tabPlace4th.build(),
+                                claw.sleep(200),
+                                claw.OuttakeClawOpen(),
+                                claw.outtakeNeutral() */
 
 
 

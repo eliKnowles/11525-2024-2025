@@ -166,16 +166,12 @@ public class four_sample_red extends LinearOpMode {
 
 
 
-
-
-
-
         class SampleScoring implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 outtakeClawServo.setPosition(.8);
                 vSlideTarget = 880;
-                outtakePivotServo.setPosition(.38);
+                outtakePivotServo.setPosition(.36);
                 return false;
             }
         }
@@ -513,7 +509,7 @@ public class four_sample_red extends LinearOpMode {
                                 claw.intakeGrab(),
                                 score_fourth_sample_drive_away.build(),
                                 claw.Transfer(),
-                               claw.sampleScoring(),
+                                claw.sampleScoring(),
                                 score_fourth_sample.build(),
                                 claw.Sleep(300),
                                 claw.OuttakeClawOpen(),

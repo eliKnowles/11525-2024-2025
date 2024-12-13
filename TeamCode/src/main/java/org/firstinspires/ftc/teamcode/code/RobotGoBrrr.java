@@ -41,6 +41,7 @@ public class RobotGoBrrr extends OpMode {
 
     // PIDF control variables for vertical slides
     private boolean force = false;
+    private boolean targethSlideReset = false;
     private double targetSlideReset = 0;
     private double targetSlidePosition = 0;
     private double lastError = 0;
@@ -138,7 +139,7 @@ public class RobotGoBrrr extends OpMode {
                 .build();
 
         sequence.create("intakeNeutral")
-                .add(hSlideMotor, 450f, 0)
+                .add(hSlideMotor, 420f, 0)
                 .add(intakeWristServoTwo, .5f, 0)
                 .add(outtakePivotServo, .89f, 0)
                 .add(outtakeClawServo, .98f, 0)
@@ -188,7 +189,7 @@ public class RobotGoBrrr extends OpMode {
             outtakeClawServo.setPosition(.83);
 
         }
-        if(gamepad2.triangle) {
+        if(gamepad1.circle) {
             targetSlidePosition = 255;
             outtakePivotServo.setPosition(.36);
         }
@@ -224,7 +225,21 @@ public class RobotGoBrrr extends OpMode {
             outtakePivotServo.setPosition(.85);
             speed = 1;
         }
-        runTransfer();
+
+        if(Math.abs(gamepad2.left_stick_y) > 0.25) {
+            hSlideMotor.setPower(gamepad2.left_stick_y);
+            hSlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            targethSlideReset = true;
+        } else if (gamepad2.dpad_left ) {
+            hSlideMotor.stopAndReset();
+            hSlideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            hSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            targethSlideReset = false;
+        }
+
+        if(!targethSlideReset) {
+            runTransfer();
+        }
 
         if(hSlideMotor.getCurrentPosition() == 0) {
             hSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -235,10 +250,10 @@ public class RobotGoBrrr extends OpMode {
         }
         
         if(Math.abs(gamepad2.right_stick_y) > 0.25) {
-            vSlideMotorOne.setPower(gamepad2.right_stick_y);
-            vSlideMotorTwo.setPower(gamepad2.right_stick_y);
+            vSlideMotorOne.setPower(-gamepad2.right_stick_y);
+            vSlideMotorTwo.setPower(-gamepad2.right_stick_y);
             force = true;
-        } else if (gamepad2.right_stick_y < 0.05) {
+        } else if (Math.abs(gamepad2.right_stick_y) < 0.05) {
             force = false;
         }
 

@@ -20,7 +20,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.hermeshelper.datatypes.TransferState;
 import org.firstinspires.ftc.teamcode.hermeshelper.util.Sequence;
- import org.firstinspires.ftc.teamcode.hermeshelper.util.hardware.DcMotorV2;
+import org.firstinspires.ftc.teamcode.hermeshelper.util.hardware.DcMotorV2;
 import org.firstinspires.ftc.teamcode.hermeshelper.util.hardware.ServoV2;
 import org.firstinspires.ftc.teamcode.rr.PinpointDrive;
 

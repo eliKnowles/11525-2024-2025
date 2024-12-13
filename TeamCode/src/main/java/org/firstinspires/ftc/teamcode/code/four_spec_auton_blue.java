@@ -152,7 +152,7 @@ public class four_spec_auton_blue extends LinearOpMode {
         public class vSlidePIDF implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                
+
                 vSlideMotorOne.setPIDFCoefficients(.01, 0, .02,0);
                 vSlideMotorOne.setPositionWithPIDF(vSlideTarget, vSlideMotorOne.getCurrentPosition());
                 vSlideMotorTwo.setPower(vSlideMotorOne.getPower());
@@ -292,9 +292,9 @@ public class four_spec_auton_blue extends LinearOpMode {
 
         // once at -5, 36, open claw
 
-                //pivotservo set to specimen
-                //slides set to specimen
-                //action
+        //pivotservo set to specimen
+        //slides set to specimen
+        //action
         TrajectoryActionBuilder tab2 = drive.actionBuilder(new Pose2d(-5, 30.4, Math.toRadians(90)))
 
                 .setReversed(false)
@@ -305,15 +305,15 @@ public class four_spec_auton_blue extends LinearOpMode {
 
                 .setReversed(true)
                 .splineTo(new Vector2d(-45,53), Math.toRadians(90));// push first sample
-                //.setReversed(false) ;// push first sample
+        //.setReversed(false) ;// push first sample
 
         //        .splineTo(new Vector2d(-47, 4), Math.toRadians(270))  // return
-       //         .setReversed(true)
-       //         .splineTo(new Vector2d(-58, 22), Math.toRadians(90)) // waypoint
-       //         .splineTo(new Vector2d( -58, 53), Math.toRadians(90)); //push 2nd  //push 2nd
+        //         .setReversed(true)
+        //         .splineTo(new Vector2d(-58, 22), Math.toRadians(90)) // waypoint
+        //         .splineTo(new Vector2d( -58, 53), Math.toRadians(90)); //push 2nd  //push 2nd
 
 
-                //cycle 2nd specimen
+        //cycle 2nd specimen
 
         TrajectoryActionBuilder tab3 = drive.actionBuilder(new Pose2d(-45, 53, Math.toRadians(270)))
                 .waitSeconds(0.1)
@@ -347,13 +347,15 @@ public class four_spec_auton_blue extends LinearOpMode {
                 .splineToLinearHeading(new Pose2d(5, 50, Math.toRadians(90)), Math.toRadians(270)) //intak
                 .waitSeconds(.1)
                 .strafeTo(new Vector2d(5, 30.4));
+
         TrajectoryActionBuilder tabIntakePosition4th = drive.actionBuilder(new Pose2d(5, 30.4, Math.toRadians(90)))
                 .setTangent(90)
-                .splineToLinearHeading(new Pose2d( -45, 50, Math.toRadians(270)), Math.toRadians(90))//position for intaking
+                .splineToLinearHeading(new Pose2d( -45, 50, Math.toRadians(90)), Math.toRadians(270))//position for intaking
                 //grab 2nd
                 .waitSeconds(.4);
         TrajectoryActionBuilder tabIntake4th = drive.actionBuilder(new Pose2d(-45,50, Math.toRadians(270)))
                 .strafeTo(new Vector2d(-45, 60.5))
+
                 .waitSeconds(.3);
         TrajectoryActionBuilder tabPlace4th = drive.actionBuilder(new Pose2d(-45, 60.5, Math.toRadians(90)))
                 .setTangent(Math.toRadians(-90))
@@ -396,7 +398,7 @@ public class four_spec_auton_blue extends LinearOpMode {
                 new ParallelAction(
                         claw.SlidePIDF(),
                         claw.HSlideIdle(),
-                         new SequentialAction(
+                        new SequentialAction(
                                 claw.specimenScoring(),
                                 tab1.build(),
                                 claw.OuttakeClawOpen(),
@@ -411,7 +413,7 @@ public class four_spec_auton_blue extends LinearOpMode {
                                 tab4.build(),
                                 claw.OuttakeClawOpen(),
                                 new ParallelAction(
-                                    claw.outtakeNeutral()
+                                        claw.outtakeNeutral()
                                 ),
                                 tab5.build(),
                                 claw.OuttakeIntake(),
@@ -422,8 +424,8 @@ public class four_spec_auton_blue extends LinearOpMode {
                                 claw.OuttakeClawOpen(),
 
                                 new ParallelAction(
-                                    claw.outtakeNeutral()
-                                 ),
+                                        claw.outtakeNeutral()
+                                ),
                                 tabIntakePosition4th.build(),
                                 claw.OuttakeIntake(),
                                 tabIntake4th.build(),
@@ -438,8 +440,8 @@ public class four_spec_auton_blue extends LinearOpMode {
 
 
                                 //  tab3.build()
-                                 )
-                       // Run the PID loop for the slide
+                        )
+                        // Run the PID loop for the slide
                 )
         );
 //                        claw.intakeGrab(),
@@ -449,7 +451,7 @@ public class four_spec_auton_blue extends LinearOpMode {
 ////                        claw.idle(),
 //                        tab2.build(),
 //                        tab3.build()
-                        // TODO: add placing the thing
+        // TODO: add placing the thing
 
 
 

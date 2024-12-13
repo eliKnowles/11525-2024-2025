@@ -15,23 +15,13 @@ public class MeepMeepTesting {
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
-                .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(new Pose2d(5, -65, Math.toRadians(90)))
+                .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(new Pose2d(-37, -65, Math.toRadians(90)))
+                        .strafeTo(new Vector2d(-37,-50))
                         .setReversed(true)
-                        .splineTo(new Vector2d(5, -30.4), Math.toRadians(90))  //waypoint to first sample
-
-        // once at -5, 36, open claw
-
-        //pivotservo set to specimen
-        //slides set to specimen
-        //action
-                        .setReversed(false)
-                     .splineTo(new Vector2d(35,-37 ), Math.toRadians(90)) //waypoint to first sample
-
-                         .splineTo(new Vector2d(50, -1), Math.toRadians(90)) // align with first sampleample
+                        .setTangent(Math.toRadians(225))
+                        .splineTo(new Vector2d(-56.5, -56.5), Math.toRadians(180))
 
 
-                         .setReversed(true)
-                         .splineTo(new Vector2d(45,-53), Math.toRadians(270))// push first sample
 
         // actions that need to happen on init; for insta
                          .build());// place 4th specimen // 4th cycle
