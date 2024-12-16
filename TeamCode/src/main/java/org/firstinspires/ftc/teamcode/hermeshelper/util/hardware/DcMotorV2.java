@@ -82,13 +82,19 @@ public class DcMotorV2 implements DcMotorEx{
     public void setPositionWithPIDF(double targetPosition, double currentPosition) {
         setPower(computePIDFOutput(targetPosition, currentPosition));
     }
-
+    
+    public void runToPositionWithPIDF(double targetPosition) {
+        double currentPosition = motor.getCurrentPosition();
+        double output = computePIDFOutput(targetPosition, currentPosition);
+        motor.setPower(output);
+    }
+    
     private double computePIDFOutput(double targetPosition, double currentPosition) {
         double error = targetPosition - currentPosition;
         integral += error;
         double derivative = error - lastError;
         lastError = error;
-
+        
         return kP * error + kI * integral + kD * derivative + kF * targetPosition;
     }
 
