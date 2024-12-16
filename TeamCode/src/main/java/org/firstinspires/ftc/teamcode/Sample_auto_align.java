@@ -46,6 +46,7 @@ public abstract class Sample_auto_align {
         double adjustedTargetX = distanceToTarget * Math.tan(Math.toRadians(tx)) - clawOffsetX;
         double adjustedTargetY = distanceToTarget - clawOffsetY;
 
+
         // Calculate the new angle the robot should align to
         double robotHeading = drive.pinpoint.getHeading();
         double newTargetAngle = Math.atan2(adjustedTargetX, adjustedTargetY);
