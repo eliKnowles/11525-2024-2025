@@ -59,7 +59,7 @@ public abstract class Sample_auto_align {
 // Drive forward to position claw directly over the game piece
         drive.actionBuilder(drive.pinpoint.getPositionRR())
                 .turn(newTargetAngle - robotHeading)// Turn to align
-                // TODO: eli add it so it moves forward given the adjustest target y
+                // TODO: eli add it so it moves forward given the adjusted target y
                 .build();
         )
     }
