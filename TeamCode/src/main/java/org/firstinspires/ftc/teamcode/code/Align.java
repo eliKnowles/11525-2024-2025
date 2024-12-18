@@ -16,6 +16,7 @@ public class Align {
     public final PinpointDrive drive; // PinpointDrive instance passed into Align
     private boolean aligned = false;
 
+
     // Constructor to accept the PinpointDrive instance
     public Align(Limelight3A limelight, PinpointDrive drive) {
         this.limelight = limelight;
