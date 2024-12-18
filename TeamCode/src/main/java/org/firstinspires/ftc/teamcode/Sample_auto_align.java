@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 
 import com.acmerobotics.roadrunner.Pose2d;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.sun.tools.javac.comp.Todo;
 
@@ -13,7 +15,7 @@ import java.lang.Math;
 public abstract class Sample_auto_align {
     // Declare Limelight
     private Limelight3A limelight;
-
+    private LLResult llResult;
 
     public Sample_auto_align(HardwareMap hardwareMap) {
         // Initialize Limelight
@@ -21,15 +23,17 @@ public abstract class Sample_auto_align {
     }
 
     public double calculateDistanceFromLimelight() {
+        llResult = limelight.getLatestResult();
         double targetHeight = 10.0; // Height of the target in inches or cm
         double cameraHeight = 5.0;  // Height of the Limelight in inches or cm
         double cameraAngle = Math.toRadians(30); // Limelight mounting angle in degrees
-        double ty = limelight.getTy(); // Replace with appropriate getter
+        double ty = llResult.getTy(); // Replace with appropriate getter
 
         return (targetHeight - cameraHeight) / Math.tan(cameraAngle + Math.toRadians(ty));
     }
 
     public void centerClawOverTarget(HardwareMap hardwareMap) {
+        llResult = limelight.getLatestResult();
         // Initialize PinpointDrive with starting pose
         Pose2d initialPose = new Pose2d(-37, -65, Math.toRadians(90));
         PinpointDrive drive = new PinpointDrive(hardwareMap, initialPose);
@@ -39,7 +43,7 @@ public abstract class Sample_auto_align {
         double clawOffsetY = 10; // Forward offset of claw (inches or cm)
 
         // Get Limelight data
-        double tx = limelight.getTx(); // Replace with appropriate getter
+        double tx = llResult.getTx(); // Replace with appropriate getter
         double distanceToTarget = calculateDistanceFromLimelight();
 
         // Adjust target position for claw offset
