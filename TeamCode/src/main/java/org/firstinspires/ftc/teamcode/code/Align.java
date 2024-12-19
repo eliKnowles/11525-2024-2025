@@ -27,15 +27,15 @@ public class Align {
     }
 
     // Control Gains
-    double kpLateral = 0.09;  // Proportional gain for lateral adjustment
-    double kpForward = 0.07;  // Proportional gain for forward/backward adjustment
-    double forwardOffset = -1; // Fixed offset camera to claw
+    double kpLateral = 0.08;  // Proportional gain for lateral adjustment
+    double kpForward = 0.065;  // Proportional gain for forward/backward adjustment
+    double forwardOffset = -1.2; // Fixed offset camera to claw
     double clawYOffset = 0;      // Claw Y offset relative to the robot's center
-    double tolerance = 0.12;     // Tolerance for tx and ty
+    double tolerance = 0.13;     // Tolerance for tx and ty
 
     // Add D gains
-    double kdLateral = 0.03;  // Derivative gain for lateral adjustment
-    double kdForward = 0.03;  // Derivative gain for forward adjustment
+    double kdLateral = 0.02;  // Derivative gain for lateral adjustment
+    double kdForward = 0.02;  // Derivative gain for forward adjustment
 
     // Variables for error tracking
     double lastTx = 0;
@@ -83,7 +83,6 @@ public class Align {
 
             // Force update drive.pose
             drive.updatePoseEstimate();
-            drive.pose = new Pose2d(targetX, targetY, Math.toRadians(90));
         }
     }
 

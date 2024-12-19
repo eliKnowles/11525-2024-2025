@@ -94,14 +94,17 @@ public class four_sample_red extends LinearOpMode {
 
 
             sequence.create("intakeGrab")
-
+                    .add(intakeWristServo, .45,0)
                     .add(intakePivotServoOne, .02, 0)
                     .add(intakeClawServo, .92f, 300)
                     .add(intakePivotServoOne, .2f, 300)
                     .build();
 
             sequence.create("transfer")
-                    .add(intakePivotServoOne, .02, 100)
+                    .add(intakeWristServo, .7,0)
+
+                    .add(intakePivotServoOne, .02, 200)
+
                     .add(intakeClawServo, .92f, 300)
                     .add(intakePivotServoOne, .55f, 300)
                     .add(intakeWristServo, .16f, 0)
@@ -126,7 +129,7 @@ public class four_sample_red extends LinearOpMode {
                     .add(intakeWristServoTwo, .5f, 0)
                     .add(outtakePivotServo, .89f, 0)
                     .add(outtakeClawServo, .98, 0)
-                    .add(intakePivotServoOne, .07f, 0)
+                    .add(intakePivotServoOne, .1f, 0)
                     .add(intakeWristServo, .73f, 0)
                     .add(intakeClawServo, .4f, 0)
                     .build();
@@ -181,10 +184,10 @@ public class four_sample_red extends LinearOpMode {
         class limelightHover implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                        intakeClawServo.setPosition(.6);
-                        intakePivotServoOne.setPosition(.15);
-                        intakeWristServo.setPosition(.73);
-                        return false;
+                intakeClawServo.setPosition(.4);
+                intakePivotServoOne.setPosition(.15);
+                intakeWristServo.setPosition(.73);
+                return false;
             }
         }
 
@@ -453,11 +456,11 @@ public class four_sample_red extends LinearOpMode {
 
         Align align = new Align(limelight, drive);
 
-        TrajectoryActionBuilder run_auton = drive.actionBuilder(initialPose)
+        Action run_auton = drive.actionBuilder(initialPose)
                 .strafeTo(new Vector2d(-37,-50))
                 .setReversed(true)
+                .afterTime(.01,new SequentialAction(claw.sampleScoring()))
                 .setTangent(Math.toRadians(225))
-                .stopAndAdd(new SequentialAction(claw.sampleScoring()))
                 .splineTo(new Vector2d(-56.5, -56.5), Math.toRadians(180))
                 .afterTime(.5, new SequentialAction(claw.OuttakeClawOpen()))
                 .setReversed(false)
@@ -465,13 +468,22 @@ public class four_sample_red extends LinearOpMode {
 
                 .stopAndAdd(new SequentialAction(claw.SlidesNeutral(),claw.intakeGrabPosition(), claw.LimelightHover()))// slides down, limelight goes to searching positionm
                 .strafeTo(new Vector2d(-49,-40 ))
-                .stopAndAdd(new SequentialAction(align.CenterOverTarget()));// limelight alignment, transfer
-                run_auton.build();
+                .stopAndAdd(new SequentialAction(align.CenterOverTarget(),claw.Transfer()))// limelight alignment, transfer
+                .setReversed(true)
+                .afterTime(.01,new SequentialAction(claw.sampleScoring()))
+                .strafeToLinearHeading(new Vector2d(-56.5, -56.5), Math.toRadians(45))
 
-        Action Run_auton = run_auton.endTrajectory().fresh()
-                .afterTime(.2, new SequentialAction(claw.Transfer()))
+                .strafeToLinearHeading(new Vector2d(-60, -50), Math.toRadians(90))
+
+                .stopAndAdd(new SequentialAction(claw.SlidesNeutral(),claw.intakeGrabPosition(), claw.LimelightHover()))// slides down, limelight goes to searching positionm
+                .strafeToLinearHeading(new Vector2d(-60, -40), Math.toRadians(90))
+                .stopAndAdd(new SequentialAction(align.CenterOverTarget(),claw.Transfer()))// limelight alignment, transfer
+                .setReversed(true)
+                .afterTime(.01,new SequentialAction(claw.sampleScoring()))
+                .strafeToLinearHeading(new Vector2d(-56.5, -56.5), Math.toRadians(45))
 
                 .build();
+
 
                 /*
         TrajectoryActionBuilder score_second_sample =   drive.actionBuilder(drive.pose)
@@ -576,12 +588,13 @@ public class four_sample_red extends LinearOpMode {
                         claw.HSlideIdle(),
                         claw.SlidePIDF(),
                         claw.sequenceUpdater(),
-                        new SequentialAction(Run_auton)
-            )
+                        new SequentialAction(run_auton)
+                )
+
         );
 
 
-                // Run the PID loop for the slide
+        // Run the PID loop for the slide
 
         // TODO: add placing the thing
 
