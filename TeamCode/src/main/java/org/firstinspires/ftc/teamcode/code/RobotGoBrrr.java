@@ -248,7 +248,6 @@ public class RobotGoBrrr extends OpMode {
             hSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             targethSlideReset = false;
         }
-
         if(!targethSlideReset) {
             runTransfer();
         }

@@ -482,8 +482,6 @@ public class four_sample_red extends LinearOpMode {
     }
 
 
-
-
     @Override
     public void runOpMode() {
 
@@ -494,7 +492,7 @@ public class four_sample_red extends LinearOpMode {
 
         outtake claw = new outtake(hardwareMap);
 
-        Align align = new Align(hardwareMap);
+        Align align = new Align(limelight, drive);
 
         Action run_auton = drive.actionBuilder(initialPose)
                 .afterTime(.01,new SequentialAction(claw.sampleScoring()))
