@@ -72,7 +72,7 @@ public class DcMotorV2 implements DcMotorEx{
         motor.setPower(power);
     }
 
-    public void setPIDFCoefficients(double p, double i, double d, double f) {
+        public void setPIDFCoefficients(double p, double i, double d, double f) {
         kP = p;
         kI = i;
         kD = d;

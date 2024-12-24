@@ -454,7 +454,7 @@ public class four_sample_red extends LinearOpMode {
 
         outtake claw = new outtake(hardwareMap);
 
-        Align align = new Align(limelight, drive);
+        Align align = new Align(hardwareMap);
 
         Action run_auton = drive.actionBuilder(initialPose)
                 .strafeTo(new Vector2d(-37,-50))
