@@ -16,6 +16,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.hermeshelper.datatypes.TransferState;
+import org.firstinspires.ftc.teamcode.hermeshelper.datatypes.vExtensionMode;
 import org.firstinspires.ftc.teamcode.hermeshelper.util.GlobalTelemetry;
 import org.firstinspires.ftc.teamcode.hermeshelper.util.Sequence;
 import org.firstinspires.ftc.teamcode.hermeshelper.util.hardware.DcMotorV2;
@@ -75,6 +76,8 @@ public class RobotGoBrrr extends OpMode {
     public static double rx = 0;
 
     private TransferState currentTransferState = TransferState.H_IDLE;
+    private vExtensionMode currentVState = vExtensionMode.IDLE ;
+
 
     double oldTime = 0;
 
@@ -128,6 +131,7 @@ public class RobotGoBrrr extends OpMode {
 
         currentTransferState = TransferState.H_IDLE;
 
+
         sequence.create("transfer")
                 .add(intakeWristServo, .14f, 0)
                 .add(intakePivotServoOne, .55f, 100)
@@ -135,13 +139,14 @@ public class RobotGoBrrr extends OpMode {
                 .add(hSlideMotor, 0f, 0)
                 .add(outtakeClawServo, 0.85f, 700)
                 .add(intakeClawServo, 0.4f, 100)
+                .add(intakeWristServo, .25, 100)
                 .add(outtakePivotServo, .38f, 0)
                 .build();
 
         sequence.create("intakeNeutral")
                 .add(hSlideMotor, 420f, 0)
                 .add(intakeWristServoTwo, .5f, 0)
-                .add(outtakePivotServo, .89f, 0)
+                .add(outtakePivotServo, .85f, 0)
                 .add(outtakeClawServo, .98f, 0)
                 .add(intakePivotServoOne, .07f, 0)
                 .add(intakeWristServo, .73f, 0)
@@ -150,7 +155,7 @@ public class RobotGoBrrr extends OpMode {
 
         sequence.create("intakeNeutralNoExtendo")
                 .add(intakeWristServoTwo, .5f, 0)
-                .add(outtakePivotServo, .89f, 0)
+                .add(outtakePivotServo, .85f, 0)
                 .add(outtakeClawServo, .98, 0)
                 .add(intakePivotServoOne, .07f, 0)
                 .add(intakeWristServo, .73f, 0)
@@ -183,6 +188,7 @@ public class RobotGoBrrr extends OpMode {
             outtakePivotServo.setPosition(.2);
             outtakeClawServo.setPosition(.98);
             targetSlidePosition = 0;
+            currentVState = vExtensionMode.IDLE;
         }
 
         if(gamepad2.b) {
@@ -190,8 +196,9 @@ public class RobotGoBrrr extends OpMode {
 
         }
         if(gamepad1.circle) {
-            targetSlidePosition = 255;
-            outtakePivotServo.setPosition(.36);
+            targetSlidePosition = 250;
+            outtakePivotServo.setPosition(.28);
+            currentVState = vExtensionMode.EXTENDED;
         }
 
         if(gamepad2.square) {
@@ -218,12 +225,17 @@ public class RobotGoBrrr extends OpMode {
 
         // Set target positions for slides based on gamepad input
         if(gamepad1.y) {
-            targetSlidePosition = 880; // Example extension position for PIDF
+            targetSlidePosition = 500; // Example extension position for PIDF
             speed = 0.7;
+            currentVState = vExtensionMode.EXTENDED;
+
+
         } else if(gamepad1.a) {
             targetSlidePosition = 0;
             outtakePivotServo.setPosition(.85);
             speed = 1;
+            currentVState = vExtensionMode.IDLE;
+
         }
 
         if(Math.abs(gamepad2.left_stick_y) > 0.25) {
@@ -232,7 +244,7 @@ public class RobotGoBrrr extends OpMode {
             targethSlideReset = true;
         } else if (gamepad2.dpad_left ) {
             hSlideMotor.stopAndReset();
-            hSlideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            hSlideMotor.setTargetPosition(0);
             hSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             targethSlideReset = false;
         }
@@ -388,15 +400,37 @@ public class RobotGoBrrr extends OpMode {
 //        }
     }
 
-    public void vSlidePIDF ( ) {
-        double currentSlidePosition = (vSlideMotorOne.getCurrentPosition());
-        double pidfOutput = computePIDFOutput(targetSlidePosition - targetSlideReset, currentSlidePosition);
-        vSlideMotorOne.setPower(pidfOutput);
-        vSlideMotorTwo.setPower(pidfOutput);
+    public void vSlidePIDF() {
+        double currentSlidePositionOne = vSlideMotorOne.getCurrentPosition();
 
-        double newTime = getRuntime();
-        double loopTime = newTime - oldTime;
-        double frequency = 1 / loopTime;
-        oldTime = newTime;
+        // Define the tolerance range around position zero
+        double lowerTolerance = -10.0; // Lower bound
+        double upperTolerance = 10.0;  // Upper bound
+
+        // Check if both motors are within the tolerance range (-10 to 10)
+        if ((currentSlidePositionOne >= lowerTolerance && currentSlidePositionOne <= upperTolerance && currentVState == vExtensionMode.IDLE)) {
+
+            // If within tolerance, stop both motors
+            vSlideMotorOne.setPower(0.0);
+            vSlideMotorTwo.setPower(0.0);
+
+
+
+            // Exit early as no further control is needed
+            return;
+        }
+
+        // If outside tolerance, compute the PID output normally
+        double pidOutput = computePIDFOutput(targetSlidePosition, currentSlidePositionOne);
+
+        // Clamp PID output to motor power range (-1.0 to 1.0)
+        pidOutput = Math.max(-1.0, Math.min(1.0, pidOutput));
+
+        // Apply PID output to both motors
+        vSlideMotorOne.setPower(pidOutput);
+        vSlideMotorTwo.setPower(pidOutput);
     }
+
+
+
 }

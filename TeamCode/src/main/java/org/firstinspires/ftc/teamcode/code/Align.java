@@ -27,11 +27,11 @@ public class Align {
     }
 
     // Control Gains
-    double kpLateral = 0.08;  // Proportional gain for lateral adjustment
-    double kpForward = 0.065;  // Proportional gain for forward/backward adjustment
-    double forwardOffset = -1.2; // Fixed offset camera to claw
+    double kpLateral = 0.06;  // Proportional gain for lateral adjustment
+    double kpForward = 0.1;  // Proportional gain for forward/backward adjustment
+    double forwardOffset = -.7; // Fixed offset camera to claw
     double clawYOffset = 0;      // Claw Y offset relative to the robot's center
-    double tolerance = 0.13;     // Tolerance for tx and ty
+    double tolerance = 0.25;     // Tolerance for tx and ty
 
     // Add D gains
     double kdLateral = 0.02;  // Derivative gain for lateral adjustment
@@ -43,10 +43,28 @@ public class Align {
 
     public void centerClawOverTarget() {
         aligned = false; // Reset alignment status
+        long targetLostStartTime = -1; // Tracks when the target was first lost
 
         while (!aligned) {
             LLResult llResult = limelight.getLatestResult();
 
+            if (!llResult.isValid()) {
+                // If target is lost, start the timeout timer
+                if (targetLostStartTime == -1) {
+                    targetLostStartTime = System.currentTimeMillis();
+                }
+
+                // Check if the target has been missing for 500 ms
+                if (System.currentTimeMillis() - targetLostStartTime >= 500) {
+                    System.out.println("Target missing for too long. Completing without alignment.");
+                    break; // Exit the loop without completing alignment
+                }
+
+                continue; // Skip the rest of the loop if no target is found
+            } else {
+                // Reset the timer if the target is found
+                targetLostStartTime = -1;
+            }
 
             double tx = llResult.getTx();
             double ty = llResult.getTy();
@@ -87,10 +105,12 @@ public class Align {
     }
 
 
+
     public class centerOverTarget implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
             centerClawOverTarget();
+
             return false; // Action completed
         }
     }
