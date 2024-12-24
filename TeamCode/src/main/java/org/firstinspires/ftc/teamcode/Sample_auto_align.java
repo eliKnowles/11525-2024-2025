@@ -65,6 +65,5 @@ public abstract class Sample_auto_align {
                 .turn(newTargetAngle - robotHeading)// Turn to align
                 // TODO: eli add it so it moves forward given the adjusted target y
                 .build();
-        )
     }
 }

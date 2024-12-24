@@ -193,8 +193,8 @@ public class RobotGoBrrr extends OpMode {
 
         if(gamepad2.b) {
             outtakeClawServo.setPosition(.83);
-
         }
+
         if(gamepad1.circle) {
             targetSlidePosition = 250;
             outtakePivotServo.setPosition(.28);
