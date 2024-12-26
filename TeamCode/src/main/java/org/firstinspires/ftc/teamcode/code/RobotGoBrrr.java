@@ -252,6 +252,7 @@ public class RobotGoBrrr extends OpMode {
             runTransfer();
         }
 
+
         if(hSlideMotor.getCurrentPosition() == 0) {
             hSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
