@@ -120,7 +120,7 @@ public class four_sample_red extends LinearOpMode {
             sequence.create("intakeNeutral")
                     .add(hSlideMotor, 450f, 0)
                     .add(intakeWristServoTwo, .5f, 0)
-                    .add(outtakePivotServo, .85f, 0)
+                    .add(outtakePivotServo, .82f, 0)
                     .add(outtakeClawServo, .98f, 0)
                     .add(intakePivotServoOne, .07f, 0)
                     .add(intakeWristServo, .73f, 0)
@@ -129,7 +129,7 @@ public class four_sample_red extends LinearOpMode {
 
             sequence.create("intakeNeutralNoExtendo")
                     .add(intakeWristServoTwo, .5f, 0)
-                    .add(outtakePivotServo, .85f, 0)
+                    .add(outtakePivotServo, .82f, 0)
                     .add(outtakeClawServo, .98, 0)
                     .add(intakePivotServoOne, .1f, 0)
                     .add(intakeWristServo, .77, 0)
@@ -138,7 +138,7 @@ public class four_sample_red extends LinearOpMode {
 
             sequence.create("intakeNeutralNoExtendoFourthSpec")
                     .add(intakeWristServoTwo, 0f, 0)
-                    .add(outtakePivotServo, .85f, 0)
+                    .add(outtakePivotServo, .82f, 0)
                     .add(outtakeClawServo, .98, 0)
                     .add(intakePivotServoOne, .07f, 0)
                     .add(intakeWristServo, .77f, 0)
@@ -160,7 +160,7 @@ public class four_sample_red extends LinearOpMode {
         class slidesNeutral implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                outtakePivotServo.setPosition(.89);
+                outtakePivotServo.setPosition(.85);
                 intakeWristServo.setPosition(.77);
                 vSlideTarget = 0;
                 return false;
@@ -508,24 +508,21 @@ public class four_sample_red extends LinearOpMode {
                 .afterTime(.01,new SequentialAction(claw.SlidesNeutral(),claw.intakeGrabPosition(), claw.LimelightHover()))// slides down, limelight goes to searching positionm
                 .waitSeconds(.7)
                 .strafeTo(new Vector2d(-49,-41))
+                .waitSeconds(.2)
                 .afterTime(.01,new SequentialAction(align.CenterOverTarget(),claw.Transfer()))// limelight alignment, transfer
-                .waitSeconds(3)
+                .waitSeconds(2)
                 .setReversed(true)
                 .afterTime(.01,new SequentialAction(claw.sampleScoring()))
                 .waitSeconds(.5)
                 .strafeToLinearHeading(new Vector2d(-56.5, -56.5), Math.toRadians(45))
                 .afterDisp(.01, claw.OuttakeClawOpen())
                 .waitSeconds(.5)
-
-
-
                 .strafeToLinearHeading(new Vector2d(-60, -50), Math.toRadians(90))
-
                 .afterTime(.01,new SequentialAction(claw.SlidesNeutral(),claw.intakeGrabPosition(), claw.LimelightHover()))// slides down, limelight goes to searching positionm
                 .waitSeconds(.7)
                 .strafeToLinearHeading(new Vector2d(-60, -41), Math.toRadians(90))
                 .afterTime(.01,new SequentialAction(align.CenterOverTarget(),claw.Transfer()))// limelight alignment, transfer
-                .waitSeconds(3)
+                .waitSeconds(2)
 
                 .afterTime(.01,new SequentialAction(claw.sampleScoring()))
                 .waitSeconds(.5)
@@ -535,10 +532,10 @@ public class four_sample_red extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(-50, -50), Math.toRadians(90))
                 .afterTime(.01, new SequentialAction(claw.SlidesNeutral(), claw.intakeGrabPositionFourth()))
                  .waitSeconds(.2)
-                 .strafeToLinearHeading(new Vector2d(-59, -26.75), Math.toRadians(180))
+                 .strafeToLinearHeading(new Vector2d(-59, -27), Math.toRadians(180))
                   .afterTime(.01, claw.intakeGrab())
                 .waitSeconds(.5)
-                .strafeToLinearHeading(new Vector2d(-44, -26.5), Math.toRadians(180))
+                .strafeToLinearHeading(new Vector2d(-44, -27), Math.toRadians(180))
                 .afterTime(.01, new SequentialAction( claw.Transfer(), claw.sampleScoring()))
                 .waitSeconds(.5)
                 .strafeToLinearHeading(new Vector2d(-53, -53), Math.toRadians(45))

@@ -22,20 +22,20 @@ public class Align {
         this.limelight = limelight;
         this.drive = drive;
         limelight.start();
-        limelight.setPollRateHz(90); // This sets how often we ask Limelight for data (100 times per second)
+        limelight.setPollRateHz(100); // This sets how often we ask Limelight for data (100 times per second)
         limelight.pipelineSwitch(1);
     }
 
     // Control Gains
-    double kpLateral = 0.06;  // Proportional gain for lateral adjustment
-    double kpForward = 0.1;  // Proportional gain for forward/backward adjustment
-    double forwardOffset = -.7; // Fixed offset camera to claw
+    double kpLateral = 0.13;  // Proportional gain for lateral adjustment
+    double kpForward = 0;  // Proportional gain for forward/backward adjustment
+    double forwardOffset = -2.3; // Fixed offset camera to claw
     double clawYOffset = 0;      // Claw Y offset relative to the robot's center
-    double tolerance = 0.25;     // Tolerance for tx and ty
+    double tolerance = 1;     // Tolerance for tx and ty
 
     // Add D gains
-    double kdLateral = 0.02;  // Derivative gain for lateral adjustment
-    double kdForward = 0.02;  // Derivative gain for forward adjustment
+    double kdLateral = 0.001;  // Derivative gain for lateral adjustment
+    double kdForward = 0.001;  // Derivative gain for forward adjustment
 
     // Variables for error tracking
     double lastTx = 0;
@@ -45,7 +45,7 @@ public class Align {
         aligned = false; // Reset alignment status
         long targetLostStartTime = -1; // Tracks when the target was first lost
 
-        while (!aligned) {
+        if (!aligned) {
             LLResult llResult = limelight.getLatestResult();
 
             if (!llResult.isValid()) {
@@ -55,12 +55,12 @@ public class Align {
                 }
 
                 // Check if the target has been missing for 500 ms
-                if (System.currentTimeMillis() - targetLostStartTime >= 500) {
+                if (System.currentTimeMillis() - targetLostStartTime >= 100) {
                     System.out.println("Target missing for too long. Completing without alignment.");
-                    break; // Exit the loop without completing alignment
+                   // break; // Exit the loop without completing alignment
                 }
 
-                continue; // Skip the rest of the loop if no target is found
+               // continue; // Skip the rest of the loop if no target is found
             } else {
                 // Reset the timer if the target is found
                 targetLostStartTime = -1;
@@ -80,7 +80,7 @@ public class Align {
             if (Math.abs(tx) < tolerance && Math.abs(ty) < tolerance) {
                 aligned = true;
                 System.out.println("Alignment complete!");
-                break;
+              //  break;
             }
 
             // PD control adjustments
@@ -103,6 +103,7 @@ public class Align {
             drive.updatePoseEstimate();
         }
     }
+
 
 
     public class centerOverTarget implements Action {
