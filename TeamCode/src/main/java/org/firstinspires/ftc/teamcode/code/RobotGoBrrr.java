@@ -8,6 +8,7 @@ import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
@@ -22,6 +23,7 @@ import org.firstinspires.ftc.teamcode.hermeshelper.util.Sequence;
 import org.firstinspires.ftc.teamcode.hermeshelper.util.hardware.DcMotorV2;
 import org.firstinspires.ftc.teamcode.hermeshelper.util.hardware.IMUV2;
 import org.firstinspires.ftc.teamcode.hermeshelper.util.hardware.ServoV2;
+
 import org.firstinspires.ftc.teamcode.rr.PinpointDrive;
 
 @TeleOp(name = "Robot Go Brrr", group = "Linear OpMode")
@@ -61,6 +63,9 @@ public class RobotGoBrrr extends OpMode {
     private ServoV2 outtakePivotServo;
     private ServoV2 intakeWristServo;
     private ServoV2 intakeWristServoTwo;
+    private CRServo hangServoOne;
+    private CRServo hangServoTwo;
+
 
     private DcMotorV2 hSlideMotor;
     private DcMotorV2 vSlideMotorOne;
@@ -103,6 +108,9 @@ public class RobotGoBrrr extends OpMode {
         intakeWristServo = new ServoV2("intake_wrist", hardwareMap);
         intakeWristServoTwo = new ServoV2("intake_wrist_two", hardwareMap);
 
+        hangServoOne = hardwareMap.get(CRServo.class, "hang_servo_one");
+        hangServoTwo = hardwareMap.get(CRServo.class, "hang_servo_two");
+
         hSlideMotor = new DcMotorV2("h_slide", hardwareMap);
         hSlideMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         hSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -137,7 +145,7 @@ public class RobotGoBrrr extends OpMode {
                 .add(intakePivotServoOne, .55f, 100)
                 .add(intakeWristServoTwo, .5f, 0)
                 .add(hSlideMotor, 0f, 0)
-                .add(outtakeClawServo, 0.85f, 700)
+                .add(outtakeClawServo, 0.78f, 700)
                 .add(intakeClawServo, 0.4f, 100)
                 .add(intakeWristServo, .25, 100)
                 .add(outtakePivotServo, .38f, 0)
@@ -146,7 +154,7 @@ public class RobotGoBrrr extends OpMode {
         sequence.create("intakeNeutral")
                 .add(hSlideMotor, 420f, 0)
                 .add(intakeWristServoTwo, .5f, 0)
-                .add(outtakePivotServo, .85f, 0)
+                .add(outtakePivotServo, .83f, 0)
                 .add(outtakeClawServo, .98f, 0)
                 .add(intakePivotServoOne, .07f, 0)
                 .add(intakeWristServo, .73f, 0)
@@ -155,7 +163,7 @@ public class RobotGoBrrr extends OpMode {
 
         sequence.create("intakeNeutralNoExtendo")
                 .add(intakeWristServoTwo, .5f, 0)
-                .add(outtakePivotServo, .85f, 0)
+                .add(outtakePivotServo, .83f, 0)
                 .add(outtakeClawServo, .98, 0)
                 .add(intakePivotServoOne, .07f, 0)
                 .add(intakeWristServo, .73f, 0)
@@ -183,6 +191,24 @@ public class RobotGoBrrr extends OpMode {
 
     @Override
     public void loop ( ) {
+
+
+        if (gamepad2.y) {
+            hangServoOne.setPower(1); // Move servo in one direction
+        } else if (gamepad2.left_bumper) {
+            hangServoOne.setPower(-1); // Move servo in the opposite direction
+        } else {
+            hangServoOne.setPower(0); // Stop the servo
+        }
+
+        // Set power for hangServoTwo based on gamepad inputs
+        if (gamepad2.square) {
+            hangServoTwo.setPower(-1); // Move servo in one direction
+        } else if (gamepad2.right_bumper) {
+            hangServoTwo.setPower(1); // Move servo in the opposite direction
+        } else {
+            hangServoTwo.setPower(0); // Stop the servo
+        }
 
         if(gamepad2.a){
             outtakePivotServo.setPosition(.2);
@@ -225,7 +251,7 @@ public class RobotGoBrrr extends OpMode {
 
         // Set target positions for slides based on gamepad input
         if(gamepad1.y) {
-            targetSlidePosition = 500; // Example extension position for PIDF
+            targetSlidePosition = 850; // Example extension position for PIDF
             speed = 0.7;
             currentVState = vExtensionMode.EXTENDED;
 
