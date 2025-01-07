@@ -125,7 +125,7 @@ public class RobotGoBrrr extends OpMode {
         vSlideMotorTwo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         vSlideMotorTwo.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        intakeWristServo.setDirection(Servo.Direction.REVERSE);
+        intakeWristServo.setDirection(Servo.Direction.FORWARD);
         outtakePivotServo.setDirection(Servo.Direction.REVERSE);
 
         hSlideMotor.setDirection(FORWARD);
@@ -141,7 +141,7 @@ public class RobotGoBrrr extends OpMode {
 
 
         sequence.create("transfer")
-                .add(intakeWristServo, .14f, 0)
+                .add(intakeWristServo, 0f, 0)
                 .add(intakePivotServoOne, .55f, 100)
                 .add(intakeWristServoTwo, .5f, 0)
                 .add(hSlideMotor, 0f, 0)
@@ -157,7 +157,7 @@ public class RobotGoBrrr extends OpMode {
                 .add(outtakePivotServo, .83f, 0)
                 .add(outtakeClawServo, .98f, 0)
                 .add(intakePivotServoOne, .07f, 0)
-                .add(intakeWristServo, .73f, 0)
+                .add(intakeWristServo, 1f, 0)
                 .add(intakeClawServo, .4f, 0)
                 .build();
 
@@ -166,13 +166,12 @@ public class RobotGoBrrr extends OpMode {
                 .add(outtakePivotServo, .83f, 0)
                 .add(outtakeClawServo, .98, 0)
                 .add(intakePivotServoOne, .07f, 0)
-                .add(intakeWristServo, .73f, 0)
+                .add(intakeWristServo, 1f, 0)
                 .add(intakeClawServo, .4f, 0)
                 .build();
 
         sequence.create("intakeGrab")
                 .add(intakePivotServoOne, .02, 0)
-                .add(intakeWristServo, .72f, 0)
                 .add(intakeClawServo, .92f, 100)
                 .add(intakePivotServoOne, .2f, 300)
                 .build();
@@ -361,7 +360,7 @@ public class RobotGoBrrr extends OpMode {
             wristPos = 0;
             sequence.run("intakeNeutral");
             
-            if (currentTransferState != TransferState.H_IDLE) {
+            if (currentTransferState == TransferState.H_EXTENDED) {
                 speed = 0.5;
             } else {
                 speed = 1;

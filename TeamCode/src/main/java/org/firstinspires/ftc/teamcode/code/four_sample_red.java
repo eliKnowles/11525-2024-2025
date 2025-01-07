@@ -86,7 +86,7 @@ public class four_sample_red extends LinearOpMode {
 
 
 
-            intakeWristServo.setDirection(Servo.Direction.REVERSE);
+            intakeWristServo.setDirection(Servo.Direction.FORWARD);
             outtakePivotServo.setDirection(Servo.Direction.REVERSE);
 
             sequence = new Sequence();
@@ -97,20 +97,16 @@ public class four_sample_red extends LinearOpMode {
 
 
             sequence.create("intakeGrab")
-                    .add(intakeWristServo, .73,0)
                     .add(intakePivotServoOne, .02, 0)
                     .add(intakeClawServo, .92f, 300)
                     .add(intakePivotServoOne, .2f, 300)
                     .build();
 
             sequence.create("transfer")
-                    .add(intakeWristServo, .7,0)
-
                     .add(intakePivotServoOne, .02, 200)
-
                     .add(intakeClawServo, .92f, 300)
                     .add(intakePivotServoOne, .55f, 300)
-                    .add(intakeWristServo, .16f, 0)
+                    .add(intakeWristServo, .0f, 0)
                     .add(intakeWristServoTwo, .5f, 0)
                     .add(outtakeClawServo, 0.86f, 500)
                     .add(intakeClawServo, 0.4f, 100)
@@ -123,7 +119,6 @@ public class four_sample_red extends LinearOpMode {
                     .add(outtakePivotServo, .82f, 0)
                     .add(outtakeClawServo, .98f, 0)
                     .add(intakePivotServoOne, .07f, 0)
-                    .add(intakeWristServo, .73f, 0)
                     .add(intakeClawServo, .4f, 0)
                     .build();
 
@@ -132,7 +127,6 @@ public class four_sample_red extends LinearOpMode {
                     .add(outtakePivotServo, .82f, 0)
                     .add(outtakeClawServo, .98, 0)
                     .add(intakePivotServoOne, .1f, 0)
-                    .add(intakeWristServo, .77, 0)
                     .add(intakeClawServo, .4f, 0)
                     .build();
 
@@ -141,7 +135,6 @@ public class four_sample_red extends LinearOpMode {
                     .add(outtakePivotServo, .82f, 0)
                     .add(outtakeClawServo, .98, 0)
                     .add(intakePivotServoOne, .07f, 0)
-                    .add(intakeWristServo, .77f, 0)
                     .add(intakeClawServo, .4f, 0)
                     .build();
 
@@ -161,7 +154,7 @@ public class four_sample_red extends LinearOpMode {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 outtakePivotServo.setPosition(.85);
-                intakeWristServo.setPosition(.77);
+                intakeWristServo.setPosition(1);
                 vSlideTarget = 0;
                 return false;
             }
@@ -188,8 +181,7 @@ public class four_sample_red extends LinearOpMode {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 intakeClawServo.setPosition(.4);
-                intakePivotServoOne.setPosition(.15);
-                intakeWristServo.setPosition(.75);
+                intakePivotServoOne.setPosition(.2);
                 return false;
             }
         }
@@ -510,7 +502,7 @@ public class four_sample_red extends LinearOpMode {
                 .strafeTo(new Vector2d(-49,-41))
                 .waitSeconds(.2)
                 .afterTime(.01,new SequentialAction(align.CenterOverTarget(),claw.Transfer()))// limelight alignment, transfer
-                .waitSeconds(2)
+                .waitSeconds(2.5)
                 .setReversed(true)
                 .afterTime(.01,new SequentialAction(claw.sampleScoring()))
                 .waitSeconds(.5)
@@ -522,7 +514,7 @@ public class four_sample_red extends LinearOpMode {
                 .waitSeconds(.7)
                 .strafeToLinearHeading(new Vector2d(-60, -41), Math.toRadians(90))
                 .afterTime(.01,new SequentialAction(align.CenterOverTarget(),claw.Transfer()))// limelight alignment, transfer
-                .waitSeconds(2)
+                .waitSeconds(2.5)
 
                 .afterTime(.01,new SequentialAction(claw.sampleScoring()))
                 .waitSeconds(.5)
@@ -537,7 +529,7 @@ public class four_sample_red extends LinearOpMode {
                 .waitSeconds(.5)
                 .strafeToLinearHeading(new Vector2d(-44, -27), Math.toRadians(180))
                 .afterTime(.01, new SequentialAction( claw.Transfer(), claw.sampleScoring()))
-                .waitSeconds(.5)
+                .waitSeconds(.7)
                 .strafeToLinearHeading(new Vector2d(-53, -53), Math.toRadians(45))
                 .strafeTo(new Vector2d(-56.5,-56.5 ))
                 .afterTime(.01, claw.OuttakeClawOpen())

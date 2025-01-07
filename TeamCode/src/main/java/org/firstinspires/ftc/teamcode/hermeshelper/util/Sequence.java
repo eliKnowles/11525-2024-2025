@@ -28,7 +28,7 @@ public class Sequence {
                 ((ServoV2) target).setPosition(position);
             } else if (target instanceof DcMotorV2) {
                 // Run motor to position using manual PIDF
-                ((DcMotorV2) target).runToPositionWithPIDF(position);
+                ((DcMotorV2) target).runToPosition((int) position);
             }
         }
     }
