@@ -108,9 +108,10 @@ public class four_sample_red extends LinearOpMode {
                     .add(intakePivotServoOne, .55f, 300)
                     .add(intakeWristServo, .0f, 0)
                     .add(intakeWristServoTwo, .5f, 0)
-                    .add(outtakeClawServo, 0.86f, 500)
+                    .add(outtakeClawServo, 0.78f, 700)
                     .add(intakeClawServo, 0.4f, 100)
-                    .add(outtakePivotServo, .45f, 0)
+                    .add(intakeWristServo, .25, 100)
+                    .add(outtakePivotServo, .38f, 0)
                     .build();
 
             sequence.create("intakeNeutral")
@@ -153,8 +154,8 @@ public class four_sample_red extends LinearOpMode {
         class slidesNeutral implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                outtakePivotServo.setPosition(.85);
-                intakeWristServo.setPosition(1);
+                outtakePivotServo.setPosition(.83);
+                intakeWristServo.setPosition(.96);
                 vSlideTarget = 0;
                 return false;
             }
@@ -202,7 +203,7 @@ public class four_sample_red extends LinearOpMode {
             public boolean run(@NonNull TelemetryPacket packet) {
 
                 outtakeClawServo.setPosition(.8);
-                outtakePivotServo.setPosition(.34);
+                outtakePivotServo.setPosition(.32);
                 vSlideTarget = 880;
                 return false;
             }
@@ -502,7 +503,7 @@ public class four_sample_red extends LinearOpMode {
                 .strafeTo(new Vector2d(-49,-41))
                 .waitSeconds(.2)
                 .afterTime(.01,new SequentialAction(align.CenterOverTarget(),claw.Transfer()))// limelight alignment, transfer
-                .waitSeconds(2.5)
+                .waitSeconds(3)
                 .setReversed(true)
                 .afterTime(.01,new SequentialAction(claw.sampleScoring()))
                 .waitSeconds(.5)
@@ -514,7 +515,7 @@ public class four_sample_red extends LinearOpMode {
                 .waitSeconds(.7)
                 .strafeToLinearHeading(new Vector2d(-60, -41), Math.toRadians(90))
                 .afterTime(.01,new SequentialAction(align.CenterOverTarget(),claw.Transfer()))// limelight alignment, transfer
-                .waitSeconds(2.5)
+                .waitSeconds(3)
 
                 .afterTime(.01,new SequentialAction(claw.sampleScoring()))
                 .waitSeconds(.5)

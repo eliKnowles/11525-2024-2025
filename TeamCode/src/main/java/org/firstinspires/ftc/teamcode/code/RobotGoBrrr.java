@@ -37,9 +37,9 @@ public class RobotGoBrrr extends OpMode {
     private final ElapsedTime runtime = new ElapsedTime();
 
     // PIDF Constants for Vertical Slides
-    private static final double kP = 0.01;
+    private static final double kP = 0.05;
     private static final double kI = 0.0;
-    private static final double kD = 0.02;
+    private static final double kD = 0.2;
     private static final double kF = 0.0;
 
     // PIDF control variables for vertical slides
@@ -82,6 +82,8 @@ public class RobotGoBrrr extends OpMode {
 
     private TransferState currentTransferState = TransferState.H_IDLE;
     private vExtensionMode currentVState = vExtensionMode.IDLE ;
+
+    public boolean specimenChamber = false;
 
 
     double oldTime = 0;
@@ -145,11 +147,12 @@ public class RobotGoBrrr extends OpMode {
                 .add(intakePivotServoOne, .55f, 100)
                 .add(intakeWristServoTwo, .5f, 0)
                 .add(hSlideMotor, 0f, 0)
-                .add(outtakeClawServo, 0.78f, 700)
+                .add(outtakeClawServo, 0.78f, 500)
                 .add(intakeClawServo, 0.4f, 100)
-                .add(intakeWristServo, .25, 100)
-                .add(outtakePivotServo, .38f, 0)
+                .add(intakeWristServo, .35, 100)
+                .add(outtakePivotServo, .34f, 0)
                 .build();
+
 
         sequence.create("intakeNeutral")
                 .add(hSlideMotor, 420f, 0)
@@ -157,7 +160,7 @@ public class RobotGoBrrr extends OpMode {
                 .add(outtakePivotServo, .83f, 0)
                 .add(outtakeClawServo, .98f, 0)
                 .add(intakePivotServoOne, .07f, 0)
-                .add(intakeWristServo, 1f, 0)
+                .add(intakeWristServo, .96f, 0)
                 .add(intakeClawServo, .4f, 0)
                 .build();
 
@@ -166,14 +169,14 @@ public class RobotGoBrrr extends OpMode {
                 .add(outtakePivotServo, .83f, 0)
                 .add(outtakeClawServo, .98, 0)
                 .add(intakePivotServoOne, .07f, 0)
-                .add(intakeWristServo, 1f, 0)
+                .add(intakeWristServo, .96f, 0)
                 .add(intakeClawServo, .4f, 0)
                 .build();
 
         sequence.create("intakeGrab")
                 .add(intakePivotServoOne, .02, 0)
                 .add(intakeClawServo, .92f, 100)
-                .add(intakePivotServoOne, .2f, 300)
+                .add(intakePivotServoOne, .3f, 300)
                 .build();
         
         sequence.create("Idle")
@@ -250,7 +253,7 @@ public class RobotGoBrrr extends OpMode {
 
         // Set target positions for slides based on gamepad input
         if(gamepad1.y) {
-            targetSlidePosition = 850; // Example extension position for PIDF
+            targetSlidePosition = 880; // Example extension position for PIDF
             speed = 0.7;
             currentVState = vExtensionMode.EXTENDED;
 
@@ -284,6 +287,13 @@ public class RobotGoBrrr extends OpMode {
         
         if(gamepad2.dpad_up) {
             targetSlideReset = targetSlidePosition - vSlideMotorOne.getCurrentPosition();
+        }
+
+        if (gamepad1.share){
+            specimenChamber = true;
+        }
+        if (gamepad1.options){
+            specimenChamber = false;
         }
         
         if(Math.abs(gamepad2.right_stick_y) > 0.25) {
@@ -344,42 +354,43 @@ public class RobotGoBrrr extends OpMode {
     }
 
     public void runTransfer ( ) {
-        
+
         if (gamepad1.dpad_right && currentTransferState == TransferState.H_EXTENDED) {
             //sequence.run("intakeNeutral");
             sequence.run("intakeGrab");
             currentTransferState = TransferState.H_INTAKEN;
+
         }
-        
-        if (gamepad1.dpad_down && currentTransferState == TransferState.H_INTAKEN) {
+
+        if (gamepad1.dpad_down && specimenChamber == false && currentTransferState  == TransferState.H_INTAKEN) {
             sequence.run("transfer");
             currentTransferState = TransferState.TRANSFERED;
         }
-        
+
         if (gamepad1.dpad_left && (currentTransferState == TransferState.H_IDLE || currentTransferState == TransferState.H_INTAKEN)) {
             wristPos = 0;
             sequence.run("intakeNeutral");
-            
+
             if (currentTransferState == TransferState.H_EXTENDED) {
                 speed = 0.5;
             } else {
                 speed = 1;
             }
-            
+
             currentTransferState = TransferState.H_EXTENDED;
         }
-        
+
         if (gamepad1.dpad_up && currentTransferState == TransferState.TRANSFERED) {
             outtakeClawServo.setPosition(.98f);
             currentTransferState = TransferState.H_IDLE;
             speed = 1;
         }
-        
+
         if (gamepad1.square && (currentTransferState == TransferState.H_INTAKEN || currentTransferState == TransferState.H_IDLE)) {
             sequence.run("intakeNeutralNoExtendo");
             currentTransferState = TransferState.H_EXTENDED;
         }
-        
+
         if (currentTransferState == TransferState.H_IDLE) {
             sequence.run("idle");
         }
