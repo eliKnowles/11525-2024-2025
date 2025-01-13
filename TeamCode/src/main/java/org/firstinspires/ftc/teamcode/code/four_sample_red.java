@@ -474,7 +474,6 @@ public class four_sample_red extends LinearOpMode {
         }
     }
 
-
     @Override
     public void runOpMode() {
 
