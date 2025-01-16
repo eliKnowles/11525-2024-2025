@@ -19,6 +19,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.hermeshelper.datatypes.TransferState;
+import org.firstinspires.ftc.teamcode.hermeshelper.datatypes.vExtensionMode;
 import org.firstinspires.ftc.teamcode.hermeshelper.util.Sequence;
 import org.firstinspires.ftc.teamcode.hermeshelper.util.hardware.DcMotorV2;
 import org.firstinspires.ftc.teamcode.hermeshelper.util.hardware.ServoV2;
@@ -120,12 +121,9 @@ public class four_spec_red extends LinearOpMode {
         class SpecimenScoring implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                outtakeClawServo.setPosition(.8);
-                vSlideTarget = 265;
-                outtakePivotServo.setPosition(.36);
-
-
-
+                vSlideTarget = 275;
+                outtakeClawServo.setPosition(.4);
+                outtakePivotServo.setPosition(.31);
                 return false;
             }
         }
@@ -195,8 +193,22 @@ public class four_spec_red extends LinearOpMode {
             }
         }
 
+
         public Action OuttakeIntake() {
             return new outtakeIntake();
+        }
+
+        public class SequenceUpdater implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                sequence.update();
+
+                return true;
+            }
+        }
+
+        public Action sequenceUpdater() {
+            return new SequenceUpdater();
         }
 
         public class outtakeClawClose implements Action {
@@ -282,11 +294,33 @@ public class four_spec_red extends LinearOpMode {
 
         // vision here that outputs position
 //        int initialPosition = 1;
+        Action run_auton = drive.actionBuilder(initialPose)
+                .setReversed(true)
+                .stopAndAdd(claw.specimenScoring())
+                .waitSeconds(.2)
+                .splineTo(new Vector2d(5, -30.4), Math.toRadians(90))
+                .waitSeconds(.1)
+                .stopAndAdd(claw.OuttakeClawOpen())
 
+                .setReversed(false)
+                .splineTo(new Vector2d(35,-37 ), Math.toRadians(90)) //waypoint to first sample
+                .splineTo(new Vector2d(50, -1), Math.toRadians(90)) // align with first sampleample
+                .setReversed(true)
+                .splineTo(new Vector2d(50, -55), Math.toRadians(270)) // align with first sampleample
+                .setReversed(false)
+                .splineTo(new Vector2d(50, 0), Math.toRadians(90)) // align with first sampleample
+                .setReversed(true)
+                .splineTo(new Vector2d(57, -10), Math.toRadians(270)) // align with first sampleample
+                .splineTo(new Vector2d(57, -55), Math.toRadians(270)) // align with first sampleample
+
+
+
+
+                .build();
 
 
         waitForStart();
-        TrajectoryActionBuilder tab1 = drive.actionBuilder(initialPose)
+       /* TrajectoryActionBuilder tab1 = drive.actionBuilder(initialPose)
 
                 .setReversed(true)
                 .splineTo(new Vector2d(5, -30.4), Math.toRadians(90)) ; //waypoint to first sample
@@ -374,7 +408,7 @@ public class four_spec_red extends LinearOpMode {
 
 
 
-        Actions.runBlocking(claw.specimenScoring());
+        Actions.runBlocking(claw.specimenScoring()); */
 
 
 
@@ -401,59 +435,8 @@ public class four_spec_red extends LinearOpMode {
         Actions.runBlocking(
                 new ParallelAction(
                         claw.SlidePIDF(),
-                        claw.HSlideIdle(),
-                        new SequentialAction(
-                                claw.specimenScoring(),
-                                tab1.build(),
-                                claw.OuttakeClawOpen(),
-                                new ParallelAction(
-                                        claw.outtakeNeutral()
-                                ),
-                                tab2.build(),
-                                claw.OuttakeIntake(),
-                                tab3.build(),
-                                claw.OuttakeClawClose(),
-                                claw.specimenScoring(),
-                                tab4.build(),
-                                claw.OuttakeClawOpen(),
-                                new ParallelAction(
-                                        claw.outtakeNeutral()
-                                ),
-                                tab5.build(),
-                                claw.OuttakeIntake(),
-                                tab6.build(),
-                                claw.OuttakeClawClose(),
-                                claw.specimenScoring(),
-                                tab7.build(),
-                                claw.OuttakeClawOpen(),
-
-                                new ParallelAction(
-                                        claw.outtakeNeutral()
-                                )/*,
-                                tabIntakePosition4th.build(),
-                                claw.OuttakeIntake(),
-                                tabIntake4th.build(),
-                                claw.OuttakeClawClose(),
-                                claw.specimenScoring(),
-                                tabPlace4th.build(),
-                                claw.sleep(200),
-                                claw.OuttakeClawOpen(),
-                                claw.outtakeNeutral()*/
-
-                                /* tabIntake4th.build(),
-                                claw.OuttakeClawClose(),
-                                claw.specimenScoring(),
-                                tabPlace4th.build(),
-                                claw.sleep(200),
-                                claw.OuttakeClawOpen(),
-                                claw.outtakeNeutral() */
-
-
-
-
-                                //  tab3.build()
-                        )
-                        // Run the PID loop for the slide
+                        claw.sequenceUpdater(),
+                        new SequentialAction(run_auton)
                 )
         );
 //                        claw.intakeGrab(),
