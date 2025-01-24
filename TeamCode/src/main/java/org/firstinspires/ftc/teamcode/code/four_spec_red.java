@@ -9,7 +9,9 @@ import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
+import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.VelConstraint;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -84,6 +86,7 @@ public class four_spec_red extends LinearOpMode {
                     .add(outtakePivotServo, .55f, 0)
                     .build();
 
+
             sequence.create("intakeNeutral")
                     .add(intakeWristServoTwo, .5f, 0)
                     .add(outtakePivotServo, .85f, 0)
@@ -123,7 +126,7 @@ public class four_spec_red extends LinearOpMode {
             public boolean run(@NonNull TelemetryPacket packet) {
                 vSlideTarget = 275;
                 outtakeClawServo.setPosition(.4);
-                outtakePivotServo.setPosition(.31);
+                outtakePivotServo.setPosition(.27);
                 return false;
             }
         }
@@ -136,7 +139,9 @@ public class four_spec_red extends LinearOpMode {
         class outtakeClawOpen implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                outtakeClawServo.setPosition(.98); // open servo
+                outtakeClawServo.setPosition(1); // open servo
+                vSlideTarget = 190;
+
 
                 return false;
             }
@@ -144,6 +149,20 @@ public class four_spec_red extends LinearOpMode {
 
         public Action OuttakeClawOpen(){
             return new outtakeClawOpen();
+
+        }
+
+        class outtakePullDown implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                outtakePivotServo.setPosition(.24);
+                vSlideTarget = 210;
+                return false;
+            }
+        }
+
+        public Action OuttakePullDown(){
+            return new outtakePullDown();
 
         }
 
@@ -187,7 +206,7 @@ public class four_spec_red extends LinearOpMode {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 vSlideTarget = 0;
-                outtakePivotServo.setPosition(.2);
+                outtakePivotServo.setPosition(.11);
                 outtakeClawServo.setPosition(.98);
                 return false;
             }
@@ -228,6 +247,21 @@ public class four_spec_red extends LinearOpMode {
         public Action OuttakeClawClose() {
             return new outtakeClawClose();
         }
+
+        public class InitPosOuttake implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                outtakePivotServo.setPosition(.55);
+
+
+                return false;
+            }
+        }
+
+        public Action initPosOuttake() {
+            return new InitPosOuttake();
+        }
+
 
 
 
@@ -272,7 +306,7 @@ public class four_spec_red extends LinearOpMode {
                 hSlideMotor.setTargetPosition(0);
                 hSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 hSlideMotor.setPower(.5);
-                return false;
+                return true;
             }
         }
 
@@ -282,36 +316,100 @@ public class four_spec_red extends LinearOpMode {
     }
 
 
-
     @Override
     public void runOpMode() {
+
         Pose2d initialPose = new Pose2d(5, -65, Math.toRadians(270));
 
         PinpointDrive drive = new PinpointDrive(hardwareMap, initialPose);
         outtake claw = new outtake(hardwareMap);
+        claw.OuttakeClawClose();
+        claw.initPosOuttake();
+
+
+
+        Actions.runBlocking(
+                new ParallelAction(
+                        claw.OuttakeClawClose(),
+                        claw.initPosOuttake()
+
+                )
+        );
+
 
 
 
         // vision here that outputs position
 //        int initialPosition = 1;
         Action run_auton = drive.actionBuilder(initialPose)
-                .setReversed(true)
                 .stopAndAdd(claw.specimenScoring())
                 .waitSeconds(.2)
-                .splineTo(new Vector2d(5, -30.4), Math.toRadians(90))
+                .setTangent(Math.toRadians(90))
+                .splineTo(new Vector2d(7, -31), Math.toRadians(90))
+                .afterTime(.01, claw.OuttakePullDown())
+                .waitSeconds(.3)
+                .stopAndAdd(claw.OuttakeClawOpen())
+                .setTangent(Math.toRadians(270))
+                .splineTo(new Vector2d(35,-37 ), Math.toRadians(90)) //waypoint to first sample
+                .splineToConstantHeading(new Vector2d(35, -20), Math.toRadians(90)) // align with first sampleample
+
+                .afterTime(.5, claw.outtakeNeutral())
+                .splineToConstantHeading(new Vector2d(46, -7), Math.toRadians(90), new TranslationalVelConstraint(30)) // align with first sampleample
+                .splineToConstantHeading(new Vector2d(46, -40), Math.toRadians(270), new TranslationalVelConstraint(30)) //push first
+                .splineToConstantHeading(new Vector2d(46, -50), Math.toRadians(270), new TranslationalVelConstraint(40)) //push first
+
+                .splineToConstantHeading(new Vector2d(50, -15), Math.toRadians(270),new TranslationalVelConstraint(25)) // return
+                .splineToConstantHeading(new Vector2d(62, -20), Math.toRadians(270),new TranslationalVelConstraint(30)) // waypoint to push second // waypoint to push second
+                .afterTime(.5, claw.OuttakeIntake())
+                .splineToConstantHeading(new Vector2d(62, -40.5), Math.toRadians(270),new TranslationalVelConstraint(30)) // push second and grab
+                .splineToConstantHeading(new Vector2d(62, -60.5), Math.toRadians(270),new TranslationalVelConstraint(30)) // push second and grab
+
+
+                .stopAndAdd(claw.OuttakeClawClose())
                 .waitSeconds(.1)
+                .stopAndAdd(claw.specimenScoring())
+                .setTangent(Math.toRadians(90))
+                .splineToSplineHeading(new Pose2d(0, -45, Math.toRadians(-90)), Math.toRadians(90))
+                .splineTo(new Vector2d(0, -31), Math.toRadians(90))
+
+                .afterTime(.01, claw.OuttakePullDown())
+                .waitSeconds(.3)
+                .stopAndAdd(claw.OuttakeClawOpen())
+                .afterTime(1, claw.OuttakeIntake())
+                .setTangent(Math.toRadians(270))
+                .splineToSplineHeading(new Pose2d(47, -50, Math.toRadians(90)), Math.toRadians(270))
+                .splineTo(new Vector2d(47, -60.75), Math.toRadians(270))
+
+                .stopAndAdd(claw.OuttakeClawClose())
+                .waitSeconds(.1)
+                .stopAndAdd(claw.specimenScoring())
+
+                .setTangent(Math.toRadians(90))
+                .splineToSplineHeading(new Pose2d(-3, -45, Math.toRadians(-90)), Math.toRadians(90))
+                .splineTo(new Vector2d(-3, -31), Math.toRadians(90))
+                .afterTime(.01, claw.OuttakePullDown())
+
+                .waitSeconds(.3)
                 .stopAndAdd(claw.OuttakeClawOpen())
 
-                .setReversed(false)
-                .splineTo(new Vector2d(35,-37 ), Math.toRadians(90)) //waypoint to first sample
-                .splineTo(new Vector2d(50, -1), Math.toRadians(90)) // align with first sampleample
-                .setReversed(true)
-                .splineTo(new Vector2d(50, -55), Math.toRadians(270)) // align with first sampleample
-                .setReversed(false)
-                .splineTo(new Vector2d(50, 0), Math.toRadians(90)) // align with first sampleample
-                .setReversed(true)
-                .splineTo(new Vector2d(57, -10), Math.toRadians(270)) // align with first sampleample
-                .splineTo(new Vector2d(57, -55), Math.toRadians(270)) // align with first sampleample
+                .afterTime(1, claw.OuttakeIntake())
+                .setTangent(Math.toRadians(270))
+                .splineToSplineHeading(new Pose2d(47, -50, Math.toRadians(90)), Math.toRadians(270))
+                .splineTo(new Vector2d(47, -60.75), Math.toRadians(270))
+
+
+                .stopAndAdd(claw.OuttakeClawClose())
+                .waitSeconds(.1)
+                .stopAndAdd(claw.specimenScoring())
+
+                .setTangent(Math.toRadians(90))
+                .splineToSplineHeading(new Pose2d(4, -45, Math.toRadians(-90)), Math.toRadians(90))
+                .splineTo(new Vector2d(4, -31), Math.toRadians(90))
+                .afterTime(.01, claw.OuttakePullDown())
+                .waitSeconds(.3 )
+                .stopAndAdd(claw.OuttakeClawOpen())
+                .strafeTo(new Vector2d(2, -40))
+                .stopAndAdd(claw.outtakeNeutral())
 
 
 
@@ -320,96 +418,6 @@ public class four_spec_red extends LinearOpMode {
 
 
         waitForStart();
-       /* TrajectoryActionBuilder tab1 = drive.actionBuilder(initialPose)
-
-                .setReversed(true)
-                .splineTo(new Vector2d(5, -30.4), Math.toRadians(90)) ; //waypoint to first sample
-
-        // once at -5, 36, open claw
-
-        //pivotservo set to specimen
-        //slides set to specimen
-        //action
-        TrajectoryActionBuilder tab2 = drive.actionBuilder(new Pose2d(5, -30.4, Math.toRadians(270)))
-
-                .setReversed(false)
-                .splineTo(new Vector2d(35,-37 ), Math.toRadians(90)) //waypoint to first sample
-
-                .splineTo(new Vector2d(50, -1), Math.toRadians(90)) // align with first sampleample
-
-
-                .setReversed(true)
-                .splineTo(new Vector2d(45,-53), Math.toRadians(270));// push first sample
-        //.setReversed(false) ;// push first sample
-
-        //        .splineTo(new Vector2d(-47, 4), Math.toRadians(270))  // return
-        //         .setReversed(true)
-        //         .splineTo(new Vector2d(-58, 22), Math.toRadians(90)) // waypoint
-        //         .splineTo(new Vector2d( -58, 53), Math.toRadians(90)); //push 2nd  //push 2nd
-
-
-        //cycle 2nd specimen
-
-        TrajectoryActionBuilder tab3 = drive.actionBuilder(new Pose2d(45, -53, Math.toRadians(90)))
-                .waitSeconds(0.1)
-                .strafeTo(new Vector2d(45, -60.5))// position for intaking 2nd
-                .waitSeconds(.3);
-
-
-
-        TrajectoryActionBuilder tab4 = drive.actionBuilder(new Pose2d(45, -60.5, Math.toRadians(270)))
-                .setReversed(false)
-                .strafeTo(new Vector2d(40, -50))
-                .setReversed(true)
-                .setTangent(Math.toRadians(-90))
-                .splineToLinearHeading(new Pose2d(-2, -55, Math.toRadians(270)), Math.toRadians(90))
-                .strafeTo(new Vector2d(-2, -30.4))
-                .waitSeconds(.2); // place 2nd specimen
-
-        TrajectoryActionBuilder tab5 = drive.actionBuilder(new Pose2d(-2, -30.4, Math.toRadians(270)))
-                .setTangent(90)
-                .splineToLinearHeading(new Pose2d( 45, -50, Math.toRadians(90)), Math.toRadians(270))//position for intaking 2nd
-
-                .waitSeconds(.3);
-        TrajectoryActionBuilder tab6 = drive.actionBuilder(new Pose2d(45,-50, Math.toRadians(90)))
-                .strafeTo(new Vector2d(45, -60.5))
-                .waitSeconds(.3);                //grab 3rd
-
-
-        TrajectoryActionBuilder tab7 = drive.actionBuilder(new Pose2d(45, -60.5, Math.toRadians(270)))
-                .setTangent(Math.toRadians(90))
-                .splineToLinearHeading(new Pose2d(-5, -50, Math.toRadians(270)), Math.toRadians(90)) //intak
-                .waitSeconds(.1)
-
-                .strafeTo(new Vector2d(-5, -30.4));
-
-
-
-
-
-        TrajectoryActionBuilder tabIntakePosition4th = drive.actionBuilder(new Pose2d(-5, -30.4, Math.toRadians(270)))
-                .setTangent(90)
-                .splineToLinearHeading(new Pose2d( -45, 50, Math.toRadians(90)), Math.toRadians(270))//position for intaking
-                //grab 2nd
-                .waitSeconds(.4);
-        TrajectoryActionBuilder tabIntake4th = drive.actionBuilder(new Pose2d(45,-50, Math.toRadians(90)))
-                .strafeTo(new Vector2d(45, -60.5))
-                .waitSeconds(.3);
-        TrajectoryActionBuilder tabPlace4th = drive.actionBuilder(new Pose2d(45, -60.5, Math.toRadians(270)))
-                .setTangent(Math.toRadians(90))
-                .splineToLinearHeading(new Pose2d(8, -50, Math.toRadians(270)), Math.toRadians(90)) //intak
-                .strafeTo(new Vector2d(8, -30.4)); // place 4th specimen // 4th cycle
-
-
-
-
-
-
-
-
-
-        Actions.runBlocking(claw.specimenScoring()); */
-
 
 
 
@@ -417,7 +425,6 @@ public class four_spec_red extends LinearOpMode {
 
 
 //        }
-        waitForStart();
 //        int startPosition = initialPosition;
 //        telemetry.addData("Starting Position", startPosition);
 //        telemetry.update();
@@ -436,6 +443,7 @@ public class four_spec_red extends LinearOpMode {
                 new ParallelAction(
                         claw.SlidePIDF(),
                         claw.sequenceUpdater(),
+                        claw.HSlideIdle(),
                         new SequentialAction(run_auton)
                 )
         );
