@@ -27,12 +27,12 @@ public class Align {
     }
 
     // Control Gains
-    double kpLateral = 0.25
+    double kpLateral = 0.24
 
 
             ;  // Proportional gain for lateral adjustment
-    double kpForward = 0.09;  // Proportional gain for forward/backward adjustment
-    double forwardOffset = -1; // Fixed offset camera to claw
+    double kpForward = 0.1;  // Proportional gain for forward/backward adjustment
+    double forwardOffset = -1.2; // Fixed offset camera to claw
     double clawYOffset = 0;      // Claw Y offset relative to the robot's center
     double tolerance = 1;     // Tolerance for tx and ty
 
