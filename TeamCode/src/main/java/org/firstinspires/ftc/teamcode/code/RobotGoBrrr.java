@@ -2,12 +2,6 @@ package org.firstinspires.ftc.teamcode.code;
 
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
 
-import static org.firstinspires.ftc.teamcode.code.four_spec_red.vSlideTarget;
-
-import androidx.annotation.NonNull;
-
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
@@ -31,7 +25,9 @@ import org.firstinspires.ftc.teamcode.hermeshelper.util.hardware.DcMotorV2;
 import org.firstinspires.ftc.teamcode.hermeshelper.util.hardware.IMUV2;
 import org.firstinspires.ftc.teamcode.hermeshelper.util.hardware.ServoV2;
 
-import org.firstinspires.ftc.teamcode.rr.PinpointDrive;
+import org.firstinspires.ftc.teamcode.hermeshelper.rr.PinpointDrive;
+import org.firstinspires.ftc.teamcode.hermeshelper.util.opencv.Align;
+import org.firstinspires.ftc.teamcode.hermeshelper.util.opencv.TeleOpAlign;
 
 @TeleOp(name = "Robot Go Brrr", group = "Linear OpMode")
 public class RobotGoBrrr extends OpMode {

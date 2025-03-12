@@ -22,7 +22,7 @@ import org.firstinspires.ftc.teamcode.hermeshelper.datatypes.TransferState;
 import org.firstinspires.ftc.teamcode.hermeshelper.util.Sequence;
 import org.firstinspires.ftc.teamcode.hermeshelper.util.hardware.DcMotorV2;
 import org.firstinspires.ftc.teamcode.hermeshelper.util.hardware.ServoV2;
-import org.firstinspires.ftc.teamcode.rr.PinpointDrive;
+import org.firstinspires.ftc.teamcode.hermeshelper.rr.PinpointDrive;
 
 @Config
 @Autonomous(name = "BLUE_SPECIMEN 4", group = "Autonomous")
