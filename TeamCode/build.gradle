@@ -43,4 +43,5 @@ dependencies {
     // the following is optional if you want vision
     implementation 'org.ftclib.ftclib:vision:2.1.0'
     implementation("com.github.eliKnowles:HermesHelperFTC:1.0.1")
+    implementation "dev.frozenmilk.mercurial:Mercurial:1.0.3"
 }
