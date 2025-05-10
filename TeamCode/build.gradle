@@ -40,8 +40,9 @@ dependencies {
     implementation "page.j5155.roadrunner:ftc-otos:0.1.0+0.1.14"
     implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.4.21'
     implementation 'org.ftclib.ftclib:core:2.1.1'
-    // the following is optional if you want vision
     implementation 'org.ftclib.ftclib:vision:2.1.0'
     implementation "dev.frozenmilk.mercurial:Mercurial:1.0.3"
+    implementation "dev.frozenmilk.dairy:Core:2.2.1"
+    implementation "dev.frozenmilk.dairy:Util:1.1.1"
     implementation("com.github.eliKnowles:HermesHelperFTC:1.0.1")
 }
