@@ -21,6 +21,11 @@ apply plugin: 'com.android.application'
 
 android {
 
+        buildFeatures {
+            buildConfig true
+        }
+
+
     compileSdkVersion 29
 
     signingConfigs {

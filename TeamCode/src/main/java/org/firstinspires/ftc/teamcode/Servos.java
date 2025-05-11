@@ -2,8 +2,8 @@ package org.firstinspires.ftc.teamcode;
 
 import androidx.annotation.NonNull;
 
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.hermeshelper.util.hardware.ServoV2;
 
@@ -12,7 +12,6 @@ import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.util.concurrent.atomic.AtomicLong;
 
 import dev.frozenmilk.dairy.core.dependency.Dependency;
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotation;
@@ -28,12 +27,15 @@ public class Servos implements Subsystem {
     private Dependency<?> dependency = Subsystem.DEFAULT_DEPENDENCY.and(new SingleAnnotation<>(Mercurial.Attach.class));
 
     private static ServoV2 intakePivotServoOne;
-    private static ServoV2 intakePivotServoTwo;
+    private static ServoV2 outtakePivotServoTwo;
     private static ServoV2 intakeClawServo;
     private static ServoV2 outtakeClawServo;
     private static ServoV2 outtakePivotServo;
     private static ServoV2 intakeWristServo;
     private static ServoV2 intakeWristServoTwo;
+    private static ServoV2 outtakeLinkageServo;
+    private static ServoV2 outtakeWristServo;
+
 
     public Servos() {}
 
@@ -47,12 +49,14 @@ public class Servos implements Subsystem {
                 .setExecute(
                         () -> {
                             intakePivotServoOne.setPosition(0);
-                            intakePivotServoTwo.setPosition(0);
-                            intakeClawServo.setPosition(0);
-                            outtakeClawServo.setPosition(0);
-                            outtakePivotServo.setPosition(0);
-                            intakeWristServo.setPosition(0);
-                            intakeWristServoTwo.setPosition(0);
+                          //  intakeClawServo.setPosition(0);
+                          //  outtakeClawServo.setPosition(.2);
+                            //outtakePivotServo.setPosition(.5);
+                           // outtakePivotServoTwo.setPosition(.5);
+                            //intakeWristServo.setPosition(0);
+                           // intakeWristServoTwo.setPosition(0);
+                            outtakeLinkageServo.setPosition(.1);
+                           // outtakeWristServo.setPosition(.2);
                         }
                 );
     }
@@ -73,11 +77,25 @@ public class Servos implements Subsystem {
         HardwareMap hardwareMap = opMode.getOpMode().hardwareMap;
 
         intakePivotServoOne = new ServoV2("intake_pivot_one", hardwareMap);
-        intakePivotServoTwo = new ServoV2("intake_pivot_two", hardwareMap);
+        outtakePivotServoTwo = new ServoV2("outtake_pivot_two", hardwareMap);
         intakeClawServo = new ServoV2("intake_claw", hardwareMap);
         outtakeClawServo = new ServoV2("outtake_claw", hardwareMap);
         outtakePivotServo = new ServoV2("outtake_pivot_one", hardwareMap);
         intakeWristServo = new ServoV2("intake_wrist", hardwareMap);
         intakeWristServoTwo = new ServoV2("intake_wrist_two", hardwareMap);
+        outtakeLinkageServo = new ServoV2("outtake_linkage", hardwareMap);
+        outtakeWristServo = new ServoV2("outtake_wrist", hardwareMap);
+        outtakePivotServoTwo.setDirection(ServoV2.Direction.REVERSE);
+
+        intakePivotServoOne.setPosition(1);
+        //  intakeClawServo.setPosition(0);
+          outtakeClawServo.setPosition(0);
+        outtakePivotServo.setPosition(.85);
+         outtakePivotServoTwo.setPosition(.85);
+        //intakeWristServo.setPosition(0);
+        // intakeWristServoTwo.setPosition(0);
+        outtakeLinkageServo.setPosition(.38);
+       // neutral pos outtakeLinkageServo.setPosition(.085);
+        outtakeWristServo.setPosition(0);
     }
 }
