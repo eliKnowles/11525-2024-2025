@@ -3,6 +3,9 @@ package org.firstinspires.ftc.teamcode.hermeshelper.util.hardware;
 import androidx.annotation.NonNull;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.teamcode.hermeshelper.util.VSlide;
 
 import dev.frozenmilk.dairy.core.dependency.Dependency;
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotation;
@@ -24,6 +27,9 @@ public class Outtake implements Subsystem {
     private ServoV2 outtakePivotOne;
     private ServoV2 outtakePivotTwo;
     private ServoV2 outtakeLinkage;
+    private ServoV2 outtakeClaw;
+    private ServoV2 outtakeWrist;
+
 
     public enum OuttakeState {
         RETRACTED,
@@ -59,6 +65,9 @@ public class Outtake implements Subsystem {
         outtakePivotOne = new ServoV2("outtake_pivot_one", hw);
         outtakePivotTwo = new ServoV2("outtake_pivot_two", hw);
         outtakeLinkage = new ServoV2("outtake_linkage", hw);
+        outtakeClaw = new ServoV2("outtake_claw", hw);
+        outtakeWrist = new ServoV2("outtake_wrist", hw);
+
 
         outtakePivotTwo.setDirection(ServoV2.Direction.REVERSE);
         outtakeLinkage.setDirection(ServoV2.Direction.REVERSE);
@@ -76,6 +85,20 @@ public class Outtake implements Subsystem {
     private void setLinkage(double pos) {
         outtakeLinkage.setPosition(pos);
     }
+
+    public enum WristPosition {
+        DOWN(0.0), MID(0.5), UP(1.0);
+        public final double pos;
+        WristPosition(double pos) { this.pos = pos; }
+    }
+
+    public enum ClawPosition {
+        OPEN(0.2), CLOSED(0);
+        public final double pos;
+        ClawPosition(double pos) { this.pos = pos; }
+    }
+
+
 
     public static Sequential extendArmSample() {
         return new Sequential(
@@ -120,11 +143,14 @@ public class Outtake implements Subsystem {
         );
     }
 
-    public static Sequential grabPosSpecimen() {
+    public static Sequential grabSpecimen() {
         return new Sequential(
                 new Lambda("linkage to 0")
                         .addRequirements(INSTANCE)
                         .setExecute(() -> INSTANCE.setLinkage(0.00)),
+                new Lambda("linkage to 0")
+                        .addRequirements(INSTANCE)
+                        .setExecute(() -> INSTANCE.),
 
                 new Wait(0.2),
 
@@ -138,8 +164,12 @@ public class Outtake implements Subsystem {
         );
     }
 
-    public static Sequential retractSpecimen() {
+    public static Sequential scoreSpecimen() {
         return new Sequential(
+                new Lambda("claw to closed")
+                        .addRequirements(INSTANCE)
+                        .setExecute(() -> INSTANCE.setLinkage(0.00)),
+
                 new Lambda("linkage to 0")
                         .addRequirements(INSTANCE)
                         .setExecute(() -> INSTANCE.setLinkage(0.00)),
@@ -152,7 +182,7 @@ public class Outtake implements Subsystem {
                 new Wait(.3),
                 new Lambda("pivot to 0.1")
                         .addRequirements(INSTANCE)
-                        .setExecute(() -> INSTANCE.setLinkage(.3)),
+                        .setExecute(() -> INSTANCE.setLinkage(.32)),
 
                 new Lambda("mark state RETRACTED")
                         .addRequirements(INSTANCE)

@@ -19,12 +19,10 @@ import dev.frozenmilk.mercurial.commands.util.IfElse;
 @Mercurial.Attach
 
 public class ResetServosAuto extends OpMode {
-    private final int EXTEND_POS = 800;
-    private final int RETRACT_POS = 0;
 
     @Override
     public void init() {
-        Mercurial.gamepad1().b().onTrue(VSlide.goTo(800));
+        Mercurial.gamepad1().b().onTrue(VSlide.goTo(500));// specimen scoring
         Mercurial.gamepad1().a().onTrue(VSlide.goTo(0));
 
         Mercurial.gamepad1().y().onTrue(
@@ -48,7 +46,7 @@ public class ResetServosAuto extends OpMode {
         Mercurial.gamepad2().x().onTrue(
                 new IfElse(
                         () -> Outtake.INSTANCE.getState() == Outtake.OuttakeState.RETRACTED || Outtake.INSTANCE.getState()== Outtake.OuttakeState.RETRACTED_SPEC,
-                        Outtake.grabPosSpecimen(),
+                        Outtake.grabSpecimen(),
                         new Lambda("noop")
                                 .addRequirements(Outtake.INSTANCE)
                                 .setExecute(() -> {})
@@ -57,7 +55,7 @@ public class ResetServosAuto extends OpMode {
         Mercurial.gamepad2().y().onTrue(
                 new IfElse(
                         () -> Outtake.INSTANCE.getState() == Outtake.OuttakeState.SPECIMEN_WALL,
-                        Outtake.retractSpecimen(),
+                        Outtake.scoreSpecimen(),
                         new Lambda("noop")
                                 .addRequirements(Outtake.INSTANCE)
                                 .setExecute(() -> {})
