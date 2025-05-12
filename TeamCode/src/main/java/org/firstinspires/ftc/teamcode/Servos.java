@@ -86,8 +86,14 @@ public class Servos implements Subsystem {
         outtakeLinkageServo = new ServoV2("outtake_linkage", hardwareMap);
         outtakeWristServo = new ServoV2("outtake_wrist", hardwareMap);
         outtakePivotServoTwo.setDirection(ServoV2.Direction.REVERSE);
+        outtakeLinkageServo.setDirection(ServoV2.Direction.REVERSE);
+        outtakeLinkageServo.setPosition(0.05);
+        outtakePivotServo.setPosition(.5);
+        outtakePivotServoTwo.setPosition(.5);
 
-        intakePivotServoOne.setPosition(1);
+
+
+       /* intakePivotServoOne.setPosition(1);
         //  intakeClawServo.setPosition(0);
           outtakeClawServo.setPosition(0);
         outtakePivotServo.setPosition(.85);
@@ -96,6 +102,6 @@ public class Servos implements Subsystem {
         // intakeWristServoTwo.setPosition(0);
         outtakeLinkageServo.setPosition(.38);
        // neutral pos outtakeLinkageServo.setPosition(.085);
-        outtakeWristServo.setPosition(0);
+        outtakeWristServo.setPosition(0); */
     }
 }
