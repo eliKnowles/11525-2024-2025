@@ -148,9 +148,6 @@ public class Outtake implements Subsystem {
                 new Lambda("linkage to 0")
                         .addRequirements(INSTANCE)
                         .setExecute(() -> INSTANCE.setLinkage(0.00)),
-                new Lambda("linkage to 0")
-                        .addRequirements(INSTANCE)
-                        .setExecute(() -> INSTANCE.),
 
                 new Wait(0.2),
 
