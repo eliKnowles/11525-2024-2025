@@ -24,8 +24,51 @@ public class ResetServosAuto extends OpMode {
         Mercurial.gamepad1().b().onTrue(VSlide.goTo(500));// specimen scoring
         Mercurial.gamepad1().a().onTrue(VSlide.goTo(0));
 
-        Mercurial.gamepad1().y().onTrue(
-                        Outtake.extendArmSample()
+
+            Mercurial.gamepad1().y().onTrue(
+                    new IfElse(
+                            () -> Outtake.INSTANCE.getState() == Outtake.OuttakeState.RETRACTED,
+                            Outtake.extendArmSample(),
+                            new Lambda("noop")
+                                    .addRequirements(Outtake.INSTANCE)
+                                    .setExecute(() -> {})
+                    )
+            );
+
+            Mercurial.gamepad1().x().onTrue(
+                    new IfElse(
+                            () -> Outtake.INSTANCE.getState() == Outtake.OuttakeState.EXTENDED ||
+                                    Outtake.INSTANCE.getState() == Outtake.OuttakeState.RETRACTED_SPEC,
+                            Outtake.retractArmSample(),
+                            new Lambda("noop")
+                                    .addRequirements(Outtake.INSTANCE)
+                                    .setExecute(() -> {})
+                    )
+            );
+
+            Mercurial.gamepad2().x().onTrue(
+                    new IfElse(
+                            () -> Outtake.INSTANCE.getState() == Outtake.OuttakeState.RETRACTED ||
+                                    Outtake.INSTANCE.getState() == Outtake.OuttakeState.RETRACTED_SPEC,
+                            Outtake.grabSpecimen(),
+                            new Lambda("noop")
+                                    .addRequirements(Outtake.INSTANCE)
+                                    .setExecute(() -> {})
+                    )
+            );
+
+            Mercurial.gamepad2().y().onTrue(
+                    new IfElse(
+                            () -> Outtake.INSTANCE.getState() == Outtake.OuttakeState.SPECIMEN_WALL,
+                            Outtake.scoreSpecimen(),
+                            new Lambda("noop")
+                                    .addRequirements(Outtake.INSTANCE)
+                                    .setExecute(() -> {})
+                    )
+            );
+        }
+
+
 
 //                new IfElse(
 //                        () -> Outtake.INSTANCE.getState() == Outtake.OuttakeState.RETRACTED,
@@ -34,10 +77,9 @@ public class ResetServosAuto extends OpMode {
 //                                .addRequirements(Outtake.INSTANCE)
 //                                .setExecute(() -> {})
 //                )
-        );
 
-        Mercurial.gamepad1().x().onTrue(
-                        Outtake.retractArmSample()
+
+
 //                new IfElse(
 //                        () -> Outtake.INSTANCE.getState() == Outtake.OuttakeState.EXTENDED || Outtake.INSTANCE.getState()== Outtake.OuttakeState.RETRACTED_SPEC,
 //                        Outtake.retractArmSample(),
@@ -45,10 +87,9 @@ public class ResetServosAuto extends OpMode {
 //                                .addRequirements(Outtake.INSTANCE)
 //                                .setExecute(() -> {})
 //                )
-        );
 
-        Mercurial.gamepad2().x().onTrue(
-                        Outtake.grabSpecimen()
+
+
 //                new IfElse(
 //                        () -> Outtake.INSTANCE.getState() == Outtake.OuttakeState.RETRACTED || Outtake.INSTANCE.getState()== Outtake.OuttakeState.RETRACTED_SPEC,
 //                        Outtake.grabSpecimen(),
@@ -56,10 +97,9 @@ public class ResetServosAuto extends OpMode {
 //                                .addRequirements(Outtake.INSTANCE)
 //                                .setExecute(() -> {})
 //                )
-        );
 
-        Mercurial.gamepad2().y().onTrue(
-                        Outtake.scoreSpecimen()
+
+
 //                new IfElse(
 //                        () -> Outtake.INSTANCE.getState() == Outtake.OuttakeState.SPECIMEN_WALL,
 //                        Outtake.scoreSpecimen(),
@@ -67,8 +107,7 @@ public class ResetServosAuto extends OpMode {
 //                                .addRequirements(Outtake.INSTANCE)
 //                                .setExecute(() -> {})
 //                )
-        );
-    }
+
 
     @Override
     public void loop() {
