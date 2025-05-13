@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.VSlide;
+import org.firstinspires.ftc.teamcode.code.util.Drive;
 import org.firstinspires.ftc.teamcode.code.util.Outtake;
 
 
@@ -17,7 +18,8 @@ import dev.frozenmilk.mercurial.commands.util.IfElse;
 @VSlide.Attach
 @Outtake.Attach
 @Mercurial.Attach
-public class ResetServosAuto extends OpMode {
+@Drive.Attach
+public class MainTeleOp extends OpMode {
 
     @Override
     public void init() {
@@ -26,44 +28,26 @@ public class ResetServosAuto extends OpMode {
 
 
             Mercurial.gamepad1().y().onTrue(
-                    new IfElse(
-                            () -> Outtake.INSTANCE.getState() == Outtake.OuttakeState.RETRACTED,
-                            Outtake.extendArmSample(),
-                            new Lambda("noop")
-                                    .addRequirements(Outtake.INSTANCE)
-                                    .setExecute(() -> {})
+                    new Sequential(
+                            Outtake.sampleExtend()
                     )
             );
 
             Mercurial.gamepad1().x().onTrue(
-                    new IfElse(
-                            () -> Outtake.INSTANCE.getState() == Outtake.OuttakeState.EXTENDED ||
-                                    Outtake.INSTANCE.getState() == Outtake.OuttakeState.RETRACTED_SPEC,
-                            Outtake.retractArmSample(),
-                            new Lambda("noop")
-                                    .addRequirements(Outtake.INSTANCE)
-                                    .setExecute(() -> {})
+                    new Sequential(
+                            Outtake.sampleRetract()
                     )
             );
 
             Mercurial.gamepad2().x().onTrue(
-                    new IfElse(
-                            () -> Outtake.INSTANCE.getState() == Outtake.OuttakeState.RETRACTED ||
-                                    Outtake.INSTANCE.getState() == Outtake.OuttakeState.RETRACTED_SPEC,
-                            Outtake.grabSpecimen(),
-                            new Lambda("noop")
-                                    .addRequirements(Outtake.INSTANCE)
-                                    .setExecute(() -> {})
+                    new Sequential(
+                            Outtake.specRetract()
                     )
             );
 
             Mercurial.gamepad2().y().onTrue(
-                    new IfElse(
-                            () -> Outtake.INSTANCE.getState() == Outtake.OuttakeState.SPECIMEN_WALL,
-                            Outtake.scoreSpecimen(),
-                            new Lambda("noop")
-                                    .addRequirements(Outtake.INSTANCE)
-                                    .setExecute(() -> {})
+                    new Sequential(
+                            Outtake.specExtend()
                     )
             );
         }

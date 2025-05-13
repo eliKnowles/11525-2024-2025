@@ -44,7 +44,7 @@ public class Drive implements Subsystem {
     private Telemetry telemetry;
 
     public static void drive(double x, double y, double z) {
-        follower.setTeleOpMovementVectors(x, y, z, false);
+        follower.setTeleOpMovementVectors(x, y, z, true);
         follower.update();
     }
 
