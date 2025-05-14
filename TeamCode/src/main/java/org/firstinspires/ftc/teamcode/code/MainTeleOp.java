@@ -13,6 +13,7 @@ import dev.frozenmilk.mercurial.Mercurial;
 import dev.frozenmilk.mercurial.commands.Lambda;
 import dev.frozenmilk.mercurial.commands.groups.Sequential;
 import dev.frozenmilk.mercurial.commands.util.IfElse;
+import dev.frozenmilk.mercurial.commands.util.Wait;
 
 @TeleOp
 @VSlide.Attach
@@ -23,19 +24,20 @@ public class MainTeleOp extends OpMode {
 
     @Override
     public void init() {
-        Mercurial.gamepad1().b().onTrue(VSlide.goTo(500));// specimen scoring
-        Mercurial.gamepad1().a().onTrue(VSlide.goTo(0));
 
             Mercurial.gamepad1().y().onTrue(
-                    Outtake.extend()
+                            Outtake.extendArmSample()
             );
 
             Mercurial.gamepad1().x().onTrue(
-                    Outtake.retract()
+                            Outtake.retractArmSample()
             );
 
-            Mercurial.gamepad1().share().onTrue(
-                    Outtake.toggleMode()
+            Mercurial.gamepad2().x().onTrue(new Sequential(VSlide.goTo(0), new Wait(.3), Outtake.grabSpecimen())
+            );
+
+            Mercurial.gamepad2().y().onTrue(
+                            new Sequential(Outtake.scoreSpecimen(), new Wait(.3), VSlide.goTo(500))
             );
         }
 

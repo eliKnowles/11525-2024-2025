@@ -90,9 +90,9 @@ public class Drive implements Subsystem {
         return new Lambda("drive")
                 .addRequirements(INSTANCE)
                 .setExecute(() -> drive(
-                        -gamepad.leftStickY().state(),
-                        gamepad.leftStickX().state(),
-                        gamepad.rightStickX().state()
+                        gamepad.leftStickY().state(),
+                        -gamepad.leftStickX().state(),
+                        -gamepad.rightStickX().state()
                 ))
                 .setFinish(() -> false);
     }

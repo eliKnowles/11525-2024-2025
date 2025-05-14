@@ -1,5 +1,4 @@
-package org.firstinspires.ftc.teamcode;
-
+package org.firstinspires.ftc.teamcode.hermeshelper;
 
 import androidx.annotation.NonNull;
 
@@ -24,25 +23,24 @@ import dev.frozenmilk.mercurial.subsystems.Subsystem;
 import kotlin.annotation.MustBeDocumented;
 
 @Config
-public class VSlide implements Subsystem {
-    public static final VSlide INSTANCE = new VSlide();
+public class HSlide implements Subsystem {
+    public static final HSlide INSTANCE = new HSlide();
 
-    private static DcMotorEx vSlideMotorOne;
-    private static DcMotorEx vSlideMotorTwo;
+    private static DcMotorEx hSlideMotorOne;
+    private static DcMotorEx hSlideMotorTwo;
     public static DcMotorEx encoder;
     private static int targetPosition = 0;
 
-    // PIDF variables
-    public static double kP = 0.08;
+    public static double kP = 0.04;
     public static double kI = 0.0;
     public static double kD = 0.005;
     public static double kF = 0.0;
-    public static int tolerance = 20;
+    public static int tolerance = 5;
 
     private static double lastError = 0;
     private static double integral = 0;
 
-    private VSlide() {}
+    private HSlide() {}
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.TYPE)
@@ -59,19 +57,17 @@ public class VSlide implements Subsystem {
     public void postUserInitHook(@NonNull Wrapper opMode) {
         HardwareMap hw = opMode.getOpMode().hardwareMap;
 
-        vSlideMotorTwo = new DcMotorV2("v_slide_two", hw);
-        vSlideMotorOne = new DcMotorV2("v_slide_one", hw);
+        hSlideMotorOne = new DcMotorV2("h_slide", hw);
 
+        hSlideMotorOne.setDirection(DcMotorV2.Direction.REVERSE);
+        hSlideMotorTwo.setDirection(DcMotorV2.Direction.FORWARD);
 
-        vSlideMotorOne.setDirection(DcMotorV2.Direction.REVERSE);
-        vSlideMotorTwo.setDirection(DcMotorV2.Direction.FORWARD);
+        hSlideMotorOne.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        hSlideMotorTwo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        hSlideMotorOne.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        hSlideMotorTwo.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        vSlideMotorOne.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        vSlideMotorTwo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        vSlideMotorOne.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        vSlideMotorTwo.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        encoder = vSlideMotorOne; // Use whichever motor has the accurate encoder
+        encoder = hSlideMotorOne;
 
         setDefaultCommand(update());
     }
@@ -100,38 +96,38 @@ public class VSlide implements Subsystem {
 
         double output = kP * error + kI * integral + kD * derivative + kF * targetPosition;
         output = Math.max(-1, Math.min(1, output));
+
         if (Math.abs(output) < 0.05) output = 0;
 
 
-        vSlideMotorOne.setPower(output);
-        vSlideMotorTwo.setPower(output);
+        hSlideMotorOne.setPower(output);
     }
 
     @NonNull
     public static Lambda update() {
-        return new Lambda("vslide-update")
+        return new Lambda("hslide-update")
                 .addRequirements(INSTANCE)
-                .setExecute(VSlide::pidfUpdate)
+                .setExecute(HSlide::pidfUpdate)
                 .setInterruptible(() -> true)
                 .setFinish(() -> false);
     }
 
     @NonNull
     public static Lambda goTo(int target) {
-        return new Lambda("vslide-set")
+        return new Lambda("hslide-set")
                 .setExecute(() -> setTarget(target))
-                .setFinish(VSlide::atTarget);
+                .setFinish(HSlide::atTarget);
     }
 
     @NonNull
     public static Lambda retract() {
-        return new Lambda("vslide-retract")
+        return new Lambda("hslide-retract")
                 .addRequirements(INSTANCE)
                 .setInit(() -> {
-                    vSlideMotorOne.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    vSlideMotorTwo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    vSlideMotorOne.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                    vSlideMotorTwo.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                    hSlideMotorOne.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    hSlideMotorTwo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    hSlideMotorOne.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                    hSlideMotorTwo.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 });
     }
 }
