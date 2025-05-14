@@ -27,19 +27,15 @@ public class MainTeleOp extends OpMode {
         Mercurial.gamepad1().a().onTrue(VSlide.goTo(0));
 
             Mercurial.gamepad1().y().onTrue(
-                            Outtake.sampleExtend()
+                    Outtake.extend()
             );
 
             Mercurial.gamepad1().x().onTrue(
-                            Outtake.sampleRetract()
+                    Outtake.retract()
             );
 
-            Mercurial.gamepad2().x().onTrue(
-                            Outtake.specRetract()
-            );
-
-            Mercurial.gamepad2().y().onTrue(
-                            Outtake.specExtend()
+            Mercurial.gamepad1().share().onTrue(
+                    Outtake.toggleMode()
             );
         }
 

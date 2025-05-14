@@ -32,6 +32,8 @@ public class Outtake implements Subsystem {
 
     private static Wrapper opModInstance;
 
+    private static boolean specMode = false;
+
     private static final StateMachine<OuttakeStates> clawStates = new StateMachine<>(OuttakeStates.RETRACTED)
             .withState(OuttakeStates.EXTENDED_SPEC, (ref, name) -> scoreSpecimen())
             .withState(OuttakeStates.SPECIMEN_WALL, (ref, name) -> grabSpecimen())
@@ -48,6 +50,26 @@ public class Outtake implements Subsystem {
 
     public OuttakeStates getState() {
         return clawStates.getState();
+    }
+
+    public static Lambda toggleMode() {
+        return new Lambda("toggle mode")
+                .setInit(() -> specMode = !specMode)
+                .setFinish(() -> true);
+    }
+
+    public static Sequential extend() {
+        if (specMode) {
+            return scoreSpecimen();
+        }
+        return extendArmSample();
+    }
+
+    public static Sequential retract() {
+        if (specMode) {
+            return grabSpecimen();
+        }
+        return retractArmSample();
     }
 
     public static Lambda sampleExtend() {
