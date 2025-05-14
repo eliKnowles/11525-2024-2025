@@ -29,7 +29,6 @@ public class Outtake implements Subsystem {
     private static ServoV2 outtakeLinkage;
     private static ServoV2 outtakeClaw;
     private static ServoV2 outtakeWrist;
-
     private static Wrapper opModInstance;
 
     private static boolean specMode = false;

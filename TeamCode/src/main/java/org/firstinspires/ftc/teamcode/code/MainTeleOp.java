@@ -26,18 +26,15 @@ public class MainTeleOp extends OpMode {
     public void init() {
 
             Mercurial.gamepad1().y().onTrue(
-                            Outtake.extendArmSample()
+                    Outtake.extend()
             );
 
             Mercurial.gamepad1().x().onTrue(
-                            Outtake.retractArmSample()
+                    Outtake.retract()
             );
 
-            Mercurial.gamepad2().x().onTrue(new Sequential(VSlide.goTo(0), new Wait(.3), Outtake.grabSpecimen())
-            );
-
-            Mercurial.gamepad2().y().onTrue(
-                            new Sequential(Outtake.scoreSpecimen(), new Wait(.3), VSlide.goTo(500))
+            Mercurial.gamepad1().share().onTrue(
+                    Outtake.extend()
             );
         }
 
