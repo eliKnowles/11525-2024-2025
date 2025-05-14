@@ -25,7 +25,6 @@ public class MainTeleOp extends OpMode {
     @Override
     public void init() {
 
-
             Mercurial.gamepad1().y().onTrue(
                             Outtake.extendArmSample()
             );
