@@ -34,7 +34,7 @@ public class MainTeleOp extends OpMode {
             );
 
             Mercurial.gamepad1().share().onTrue(
-                    Outtake.extend()
+                    Outtake.toggleMode()
             );
         }
 
