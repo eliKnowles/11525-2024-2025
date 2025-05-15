@@ -24,7 +24,17 @@ public class MainTeleOp extends OpMode {
 
     @Override
     public void init() {
+        Mercurial.gamepad1().y().onTrue(
+                Outtake.extend()
+        );
 
+        Mercurial.gamepad1().x().onTrue(
+                Outtake.retract()
+        );
+
+        Mercurial.gamepad1().share().onTrue(
+                Outtake.toggleMode()
+        );
     }
 
 
@@ -73,17 +83,5 @@ public class MainTeleOp extends OpMode {
         telemetry.addData("VSlide Position", VSlide.INSTANCE.encoder.getCurrentPosition());
         telemetry.addLine(Mercurial.INSTANCE.getActiveCommandSnapshot().toString());
         telemetry.update();
-
-        Mercurial.gamepad1().y().onTrue(
-                Outtake.extend()
-        );
-
-        Mercurial.gamepad1().x().onTrue(
-                Outtake.retract()
-        );
-
-        Mercurial.gamepad1().share().onTrue(
-                Outtake.toggleMode()
-        );
     }
 }

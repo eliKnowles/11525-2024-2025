@@ -57,18 +57,26 @@ public class Outtake implements Subsystem {
                 .setFinish(() -> true);
     }
 
-    public static Sequential extend() {
-        if (specMode) {
-            return scoreSpecimen();
-        }
-        return extendArmSample();
+    public static Lambda extend() {
+        return new Lambda("extend")
+                .setInit(() -> {
+                    if (specMode) {
+                        scoreSpecimen();
+                    } else {
+                        extendArmSample();
+                    }
+                });
     }
 
-    public static Sequential retract() {
-        if (specMode) {
-            return grabSpecimen();
-        }
-        return retractArmSample();
+    public static Lambda retract() {
+        return new Lambda("retract")
+                .setInit(() -> {
+                    if (specMode) {
+                        grabSpecimen();
+                    } else {
+                        retractArmSample();
+                    }
+                });
     }
 
     public static Lambda sampleExtend() {
