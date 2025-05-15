@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
 
+import dev.frozenmilk.mercurial.Mercurial;
+
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -25,12 +27,20 @@ import kotlin.annotation.MustBeDocumented;
 
 @Config
 public class VSlide implements Subsystem {
+
+    private static Wrapper opModInstance;
+
     public static final VSlide INSTANCE = new VSlide();
 
     private static DcMotorEx vSlideMotorOne;
     private static DcMotorEx vSlideMotorTwo;
     public static DcMotorEx encoder;
     private static int targetPosition = 0;
+
+    private static boolean pidEnabled = true;
+    private static double maxPower = 1.0;
+
+
 
     // PIDF variables
     public static double kP = 0.08;
@@ -57,6 +67,9 @@ public class VSlide implements Subsystem {
 
     @Override
     public void postUserInitHook(@NonNull Wrapper opMode) {
+        opModInstance = opMode;
+
+
         HardwareMap hw = opMode.getOpMode().hardwareMap;
 
         vSlideMotorTwo = new DcMotorV2("v_slide_two", hw);
@@ -73,14 +86,19 @@ public class VSlide implements Subsystem {
 
         encoder = vSlideMotorOne; // Use whichever motor has the accurate encoder
 
-        setDefaultCommand(update());
     }
 
-    public static void setTarget(int ticks) {
+    public static void setTarget(int ticks, double newMaxPower) {
         targetPosition = ticks;
         integral = 0;
         lastError = 0;
+        maxPower = newMaxPower;
     }
+
+    public static void setTarget(int ticks) {
+        setTarget(ticks, 1.0);
+    }
+
 
     public static boolean atTarget() {
         return Math.abs(targetPosition - encoder.getCurrentPosition()) < tolerance;
@@ -92,6 +110,12 @@ public class VSlide implements Subsystem {
     }
 
     public static void pidfUpdate() {
+        if (!pidEnabled) {
+            vSlideMotorOne.setPower(0);
+            vSlideMotorTwo.setPower(0);
+            return;
+        }
+
         double current = encoder.getCurrentPosition();
         double error = targetPosition - current;
         integral += error;
@@ -99,9 +123,8 @@ public class VSlide implements Subsystem {
         lastError = error;
 
         double output = kP * error + kI * integral + kD * derivative + kF * targetPosition;
-        output = Math.max(-1, Math.min(1, output));
+        output = Math.max(-maxPower, Math.min(maxPower, output));
         if (Math.abs(output) < 0.05) output = 0;
-
 
         vSlideMotorOne.setPower(output);
         vSlideMotorTwo.setPower(output);
@@ -118,10 +141,16 @@ public class VSlide implements Subsystem {
 
     @NonNull
     public static Lambda goTo(int target) {
-        return new Lambda("vslide-set")
-                .setExecute(() -> setTarget(target))
+        return goTo(target, 1.0);
+    }
+    @NonNull
+    public static Lambda goTo(int target, double maxPower) {
+        return new Lambda("vslide-set-capped")
+                .setExecute(() -> setTarget(target, maxPower))
+                .setInterruptible(() -> true)
                 .setFinish(VSlide::atTarget);
     }
+
 
     @NonNull
     public static Lambda retract() {

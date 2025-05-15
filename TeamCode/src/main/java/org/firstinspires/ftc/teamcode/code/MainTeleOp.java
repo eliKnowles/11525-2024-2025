@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.code;
 
+
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -8,11 +10,9 @@ import org.firstinspires.ftc.teamcode.code.util.Drive;
 import org.firstinspires.ftc.teamcode.code.util.Outtake;
 
 
-
 import dev.frozenmilk.mercurial.Mercurial;
 import dev.frozenmilk.mercurial.commands.Lambda;
-import dev.frozenmilk.mercurial.commands.groups.Sequential;
-import dev.frozenmilk.mercurial.commands.util.IfElse;
+import dev.frozenmilk.mercurial.commands.groups.Parallel;
 import dev.frozenmilk.mercurial.commands.util.Wait;
 
 @TeleOp
@@ -24,18 +24,58 @@ public class MainTeleOp extends OpMode {
 
     @Override
     public void init() {
+
+        VSlide.INSTANCE.setDefaultCommand(VSlide.update());
+        //HSlide.INSTANCE.setDefaultCommand(HSlide.update());
+
         Mercurial.gamepad1().y().onTrue(
-                Outtake.extend()
+                new Lambda("Dynamic Y Command")
+                        .setExecute(() -> {
+                            if (Outtake.isSpecMode()) {
+                                new Parallel(
+                                        Outtake.scoreSpecimen(),
+                                        VSlide.goTo(500)
+                                ).schedule();
+                            } else {
+                                new Parallel(
+                                        Outtake.extendArmSample(),
+                                        VSlide.goTo(600)
+                                ).schedule();
+                            }
+                        })
+                        .setFinish(() -> true)
         );
 
+        // RETRACT button
         Mercurial.gamepad1().x().onTrue(
-                Outtake.retract()
+                new Lambda("Dynamic X Command")
+                        .setExecute(() -> {
+                            if (Outtake.isSpecMode()) {
+                                new Parallel(
+                                        Outtake.grabSpecimen(),
+                                        new Wait(.4),
+                                        VSlide.goTo(0, 0.2)
+                                ).schedule();
+                            } else {
+                                new Parallel(
+                                        Outtake.retractArmSample(),
+                                        new Wait(.4),
+                                        VSlide.goTo(0, 0.2)
+                                ).schedule();
+                            }
+                        })
+                        .setFinish(() -> true)
         );
 
+
+        // TOGGLE button
         Mercurial.gamepad1().share().onTrue(
                 Outtake.toggleMode()
         );
     }
+
+
+
 
 
 
@@ -81,6 +121,8 @@ public class MainTeleOp extends OpMode {
     @Override
     public void loop() {
         telemetry.addData("VSlide Position", VSlide.INSTANCE.encoder.getCurrentPosition());
+        telemetry.addData("spec mode:", Outtake.isSpecMode());
+
         telemetry.addLine(Mercurial.INSTANCE.getActiveCommandSnapshot().toString());
         telemetry.update();
     }

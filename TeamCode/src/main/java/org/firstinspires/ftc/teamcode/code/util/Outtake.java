@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.hermeshelper.util.hardware.ServoV2;
 import dev.frozenmilk.dairy.core.dependency.Dependency;
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotation;
 import dev.frozenmilk.dairy.core.wrapper.Wrapper;
+import dev.frozenmilk.mercurial.commands.Command;
 import dev.frozenmilk.mercurial.commands.Lambda;
 import dev.frozenmilk.mercurial.commands.groups.Sequential;
 import dev.frozenmilk.mercurial.commands.util.StateMachine;
@@ -53,30 +54,37 @@ public class Outtake implements Subsystem {
 
     public static Lambda toggleMode() {
         return new Lambda("toggle mode")
-                .setInit(() -> specMode = !specMode)
+                .setExecute(() -> specMode = !specMode)
+                .setFinish(() -> true);
+    }
+    public static boolean isSpecMode() {
+        return specMode;
+    }
+/*
+    public static Command extendCommand() {
+        return new Lambda("dynamic extend")
+                .addRequirements(INSTANCE)
+                .setExecute(() -> {
+                    if (specMode) {
+                        scoreSpecimen().schedule();
+                    } else {
+                        extendArmSample().schedule();
+                    }
+                })
                 .setFinish(() -> true);
     }
 
-    public static Lambda extend() {
-        return new Lambda("extend")
-                .setInit(() -> {
+    public static Command retractCommand() {
+        return new Lambda("dynamic retract")
+                .addRequirements(INSTANCE)
+                .setExecute(() -> {
                     if (specMode) {
-                        scoreSpecimen();
+                        grabSpecimen().schedule();
                     } else {
-                        extendArmSample();
+                        retractArmSample().schedule();
                     }
-                });
-    }
-
-    public static Lambda retract() {
-        return new Lambda("retract")
-                .setInit(() -> {
-                    if (specMode) {
-                        grabSpecimen();
-                    } else {
-                        retractArmSample();
-                    }
-                });
+                })
+                .setFinish(() -> true);
     }
 
     public static Lambda sampleExtend() {
@@ -105,7 +113,7 @@ public class Outtake implements Subsystem {
                 .addRequirements(INSTANCE)
                 .setInterruptible(false)
                 .setInit(Outtake::grabSpecimen);
-    }
+    } */
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.TYPE)
@@ -132,10 +140,10 @@ public class Outtake implements Subsystem {
         outtakeLinkage.setDirection(ServoV2.Direction.REVERSE);
 
         outtakePivotOne.setPosition(0.5);
+        outtakeClaw.setPosition(ClawPosition.CLOSED.pos);
         outtakePivotTwo.setPosition(0.5);
         outtakeLinkage.setPosition(0.1);
         outtakeWrist.setPosition(WristPosition.MID.pos);
-
     }
 
     private static void setPivot(double pos) {
@@ -167,7 +175,7 @@ public class Outtake implements Subsystem {
     }
 
     public enum ClawPosition {
-        OPEN(0.27), CLOSED(0.5);
+        OPEN(0.22), CLOSED(0.5);
         public final double pos;
         ClawPosition(double pos) { this.pos = pos; }
     }
@@ -192,6 +200,14 @@ public class Outtake implements Subsystem {
 
     public static Sequential retractArmSample() {
         return new Sequential(
+
+                new Lambda("open claw" ).addRequirements(INSTANCE)
+                        .setExecute(() -> setOuttakeClaw(ClawPosition.OPEN.pos)),
+                new Wait(.5),
+
+                new Lambda("wrist for passthrough").addRequirements(INSTANCE)
+                        .setExecute(() -> setOuttakeWrist(WristPosition.SPECIMEN.pos)),
+
                 new Lambda("claw to open").addRequirements(INSTANCE)
                         .setExecute(() -> setOuttakeClaw(ClawPosition.OPEN.pos)),
                 new Lambda("linkage to 0.05").addRequirements(INSTANCE)
@@ -207,15 +223,20 @@ public class Outtake implements Subsystem {
     public static Sequential grabSpecimen() {
         return new Sequential(
                 new Lambda("wrist to SPECIMEN").addRequirements(INSTANCE)
-                        .setExecute(() -> setOuttakeWrist(WristPosition.SPECIMEN.pos)),
-                new Lambda("claw CLOSED").addRequirements(INSTANCE)
-                        .setExecute(() -> setOuttakeClaw(ClawPosition.CLOSED.pos)),
+                        .setExecute(() -> setOuttakeClaw(ClawPosition.OPEN.pos)),
+
+
                 new Lambda("linkage to 0.00").addRequirements(INSTANCE)
                         .setExecute(() -> setLinkage(0.03)),
-                new Wait(0.6),
+                new Wait(0.7),
+
+                new Lambda("wrist to SPECIMEN").addRequirements(INSTANCE)
+                        .setExecute(() -> setOuttakeWrist(WristPosition.SPECIMEN.pos)),
+
+
                 new Lambda("pivot to 0.02").addRequirements(INSTANCE)
                         .setExecute(() -> setPivot(0.03)),
-                new Wait(0.6),
+                new Wait(0.1),
                 new Lambda("claw OPEN").addRequirements(INSTANCE)
                         .setExecute(() -> setClaw(ClawPosition.OPEN.pos)),
                 new Lambda("wrist to .7").addRequirements(INSTANCE)
@@ -232,7 +253,7 @@ public class Outtake implements Subsystem {
                 new Lambda("wrist SPECIMEN").addRequirements(INSTANCE)
                         .setExecute(() -> setOuttakeWrist(WristPosition.SPECIMEN.pos)),
                 new Lambda("linkage to 0.00").addRequirements(INSTANCE)
-                        .setExecute(() -> setLinkage(0.00)),
+                        .setExecute(() -> setLinkage(0.02)),
                 new Wait(0.3),
                 new Lambda("pivot to 0.5").addRequirements(INSTANCE)
                         .setExecute(() -> setPivot(0.5)),

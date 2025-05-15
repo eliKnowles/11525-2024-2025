@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.hermeshelper;
+package org.firstinspires.ftc.teamcode.code;
 
 import androidx.annotation.NonNull;
 
@@ -60,12 +60,11 @@ public class HSlide implements Subsystem {
         hSlideMotorOne = new DcMotorV2("h_slide", hw);
 
         hSlideMotorOne.setDirection(DcMotorV2.Direction.REVERSE);
-        hSlideMotorTwo.setDirection(DcMotorV2.Direction.FORWARD);
 
         hSlideMotorOne.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        hSlideMotorTwo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         hSlideMotorOne.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        hSlideMotorTwo.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        goTo(0);
 
         encoder = hSlideMotorOne;
 
