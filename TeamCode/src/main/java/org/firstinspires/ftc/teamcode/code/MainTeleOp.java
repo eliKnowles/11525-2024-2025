@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.VSlide;
 import org.firstinspires.ftc.teamcode.code.util.Drive;
+import org.firstinspires.ftc.teamcode.code.util.Intake;
 import org.firstinspires.ftc.teamcode.code.util.Outtake;
 
 
@@ -18,6 +19,7 @@ import dev.frozenmilk.mercurial.commands.util.Wait;
 @TeleOp
 @VSlide.Attach
 @Outtake.Attach
+@Intake.Attach
 @HSlide.Attach
 @Mercurial.Attach
 @Drive.Attach
@@ -34,12 +36,12 @@ public class MainTeleOp extends OpMode {
                             if (Outtake.isSpecMode()) {
                                 new Parallel(
                                         Outtake.scoreSpecimen(),
-                                        VSlide.goTo(500)
+                                        VSlide.goTo(490)
                                 ).schedule();
                             } else {
                                 new Parallel(
                                         Outtake.extendArmSample(),
-                                        VSlide.goTo(600)
+                                        VSlide.goTo(630)
                                 ).schedule();
                             }
                         })
@@ -70,6 +72,9 @@ public class MainTeleOp extends OpMode {
         // TOGGLE button
         Mercurial.gamepad1().share().onTrue(
                 Outtake.toggleMode()
+        );
+        Mercurial.gamepad1().circle().onTrue(
+                Intake.intakeGrab()
         );
     }
 

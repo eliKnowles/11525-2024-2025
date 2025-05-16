@@ -33,7 +33,7 @@ public class HSlide implements Subsystem {
 
     public static double kP = 0.04;
     public static double kI = 0.0;
-    public static double kD = 0.005;
+    public static double kD = 0.009;
     public static double kF = 0.0;
     public static int tolerance = 5;
 
@@ -59,7 +59,7 @@ public class HSlide implements Subsystem {
 
         hSlideMotorOne = new DcMotorV2("h_slide", hw);
 
-        hSlideMotorOne.setDirection(DcMotorV2.Direction.REVERSE);
+        hSlideMotorOne.setDirection(DcMotorV2.Direction.FORWARD);
 
         hSlideMotorOne.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         hSlideMotorOne.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
