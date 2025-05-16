@@ -9,7 +9,6 @@ import org.firstinspires.ftc.teamcode.hermeshelper.util.hardware.ServoV2;
 import dev.frozenmilk.dairy.core.dependency.Dependency;
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotation;
 import dev.frozenmilk.dairy.core.wrapper.Wrapper;
-import dev.frozenmilk.mercurial.commands.Command;
 import dev.frozenmilk.mercurial.commands.Lambda;
 import dev.frozenmilk.mercurial.commands.groups.Sequential;
 import dev.frozenmilk.mercurial.commands.util.StateMachine;
@@ -30,7 +29,7 @@ public class Outtake implements Subsystem {
     private static ServoV2 outtakeLinkage;
     private static ServoV2 outtakeClaw;
     private static ServoV2 outtakeWrist;
-    private static Wrapper opModInstance;
+    private static Wrapper opModeInstance;
 
     private static boolean specMode = false;
 
@@ -126,7 +125,7 @@ public class Outtake implements Subsystem {
 
     @Override
     public void preUserInitHook(@NonNull Wrapper opMode) {
-        opModInstance = opMode;
+        opModeInstance = opMode;
         HardwareMap hw = opMode.getOpMode().hardwareMap;
 
         outtakePivotOne = new ServoV2("outtake_pivot_one", hw);

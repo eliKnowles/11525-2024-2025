@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.VSlide;
 import org.firstinspires.ftc.teamcode.code.util.Drive;
-import org.firstinspires.ftc.teamcode.code.util.Intake;
 import org.firstinspires.ftc.teamcode.code.util.Outtake;
 
 
