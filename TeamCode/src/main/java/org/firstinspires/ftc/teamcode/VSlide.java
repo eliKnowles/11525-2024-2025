@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 
-import dev.frozenmilk.mercurial.Mercurial;
+
 
 import androidx.annotation.NonNull;
 
@@ -41,7 +41,6 @@ public class VSlide implements Subsystem {
     private static double maxPower = 1.0;
 
 
-
     // PIDF variables
     public static double kP = 0.08;
     public static double kI = 0.0;
@@ -52,18 +51,28 @@ public class VSlide implements Subsystem {
     private static double lastError = 0;
     private static double integral = 0;
 
-    private VSlide() {}
+    private VSlide() {
+    }
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.TYPE)
     @MustBeDocumented
     @Inherited
-    public @interface Attach {}
+    public @interface Attach {
+    }
 
     private Dependency<?> dependency = Subsystem.DEFAULT_DEPENDENCY.and(new SingleAnnotation<>(Attach.class));
+
     @NonNull
-    @Override public Dependency<?> getDependency() { return dependency; }
-    @Override public void setDependency(@NonNull Dependency<?> dependency) { this.dependency = dependency; }
+    @Override
+    public Dependency<?> getDependency() {
+        return dependency;
+    }
+
+    @Override
+    public void setDependency(@NonNull Dependency<?> dependency) {
+        this.dependency = dependency;
+    }
 
     @Override
     public void postUserInitHook(@NonNull Wrapper opMode) {
@@ -95,9 +104,6 @@ public class VSlide implements Subsystem {
         maxPower = newMaxPower;
     }
 
-    public static void setTarget(int ticks) {
-        setTarget(ticks, 1.0);
-    }
 
 
     public static boolean atTarget() {
@@ -143,6 +149,7 @@ public class VSlide implements Subsystem {
     public static Lambda goTo(int target) {
         return goTo(target, 1.0);
     }
+
     @NonNull
     public static Lambda goTo(int target, double maxPower) {
         return new Lambda("vslide-set-capped")
@@ -152,15 +159,5 @@ public class VSlide implements Subsystem {
     }
 
 
-    @NonNull
-    public static Lambda retract() {
-        return new Lambda("vslide-retract")
-                .addRequirements(INSTANCE)
-                .setInit(() -> {
-                    vSlideMotorOne.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    vSlideMotorTwo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    vSlideMotorOne.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                    vSlideMotorTwo.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                });
-    }
 }
+

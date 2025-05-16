@@ -18,15 +18,15 @@ import dev.frozenmilk.mercurial.commands.util.Wait;
 @TeleOp
 @VSlide.Attach
 @Outtake.Attach
+@HSlide.Attach
 @Mercurial.Attach
 @Drive.Attach
 public class MainTeleOp extends OpMode {
 
     @Override
     public void init() {
-
+        HSlide.INSTANCE.setDefaultCommand(HSlide.update());
         VSlide.INSTANCE.setDefaultCommand(VSlide.update());
-        //HSlide.INSTANCE.setDefaultCommand(HSlide.update());
 
         Mercurial.gamepad1().y().onTrue(
                 new Lambda("Dynamic Y Command")
@@ -59,7 +59,6 @@ public class MainTeleOp extends OpMode {
                             } else {
                                 new Parallel(
                                         Outtake.retractArmSample(),
-                                        new Wait(.4),
                                         VSlide.goTo(0, 0.2)
                                 ).schedule();
                             }

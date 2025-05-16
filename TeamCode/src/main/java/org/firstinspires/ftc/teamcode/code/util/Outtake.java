@@ -203,10 +203,11 @@ public class Outtake implements Subsystem {
 
                 new Lambda("open claw" ).addRequirements(INSTANCE)
                         .setExecute(() -> setOuttakeClaw(ClawPosition.OPEN.pos)),
-                new Wait(.5),
 
                 new Lambda("wrist for passthrough").addRequirements(INSTANCE)
                         .setExecute(() -> setOuttakeWrist(WristPosition.SPECIMEN.pos)),
+                new Wait(.4),
+
 
                 new Lambda("claw to open").addRequirements(INSTANCE)
                         .setExecute(() -> setOuttakeClaw(ClawPosition.OPEN.pos)),
@@ -223,19 +224,21 @@ public class Outtake implements Subsystem {
     public static Sequential grabSpecimen() {
         return new Sequential(
                 new Lambda("wrist to SPECIMEN").addRequirements(INSTANCE)
-                        .setExecute(() -> setOuttakeClaw(ClawPosition.OPEN.pos)),
+                        .setExecute(() -> setOuttakeClaw(.3)),
 
 
                 new Lambda("linkage to 0.00").addRequirements(INSTANCE)
                         .setExecute(() -> setLinkage(0.03)),
-                new Wait(0.7),
-
                 new Lambda("wrist to SPECIMEN").addRequirements(INSTANCE)
                         .setExecute(() -> setOuttakeWrist(WristPosition.SPECIMEN.pos)),
-
+                new Wait(0.9),
 
                 new Lambda("pivot to 0.02").addRequirements(INSTANCE)
                         .setExecute(() -> setPivot(0.03)),
+
+
+
+
                 new Wait(0.1),
                 new Lambda("claw OPEN").addRequirements(INSTANCE)
                         .setExecute(() -> setClaw(ClawPosition.OPEN.pos)),

@@ -66,6 +66,7 @@ public class HSlide implements Subsystem {
 
         goTo(0);
 
+
         encoder = hSlideMotorOne;
 
         setDefaultCommand(update());
