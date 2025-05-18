@@ -41,6 +41,10 @@ public class Outtake implements Subsystem {
             .withState(OuttakeStates.EXTENDED, (ref, name) -> extendArmSample())
             .withState(OuttakeStates.RETRACTED, (ref, name) -> retractArmSample());
 
+    public static StateMachine<OuttakeStates> getClawStates() {
+        return clawStates;
+    }
+
     public enum OuttakeStates {
         RETRACTED,
         EXTENDED,
