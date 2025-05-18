@@ -31,27 +31,37 @@ public class HSlide implements Subsystem {
     public static DcMotorEx encoder;
     private static int targetPosition = 0;
 
-    public static double kP = 0.04;
+    public static double kP = 0.02;
     public static double kI = 0.0;
-    public static double kD = 0.009;
+    public static double kD = 0.02;
     public static double kF = 0.0;
     public static int tolerance = 5;
 
     private static double lastError = 0;
     private static double integral = 0;
 
-    private HSlide() {}
+    private HSlide() {
+    }
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.TYPE)
     @MustBeDocumented
     @Inherited
-    public @interface Attach {}
+    public @interface Attach {
+    }
 
     private Dependency<?> dependency = Subsystem.DEFAULT_DEPENDENCY.and(new SingleAnnotation<>(Attach.class));
+
     @NonNull
-    @Override public Dependency<?> getDependency() { return dependency; }
-    @Override public void setDependency(@NonNull Dependency<?> dependency) { this.dependency = dependency; }
+    @Override
+    public Dependency<?> getDependency() {
+        return dependency;
+    }
+
+    @Override
+    public void setDependency(@NonNull Dependency<?> dependency) {
+        this.dependency = dependency;
+    }
 
     @Override
     public void postUserInitHook(@NonNull Wrapper opMode) {
@@ -119,15 +129,4 @@ public class HSlide implements Subsystem {
                 .setFinish(HSlide::atTarget);
     }
 
-    @NonNull
-    public static Lambda retract() {
-        return new Lambda("hslide-retract")
-                .addRequirements(INSTANCE)
-                .setInit(() -> {
-                    hSlideMotorOne.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    hSlideMotorTwo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    hSlideMotorOne.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                    hSlideMotorTwo.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                });
-    }
 }

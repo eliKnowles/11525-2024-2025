@@ -45,7 +45,8 @@ public class Outtake implements Subsystem {
         EXTENDED,
         SPECIMEN_WALL,
         EXTENDED_SPEC,
-        RETRACTED_SPEC
+        RETRACTED_SPEC,
+        TRANSFER_SAMPLE
     }
 
     public OuttakeStates getState() {
@@ -140,7 +141,7 @@ public class Outtake implements Subsystem {
         outtakeLinkage.setDirection(ServoV2.Direction.REVERSE);
 
         outtakePivotOne.setPosition(0.5);
-        outtakeClaw.setPosition(ClawPosition.CLOSED.pos);
+        outtakeClaw.setPosition(outtakeClawPosition.CLOSED.pos);
         outtakePivotTwo.setPosition(0.5);
         outtakeLinkage.setPosition(0.1);
         outtakeWrist.setPosition(WristPosition.MID.pos);
@@ -163,7 +164,7 @@ public class Outtake implements Subsystem {
         outtakeWrist.setPosition(pos);
     }
 
-    private static void setOuttakeClaw(double pos) {
+    public static void setOuttakeClaw(double pos) {
         outtakeClaw.setPosition(pos);
     }
 
@@ -174,10 +175,10 @@ public class Outtake implements Subsystem {
         WristPosition(double pos) { this.pos = pos; }
     }
 
-    public enum ClawPosition {
+    public enum outtakeClawPosition {
         OPEN(0.22), CLOSED(0.5);
         public final double pos;
-        ClawPosition(double pos) { this.pos = pos; }
+        outtakeClawPosition(double pos) { this.pos = pos; }
     }
 
     public static Sequential extendArmSample() {
@@ -198,24 +199,33 @@ public class Outtake implements Subsystem {
         );
     }
 
+
+    public static Sequential outtakeClawClose() {
+        return new Sequential(
+                new Lambda("close claw").addRequirements(INSTANCE)
+                        .setExecute(() -> setOuttakeClaw((outtakeClawPosition.CLOSED.pos)))
+
+        );
+    }
+
     public static Sequential retractArmSample() {
         return new Sequential(
 
                 new Lambda("open claw" ).addRequirements(INSTANCE)
-                        .setExecute(() -> setOuttakeClaw(ClawPosition.OPEN.pos)),
+                        .setExecute(() -> setOuttakeClaw(outtakeClawPosition.OPEN.pos)),
+                new Lambda("linkage to 0.00").addRequirements(INSTANCE)
+                        .setExecute(() -> setLinkage(0.02)),
 
                 new Lambda("wrist for passthrough").addRequirements(INSTANCE)
                         .setExecute(() -> setOuttakeWrist(WristPosition.SPECIMEN.pos)),
-                new Wait(.4),
-
-
-                new Lambda("claw to open").addRequirements(INSTANCE)
-                        .setExecute(() -> setOuttakeClaw(ClawPosition.OPEN.pos)),
-                new Lambda("linkage to 0.05").addRequirements(INSTANCE)
-                        .setExecute(() -> setLinkage(0.05)),
-                new Wait(0.1),
                 new Lambda("pivot to 0.5").addRequirements(INSTANCE)
-                        .setExecute(() -> setPivot(0.5)),
+                        .setExecute(() -> setPivot(0.59)),
+                new Wait(.4),
+                new Lambda("claw open").addRequirements(INSTANCE)
+                        .setExecute(() -> setOuttakeClaw(outtakeClawPosition.OPEN.pos)),
+                new Lambda("wrist SPECIMEN").addRequirements(INSTANCE)
+                        .setExecute(() -> setOuttakeWrist(0.75)),
+                new Wait(0.3),
                 new Lambda("mark state RETRACTED").addRequirements(INSTANCE)
                         .setExecute(() -> clawStates.setState(OuttakeStates.RETRACTED))
         );
@@ -224,26 +234,22 @@ public class Outtake implements Subsystem {
     public static Sequential grabSpecimen() {
         return new Sequential(
                 new Lambda("wrist to SPECIMEN").addRequirements(INSTANCE)
-                        .setExecute(() -> setOuttakeClaw(ClawPosition.OPEN.pos)),
+                        .setExecute(() -> setOuttakeClaw(outtakeClawPosition.OPEN.pos)),
 
 
                 new Lambda("linkage to 0.00").addRequirements(INSTANCE)
                         .setExecute(() -> setLinkage(0.03)),
                 new Lambda("wrist to SPECIMEN").addRequirements(INSTANCE)
-                        .setExecute(() -> setOuttakeClaw(ClawPosition.CLOSED.pos)),
+                        .setExecute(() -> setOuttakeClaw(outtakeClawPosition.CLOSED.pos)),
                 new Lambda("wrist to SPECIMEN").addRequirements(INSTANCE)
                         .setExecute(() -> setOuttakeWrist(WristPosition.SPECIMEN.pos)),
                 new Wait(0.9),
 
                 new Lambda("pivot to 0.02").addRequirements(INSTANCE)
                         .setExecute(() -> setPivot(0.03)),
-
-
-
-
                 new Wait(0.4),
                 new Lambda("claw OPEN").addRequirements(INSTANCE)
-                        .setExecute(() -> setClaw(ClawPosition.OPEN.pos)),
+                        .setExecute(() -> setClaw(outtakeClawPosition.OPEN.pos)),
                 new Lambda("wrist to .7").addRequirements(INSTANCE)
                         .setExecute(() -> setOuttakeWrist(0.7)),
                 new Lambda("mark state SPECIMEN_WALL").addRequirements(INSTANCE)
@@ -254,7 +260,7 @@ public class Outtake implements Subsystem {
     public static Sequential scoreSpecimen() {
         return new Sequential(
                 new Lambda("claw CLOSED").addRequirements(INSTANCE)
-                        .setExecute(() -> setClaw(ClawPosition.CLOSED.pos)),
+                        .setExecute(() -> setClaw(outtakeClawPosition.CLOSED.pos)),
                 new Lambda("wrist SPECIMEN").addRequirements(INSTANCE)
                         .setExecute(() -> setOuttakeWrist(WristPosition.SPECIMEN.pos)),
                 new Lambda("linkage to 0.00").addRequirements(INSTANCE)
@@ -270,6 +276,24 @@ public class Outtake implements Subsystem {
                       .setExecute(() -> setOuttakeWrist(0.7)),
                 new Lambda("mark state EXTENDED_SPEC").addRequirements(INSTANCE)
                         .setExecute(() -> clawStates.setState(OuttakeStates.EXTENDED_SPEC))
+        );
+    }
+    public static Sequential transferSample() {
+        return new Sequential(
+                new Lambda("claw open").addRequirements(INSTANCE)
+                        .setExecute(() -> setOuttakeClaw(outtakeClawPosition.OPEN.pos)),
+
+                new Lambda("wrist SPECIMEN").addRequirements(INSTANCE)
+                        .setExecute(() -> setOuttakeWrist(0.75)),
+                new Lambda("linkage to 0.00").addRequirements(INSTANCE)
+                        .setExecute(() -> setLinkage(0.02)),
+                new Wait(0.3),
+                new Lambda("pivot to 0.5").addRequirements(INSTANCE)
+                        .setExecute(() -> setPivot(0.59))
+
+
+               // new Lambda("mark state EXTENDED_SPEC").addRequirements(INSTANCE)
+                //.setExecute(() -> clawStates.setState(OuttakeStates.EXTENDED_SPEC))
         );
     }
 
