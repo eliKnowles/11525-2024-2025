@@ -25,7 +25,6 @@ android {
             buildConfig true
         }
 
-
     compileSdkVersion 29
 
     signingConfigs {
