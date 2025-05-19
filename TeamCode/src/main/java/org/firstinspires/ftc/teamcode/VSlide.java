@@ -104,8 +104,6 @@ public class VSlide implements Subsystem {
         maxPower = newMaxPower;
     }
 
-
-
     public static boolean atTarget() {
         return Math.abs(targetPosition - encoder.getCurrentPosition()) < tolerance;
     }
