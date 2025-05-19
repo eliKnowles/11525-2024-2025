@@ -88,6 +88,7 @@ public class HSlide implements Subsystem {
         lastError = 0;
     }
 
+
     public static boolean atTarget() {
         return Math.abs(targetPosition - encoder.getCurrentPosition()) < tolerance;
     }

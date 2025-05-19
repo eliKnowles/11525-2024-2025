@@ -97,6 +97,7 @@ public class VSlide implements Subsystem {
 
     }
 
+
     public static void setTarget(int ticks, double newMaxPower) {
         targetPosition = ticks;
         integral = 0;
