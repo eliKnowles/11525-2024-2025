@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.code;
 
+import static org.firstinspires.ftc.teamcode.code.util.Outtake.clawStates;
+
 import androidx.annotation.NonNull;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -62,11 +64,10 @@ public class Intake implements Subsystem {
     public static Parallel runTransfer() {
         return new Parallel(
                 new Lambda("Set Wrist to 0").addRequirements(INSTANCE).setExecute(() -> intakeWristServo.setPosition(.43f)),
-                new Lambda("Set Pivot to 0.55").addRequirements(INSTANCE).setExecute(() -> intakePivotServoOne.setPosition(0.84f))
-                //new Lambda("Set Wrist2 to 0.5").addRequirements(INSTANCE).setExecute(() -> intakeWristServoTwo.setPosition(0.5f)),
-                //new Lambda("Set Outtake Claw to 0.78").addRequirements(INSTANCE).setExecute(() -> outtakeClawServo.setPosition(Outtake.ClawPosition.CLOSED.pos)), new Wait(0.5),
-                //new Lambda("Set Intake Claw to 0.4").addRequirements(INSTANCE).setExecute(() -> intakeClawServo.setPosition(0.4f)), new Wait(0.1),
-              //  new Lambda("Set Wrist to 0.35").addRequirements(INSTANCE).setExecute(() -> intakeWristServo.setPosition(0.35f)), new Wait(0.1)
+                new Lambda("Set Pivot to 0.55").addRequirements(INSTANCE).setExecute(() -> intakePivotServoOne.setPosition(0.84f)),
+                new Lambda("mark state RETRACTED_SAMPLE").addRequirements(INSTANCE)
+                        .setExecute(() -> clawStates.setState(Outtake.OuttakeStates.TRANSFER_SAMPLE))
+
         );
     }
     public static Sequential intakeClawOpen() {

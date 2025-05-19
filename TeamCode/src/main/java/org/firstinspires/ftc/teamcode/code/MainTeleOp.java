@@ -32,15 +32,15 @@ public class MainTeleOp extends OpMode {
         VSlide.INSTANCE.setDefaultCommand(VSlide.update());
 
         Mercurial.gamepad1().triangle().onTrue(
-                new Lambda("Dynamic Y Command")
+                new Lambda("Score Position")
                         .setExecute(() -> {
-                            if (Outtake.isSpecMode()) {
+                            if (Outtake.isSpecMode() && Outtake.getClawStates().getState() == Outtake.OuttakeStates.SPECIMEN_WALL) {
                                 new Parallel(
 
                                         Outtake.scoreSpecimen(),
                                         VSlide.goTo(490)
                                 ).schedule();
-                            } else {
+                            } else if (!Outtake.isSpecMode() && Outtake.getClawStates().getState() == Outtake.OuttakeStates.TRANSFER_SAMPLE) {
                                 new Parallel(
                                         Outtake.extendArmSample(),
                                         VSlide.goTo(630)
@@ -52,7 +52,7 @@ public class MainTeleOp extends OpMode {
 
         // RETRACT button
         Mercurial.gamepad1().square().onTrue(
-                new Lambda("Dynamic X Command")
+                new Lambda("Grab Position")
                         .setExecute(() -> {
                             if (Outtake.isSpecMode()) {
                                 new Parallel(
@@ -63,7 +63,7 @@ public class MainTeleOp extends OpMode {
                                         new Wait(.4),
                                         VSlide.goTo(0, 0.2)
                                 ).schedule();
-                            } else {
+                            } else  {
                                 new Parallel(
                                         new Wait(.5),
                                         Outtake.retractArmSample(),
@@ -75,10 +75,10 @@ public class MainTeleOp extends OpMode {
         );
 
         Mercurial.gamepad1().b().onTrue(
-                new Lambda("Dynamic B Command")
+                new Lambda("extend intake")
                         .setExecute(() -> {
-                            if (Outtake.getClawStates().getState() == Outtake.OuttakeStates.RETRACTED || Outtake.getClawStates().getState() ==  Outtake.OuttakeStates.RETRACTED_SPEC) {
-                                new Parallel(HSlide.goTo(400),
+                            if (Outtake.getClawStates().getState() == Outtake.OuttakeStates.RETRACTED_SAMPLE || Outtake.getClawStates().getState() ==  Outtake.OuttakeStates.RETRACTED_SAMPLE) {
+                                new Parallel(HSlide.goTo(480),
                                         Intake.runExtend()
                                 ).schedule();
                             }
@@ -87,17 +87,26 @@ public class MainTeleOp extends OpMode {
         );
 
         Mercurial.gamepad1().a().onTrue(
-                new Sequential (
-                        Intake.intakeGrab(),
-                        Outtake.transferSample(),
-                        Intake.runTransfer(),
-                        HSlide.goTo(0),
-                        new Wait(.1),
-                        Outtake.outtakeClawClose(),
-                        new Wait(.05),
-                        Intake.intakeClawOpen()
-                )
+                new Lambda("Transfer")
+                        .setExecute(() -> {
+                            if (Outtake.getClawStates().getState() == Outtake.OuttakeStates.RETRACTED_SAMPLE) {
+                                        new Sequential (
+                                                Intake.intakeGrab(),
+                                                Outtake.transferSample(),
+                                                Intake.runTransfer(),
+                                                HSlide.goTo(0),
+                                                new Wait(.1),
+                                                Outtake.outtakeClawClose(),
+                                                new Wait(.05),
+                                                Intake.intakeClawOpen(),
+                                            Intake.intakeSpecimen()
+                                ).schedule();
+                            }
+                        })
+                        .setFinish(() -> true)
         );
+
+
 
         // TOGGLE button
         Mercurial.gamepad1().share().onTrue(
@@ -106,7 +115,7 @@ public class MainTeleOp extends OpMode {
     }
 
 //                new IfElse(
-//                        () -> Outtake.INSTANCE.getState() == Outtake.OuttakeState.RETRACTED,
+//                        () -> Outtake.INSTANCE.getState() == Outtake.OuttakeState.RETRACTED_SAMPLE,
 //                        Outtake.extendArmSample(),
 //                        new Lambda("noop")
 //                                .addRequirements(Outtake.INSTANCE)
@@ -126,7 +135,7 @@ public class MainTeleOp extends OpMode {
 
 
 //                new IfElse(
-//                        () -> Outtake.INSTANCE.getState() == Outtake.OuttakeState.RETRACTED || Outtake.INSTANCE.getState()== Outtake.OuttakeState.RETRACTED_SPEC,
+//                        () -> Outtake.INSTANCE.getState() == Outtake.OuttakeState.RETRACTED_SAMPLE || Outtake.INSTANCE.getState()== Outtake.OuttakeState.RETRACTED_SPEC,
 //                        Outtake.grabSpecimen(),
 //                        new Lambda("noop")
 //                                .addRequirements(Outtake.INSTANCE)
