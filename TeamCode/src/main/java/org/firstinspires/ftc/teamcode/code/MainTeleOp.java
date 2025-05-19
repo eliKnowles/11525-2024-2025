@@ -85,7 +85,6 @@ public class MainTeleOp extends OpMode {
                         })
                         .setFinish(() -> true)
         );
-
         Mercurial.gamepad1().a().onTrue(
                 new Lambda("Transfer")
                         .setExecute(() -> {
