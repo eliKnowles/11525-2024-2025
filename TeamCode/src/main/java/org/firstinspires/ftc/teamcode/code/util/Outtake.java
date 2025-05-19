@@ -240,7 +240,7 @@ public class Outtake implements Subsystem {
                         .setExecute(() -> setLinkage(0.35)),
 
                  new Lambda("wrist to .7").addRequirements(INSTANCE)
-                      .setExecute(() -> setOuttakeWrist(0.7)),
+                      .setExecute(() -> setOuttakeWrist(0.8)),
                 new Lambda("mark state EXTENDED_SPEC").addRequirements(INSTANCE)
                         .setExecute(() -> clawStates.setState(OuttakeStates.EXTENDED_SPEC))
         );

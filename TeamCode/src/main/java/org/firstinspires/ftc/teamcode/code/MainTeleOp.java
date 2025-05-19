@@ -64,9 +64,9 @@ public class MainTeleOp extends OpMode {
                                         VSlide.goTo(0, 0.2)
                                 ).schedule();
                             } else  {
-                                new Parallel(
-                                        new Wait(.5),
+                                new Sequential(
                                         Outtake.retractArmSample(),
+                                        new Wait(.1),
                                         VSlide.goTo(0, 0.2)
                                 ).schedule();
                             }
@@ -91,22 +91,35 @@ public class MainTeleOp extends OpMode {
                 new Lambda("Transfer")
                         .setExecute(() -> {
                             if (Outtake.getClawStates().getState() == Outtake.OuttakeStates.RETRACTED_SAMPLE) {
-                                        new Sequential (
-                                                Intake.intakeGrab(),
+                                        new Parallel (
                                                 Outtake.transferSample(),
+                                                Intake.intakeGrab(),
                                                 Intake.runTransfer(),
+                                                new Wait(.1),
                                                 HSlide.goTo(0),
                                                 new Wait(.1),
                                                 Outtake.outtakeClawClose(),
                                                 new Wait(.05),
                                                 Intake.intakeClawOpen(),
-                                            Intake.intakeSpecimen()
+                                                new Wait(.1),
+                                                Intake.intakeSpecimen()
                                 ).schedule();
                             }
                         })
                         .setFinish(() -> true)
         );
+        // LEFT BUMPER: move wrist left
+        Mercurial.gamepad1().leftBumper().onTrue(
+                new Lambda("Wrist Left")
+                        .setExecute(() -> Intake.adjustWrist(-1))
+                        .setFinish(() -> true)
+        );
 
+        Mercurial.gamepad1().rightBumper().onTrue(
+                new Lambda("Wrist Right")
+                        .setExecute(() -> Intake.adjustWrist(1))
+                        .setFinish(() -> true)
+        );
 
 
         // TOGGLE button
@@ -115,45 +128,6 @@ public class MainTeleOp extends OpMode {
         );
     }
 
-//                new IfElse(
-//                        () -> Outtake.INSTANCE.getState() == Outtake.OuttakeState.RETRACTED_SAMPLE,
-//                        Outtake.extendArmSample(),
-//                        new Lambda("noop")
-//                                .addRequirements(Outtake.INSTANCE)
-//                                .setExecute(() -> {})
-//                )
-
-
-
-//                new IfElse(
-//                        () -> Outtake.INSTANCE.getState() == Outtake.OuttakeState.EXTENDED || Outtake.INSTANCE.getState()== Outtake.OuttakeState.RETRACTED_SPEC,
-//                        Outtake.retractArmSample(),
-//                        new Lambda("noop")
-//                                .addRequirements(Outtake.INSTANCE)
-//                                .setExecute(() -> {})
-//                )
-
-
-
-//                new IfElse(
-//                        () -> Outtake.INSTANCE.getState() == Outtake.OuttakeState.RETRACTED_SAMPLE || Outtake.INSTANCE.getState()== Outtake.OuttakeState.RETRACTED_SPEC,
-//                        Outtake.grabSpecimen(),
-//                        new Lambda("noop")
-//                                .addRequirements(Outtake.INSTANCE)
-//                                .setExecute(() -> {})
-//                )
-
-
-
-//                new IfElse(
-//                        () -> Outtake.INSTANCE.getState() == Outtake.OuttakeState.SPECIMEN_WALL,
-//                        Outtake.scoreSpecimen(),
-//                        new Lambda("noop")
-//                                .addRequirements(Outtake.INSTANCE)
-//                                .setExecute(() -> {})
-//                )
-
-
     @Override
     public void loop() {
         telemetry.addData("VSlide Position", VSlide.INSTANCE.encoder.getCurrentPosition());
@@ -161,5 +135,8 @@ public class MainTeleOp extends OpMode {
 
         telemetry.addLine(Mercurial.INSTANCE.getActiveCommandSnapshot().toString());
         telemetry.update();
+        if (!gamepad1.left_bumper && !gamepad1.right_bumper) {
+            Intake.resetWrist();
+        }
     }
 }
