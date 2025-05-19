@@ -9,8 +9,6 @@ import org.firstinspires.ftc.teamcode.VSlide;
 import org.firstinspires.ftc.teamcode.code.util.Drive;
 import org.firstinspires.ftc.teamcode.code.util.Outtake;
 
-
-
 import dev.frozenmilk.mercurial.Mercurial;
 import dev.frozenmilk.mercurial.commands.Lambda;
 import dev.frozenmilk.mercurial.commands.groups.Parallel;
