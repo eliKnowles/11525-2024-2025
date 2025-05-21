@@ -104,11 +104,12 @@ public class HSlide implements Subsystem {
         double derivative = error - lastError;
         lastError = error;
 
-        double output = kP * error + kI * integral + kD * derivative + kF * targetPosition;
+        double sqrtError = Math.signum(error) * Math.sqrt(Math.abs(error));
+
+        double output = kP * sqrtError + kI * integral + kD * derivative + kF * targetPosition;
         output = Math.max(-1, Math.min(1, output));
 
         if (Math.abs(output) < 0.05) output = 0;
-
 
         hSlideMotorOne.setPower(output);
     }
