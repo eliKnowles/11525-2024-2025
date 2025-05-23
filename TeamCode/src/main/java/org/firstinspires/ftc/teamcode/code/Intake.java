@@ -49,7 +49,7 @@ public class Intake implements Subsystem {
     static int wristPos = 0; // -1 = left, 0 = center, 1 = right
 
     public enum ClawPosition {
-        OPEN(0), CLOSED(0.7);
+        OPEN(.6), CLOSED(1);
         public final double pos;
         ClawPosition(double pos) { this.pos = pos; }
     }
@@ -62,13 +62,16 @@ public class Intake implements Subsystem {
         intakeClawServo = new ServoV2("intake_claw", hw);
         intakeWristServo = new ServoV2("intake_wrist", hw);
         intakeWristServoTwo = new ServoV2("intake_wrist_two", hw);
-        intakeClawServo.setPosition(.2);
+        intakeClawServo.setPosition(.4);
 
     }
 
     public static Parallel runTransfer() {
         return new Parallel(
                 new Lambda("Set Wrist to 0").addRequirements(INSTANCE).setExecute(() -> intakeWristServo.setPosition(.43f)),
+                new Lambda("Set Wrist2 to .5").addRequirements(INSTANCE).setExecute(() -> intakeWristServoTwo.setPosition(.5f)),
+
+
                 new Lambda("Set Pivot to 0.55").addRequirements(INSTANCE).setExecute(() -> intakePivotServoOne.setPosition(0.84f)),
                 new Lambda("mark state RETRACTED_SAMPLE").addRequirements(INSTANCE)
                         .setExecute(() -> clawStates.setState(Outtake.OuttakeStates.TRANSFER_SAMPLE))
@@ -118,14 +121,14 @@ public class Intake implements Subsystem {
                 new Lambda("Set Wrist2 to 0.5").addRequirements(INSTANCE).setExecute(() -> intakeWristServoTwo.setPosition(0.5f)),
                 new Lambda("Set Pivot to 0.07").addRequirements(INSTANCE).setExecute(() -> intakePivotServoOne.setPosition(0.07f)),
                 new Lambda("Set Wrist to 0.3").addRequirements(INSTANCE).setExecute(() -> intakeWristServo.setPosition(0.45f)),
-                new Lambda("Set Intake Claw to 0.4").addRequirements(INSTANCE).setExecute(() -> intakeClawServo.setPosition(0.3f))
+                new Lambda("Set Intake Claw to 0.4").addRequirements(INSTANCE).setExecute(() -> intakeClawServo.setPosition(0.4f))
         );
     }
 
 
     public static Sequential intakeGrab() {
         return new Sequential(
-                new Lambda("Set Pivot to 0.02").addRequirements(INSTANCE).setExecute(() -> intakePivotServoOne.setPosition(0.02f)),
+                new Lambda("Set Pivot to 0.02").addRequirements(INSTANCE).setExecute(() -> intakePivotServoOne.setPosition(0.00f)),
                 new Lambda("Set Intake Claw to 0.92").addRequirements(INSTANCE).setExecute(() -> intakeClawServo.setPosition(ClawPosition.CLOSED.pos))
                // new Lambda("Set Pivot to 0.3").addRequirements(INSTANCE).setExecute(() -> intakePivotServoOne.setPosition(0.3f))
         );

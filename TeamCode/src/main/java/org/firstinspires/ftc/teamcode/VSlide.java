@@ -1,10 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
+
+
+
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.hermeshelper.util.hardware.DcMotorV2;
@@ -39,11 +43,11 @@ public class VSlide implements Subsystem {
 
 
     // PIDF variables
-    public static double kP = 0.06;
+    public static double kP = 0.0005;
     public static double kI = 0.0;
-    public static double kD = 0.015;
+    public static double kD = 0.00015;
     public static double kF = 0.0;
-    public static int tolerance = 20;
+    public static int tolerance = 450;
 
     private static double lastError = 0;
     private static double integral = 0;
@@ -89,11 +93,9 @@ public class VSlide implements Subsystem {
         vSlideMotorTwo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         vSlideMotorOne.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         vSlideMotorTwo.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
         encoder = vSlideMotorOne; // Use whichever motor has the accurate encoder
 
     }
-
 
     public static void setTarget(int ticks, double newMaxPower) {
         targetPosition = ticks;
@@ -110,6 +112,10 @@ public class VSlide implements Subsystem {
         encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         encoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
+    public static double getPosition() {
+        return -encoder.getCurrentPosition();
+    }
+
 
     public static void pidfUpdate() {
         if (!pidEnabled) {
@@ -118,7 +124,7 @@ public class VSlide implements Subsystem {
             return;
         }
 
-        double current = encoder.getCurrentPosition();
+        double current = -encoder.getCurrentPosition();
         double error = targetPosition - current;
         integral += error;
         double derivative = error - lastError;

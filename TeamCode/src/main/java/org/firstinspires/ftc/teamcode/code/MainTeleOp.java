@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.code;
 
 
 
+
+import com.acmerobotics.roadrunner.ParallelAction;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -33,15 +35,15 @@ public class MainTeleOp extends OpMode {
                 new Lambda("Score Position")
                         .setExecute(() -> {
                             if (Outtake.isSpecMode() && Outtake.getClawStates().getState() == Outtake.OuttakeStates.SPECIMEN_WALL) {
-                                new Parallel(
-
-                                        Outtake.scoreSpecimen(),
-                                        VSlide.goTo(490)
+                                new Sequential(Outtake.outtakeClawClose(),
+                                        new Wait(.2),
+                                        new Parallel(Outtake.scoreSpecimen(),
+                                                VSlide.goTo(20000))
                                 ).schedule();
                             } else if (!Outtake.isSpecMode() && Outtake.getClawStates().getState() == Outtake.OuttakeStates.TRANSFER_SAMPLE) {
                                 new Parallel(
                                         Outtake.extendArmSample(),
-                                        VSlide.goTo(630)
+                                        VSlide.goTo(26000)
                                 ).schedule();
                             }
                         })
@@ -51,21 +53,23 @@ public class MainTeleOp extends OpMode {
         // RETRACT button
         Mercurial.gamepad1().square().onTrue(
                 new Lambda("Grab Position")
+                        .setInterruptible(true)
                         .setExecute(() -> {
-                            if (Outtake.isSpecMode()) {
-                                new Parallel(
-                                        Intake.intakeSpecimen(),
-                                        HSlide.goTo(0),
-                                        new Wait(.2),
-                                        Outtake.grabSpecimen(),
-                                        new Wait(.4),
-                                        VSlide.goTo(0, 0.2)
-                                ).schedule();
-                            } else  {
+                            if (Outtake.isSpecMode() && Outtake.getClawStates().getState() == Outtake.OuttakeStates.RETRACTED_SPEC ||Outtake.getClawStates().getState() == Outtake.OuttakeStates.RETRACTED_SAMPLE || Outtake.getClawStates().getState() == Outtake.OuttakeStates.EXTENDED_SPEC ) {
                                 new Sequential(
-                                        Outtake.retractArmSample(),
-                                        new Wait(.1),
-                                        VSlide.goTo(0, 0.2)
+                                        Outtake.outtakeClawOpen(),
+                                        new Wait(.3),
+                                        new Parallel(
+                                                Outtake.grabSpecimen(),
+                                                VSlide.goTo(0, 0.4)
+                                        )
+                                ).schedule();
+                            } else if (Outtake.getClawStates().getState() == Outtake.OuttakeStates.EXTENDED_SAMPLE) {
+                                new Sequential(
+                                        Outtake.retractFromBasket(),
+                                        new Wait(.5),
+                                        VSlide.goTo(0, 0.4),
+                                        Outtake.retractArmSample()
                                 ).schedule();
                             }
                         })
@@ -76,7 +80,7 @@ public class MainTeleOp extends OpMode {
                 new Lambda("extend intake")
                         .setExecute(() -> {
                             if (Outtake.getClawStates().getState() == Outtake.OuttakeStates.RETRACTED_SAMPLE || Outtake.getClawStates().getState() ==  Outtake.OuttakeStates.RETRACTED_SAMPLE) {
-                                new Parallel(HSlide.goTo(480),
+                                new Parallel(HSlide.goTo(13500),
                                         Intake.runExtend()
                                 ).schedule();
                             }
@@ -89,17 +93,12 @@ public class MainTeleOp extends OpMode {
                 new Lambda("Transfer")
                         .setExecute(() -> {
                             if (Outtake.getClawStates().getState() == Outtake.OuttakeStates.RETRACTED_SAMPLE) {
-                                        new Parallel (
-                                                Outtake.transferSample(),
+                                        new Sequential (
                                                 Intake.intakeGrab(),
                                                 Intake.runTransfer(),
-                                                new Wait(.1),
                                                 HSlide.goTo(0),
-                                                new Wait(.1),
                                                 Outtake.outtakeClawClose(),
-                                                new Wait(.05),
                                                 Intake.intakeClawOpen(),
-                                                new Wait(.1),
                                                 Intake.intakeSpecimen()
                                 ).schedule();
                             }
@@ -128,7 +127,9 @@ public class MainTeleOp extends OpMode {
 
     @Override
     public void loop() {
-        telemetry.addData("VSlide Position", VSlide.INSTANCE.encoder.getCurrentPosition());
+        telemetry.addData("VSlide Position", VSlide.getPosition());
+        telemetry.addData("Extendo Position", HSlide.getPosition());
+
         telemetry.addData("spec mode:", Outtake.isSpecMode());
 
         telemetry.addLine(Mercurial.INSTANCE.getActiveCommandSnapshot().toString());
