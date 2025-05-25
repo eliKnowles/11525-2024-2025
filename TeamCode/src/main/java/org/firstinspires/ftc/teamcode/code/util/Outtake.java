@@ -174,7 +174,7 @@ public class Outtake implements Subsystem {
         return new Sequential(
                 new Lambda("close claw").addRequirements(INSTANCE)
                         .setExecute(() -> setOuttakeClaw((outtakeClawPosition.OPEN.pos)))
-
+                        .setFinish(()-> true)
         );
     }
 
@@ -183,9 +183,6 @@ public class Outtake implements Subsystem {
         return new Sequential(
                 new Lambda("LED change").addRequirements(INSTANCE)
                         .setExecute(() -> setLED(0.5)), //green
-                new Lambda("open claw" ).addRequirements(INSTANCE)
-                        .setExecute(() -> setOuttakeClaw(outtakeClawPosition.OPEN.pos)),
-
                 new Lambda("wrist for passthrough").addRequirements(INSTANCE)
                         .setExecute(() -> setOuttakeWrist(WristPosition.SPECIMEN.pos)),
                 new Lambda("linkage to 0.00").addRequirements(INSTANCE)

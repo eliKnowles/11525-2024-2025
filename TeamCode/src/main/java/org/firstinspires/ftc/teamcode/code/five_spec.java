@@ -46,7 +46,6 @@ public class five_spec extends OpMode {
 
     private Follower follower;
 
-
     private ElapsedTime pathTimer, actionTimer, opmodeTimer;
 
     private int pathState;
@@ -76,15 +75,10 @@ public class five_spec extends OpMode {
                         )
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
-                .addParametricCallback(0.01, () -> {
-                    Outtake.setOuttakeClaw(Outtake.outtakeClawPosition.OPEN.pos);
-                })
 
-                .addParametricCallback(0.2, () -> {
-                    new Sequential(
-                            VSlide.goTo(0),
-                            Outtake.grabSpecimen()
-                    ).schedule();
+
+                .addParametricCallback(0.01, () -> {
+                    new Sequential( Outtake.outtakeClawOpen(), Outtake.grabSpecimen(), VSlide.goTo(0, 1)).schedule();
                 })
 
                 .build();
