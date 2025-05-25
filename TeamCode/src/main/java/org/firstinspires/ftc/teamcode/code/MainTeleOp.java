@@ -61,14 +61,14 @@ public class MainTeleOp extends OpMode {
                                         new Wait(.3),
                                         new Parallel(
                                                 Outtake.grabSpecimen(),
-                                                VSlide.goTo(0, 0.4)
+                                                VSlide.goTo(0, 0.6)
                                         )
                                 ).schedule();
                             } else if (Outtake.getClawStates().getState() == Outtake.OuttakeStates.EXTENDED_SAMPLE) {
                                 new Sequential(
                                         Outtake.retractFromBasket(),
                                         new Wait(.5),
-                                        VSlide.goTo(0, 0.4),
+                                        VSlide.goTo(0, 0.6),
                                         Outtake.retractArmSample()
                                 ).schedule();
                             }
@@ -127,6 +127,8 @@ public class MainTeleOp extends OpMode {
 
     @Override
     public void loop() {
+
+
         telemetry.addData("VSlide Position", VSlide.getPosition());
         telemetry.addData("Extendo Position", HSlide.getPosition());
 

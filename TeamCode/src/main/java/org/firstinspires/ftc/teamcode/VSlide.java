@@ -130,9 +130,10 @@ public class VSlide implements Subsystem {
         double derivative = error - lastError;
         lastError = error;
 
-        double sqrtError = Math.signum(error) * Math.sqrt(Math.abs(error));
+       // double sqrtError = Math.signum(error) * Math.sqrt(Math.abs(error));
 
-        double output = kP * sqrtError + kI * integral + kD * derivative + kF * targetPosition;
+        double output = kP * error + kI * integral + kD * derivative + kF * targetPosition;
+
         output = Math.max(-maxPower, Math.min(maxPower, output));
         if (Math.abs(output) < 0.05) output = 0;
 
