@@ -1,10 +1,12 @@
-package org.firstinspires.ftc.teamcode.code.util;
+package org.firstinspires.ftc.teamcode.code.subsystem;
 
 import androidx.annotation.NonNull;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.localization.Pose;
+import com.pedropathing.pathgen.Path;
+import com.pedropathing.pathgen.PathChain;
 import com.pedropathing.util.Constants;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -95,5 +97,26 @@ public class Drive implements Subsystem {
                         -gamepad.rightStickX().state()
                 ))
                 .setFinish(() -> false);
+    }
+
+    public static Lambda followPath(Path path, boolean hold) {
+        return new Lambda("follow-path")
+                .addRequirements(INSTANCE)
+                .setInterruptible(true)
+                .setInit(() -> follower.followPath(path, hold))
+                .setExecute(() -> {
+                    follower.update();
+                })
+                .setFinish(() -> !follower.isBusy());
+    }
+
+    public static Lambda followPathChain(PathChain chain) {
+        return new Lambda("follow-path-chain")
+                .addRequirements(INSTANCE)
+                .setInit(() -> follower.followPath(chain, true))
+                .setExecute(() -> {
+                    follower.update();
+                })
+                .setFinish(() -> !follower.isBusy() || follower.isRobotStuck());
     }
 }

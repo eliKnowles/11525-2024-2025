@@ -1,16 +1,10 @@
 package org.firstinspires.ftc.teamcode.code.paths;
 
-import com.pedropathing.follower.Follower;
 import com.pedropathing.pathgen.BezierCurve;
 import com.pedropathing.pathgen.BezierLine;
-import com.pedropathing.pathgen.Path;
 import com.pedropathing.pathgen.PathBuilder;
 import com.pedropathing.pathgen.PathChain;
 import com.pedropathing.pathgen.Point;
-
-import org.firstinspires.ftc.teamcode.VSlide;
-
-import dev.frozenmilk.mercurial.commands.groups.Sequential;
 
 public class GeneratedPath {
     public static PathBuilder builder = new PathBuilder();

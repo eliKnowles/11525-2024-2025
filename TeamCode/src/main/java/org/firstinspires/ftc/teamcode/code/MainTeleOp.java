@@ -3,13 +3,14 @@ package org.firstinspires.ftc.teamcode.code;
 
 
 
-import com.acmerobotics.roadrunner.ParallelAction;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.VSlide;
-import org.firstinspires.ftc.teamcode.code.util.Drive;
-import org.firstinspires.ftc.teamcode.code.util.Outtake;
+import org.firstinspires.ftc.teamcode.code.subsystem.HSlide;
+import org.firstinspires.ftc.teamcode.code.subsystem.Intake;
+import org.firstinspires.ftc.teamcode.code.subsystem.VSlide;
+import org.firstinspires.ftc.teamcode.code.subsystem.Drive;
+import org.firstinspires.ftc.teamcode.code.subsystem.Outtake;
 
 import dev.frozenmilk.mercurial.Mercurial;
 import dev.frozenmilk.mercurial.commands.Lambda;

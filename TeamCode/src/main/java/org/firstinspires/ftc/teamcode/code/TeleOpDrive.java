@@ -1,10 +1,8 @@
 package org.firstinspires.ftc.teamcode.code;
 
-import com.pedropathing.follower.Follower;
-import com.pedropathing.localization.Localizer;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.teamcode.code.util.Drive;
+import org.firstinspires.ftc.teamcode.code.subsystem.Drive;
 
 import dev.frozenmilk.mercurial.Mercurial;
 import dev.frozenmilk.mercurial.bindings.BoundGamepad;

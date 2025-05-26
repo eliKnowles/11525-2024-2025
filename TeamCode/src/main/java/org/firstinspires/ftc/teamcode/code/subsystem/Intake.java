@@ -1,24 +1,20 @@
-package org.firstinspires.ftc.teamcode.code;
+package org.firstinspires.ftc.teamcode.code.subsystem;
 
-import static org.firstinspires.ftc.teamcode.code.util.Outtake.clawStates;
+import static org.firstinspires.ftc.teamcode.code.subsystem.Outtake.clawStates;
 
 import androidx.annotation.NonNull;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.teamcode.code.util.Outtake;
 import org.firstinspires.ftc.teamcode.hermeshelper.util.hardware.ServoV2;
 
 import dev.frozenmilk.dairy.core.dependency.Dependency;
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotation;
 import dev.frozenmilk.dairy.core.wrapper.Wrapper;
-import dev.frozenmilk.mercurial.Mercurial;
-import dev.frozenmilk.mercurial.commands.Command;
 import dev.frozenmilk.mercurial.commands.Lambda;
 import dev.frozenmilk.mercurial.commands.groups.Parallel;
 import dev.frozenmilk.mercurial.commands.groups.Sequential;
-import dev.frozenmilk.mercurial.commands.util.Wait;
 import dev.frozenmilk.mercurial.subsystems.Subsystem;
 
 import java.lang.annotation.ElementType;
