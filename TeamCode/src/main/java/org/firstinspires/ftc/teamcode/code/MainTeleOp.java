@@ -128,6 +128,7 @@ public class MainTeleOp extends OpMode {
 
     @Override
     public void loop() {
+        Drive.follower.update();
 
 
         telemetry.addData("VSlide Position", VSlide.getPosition());

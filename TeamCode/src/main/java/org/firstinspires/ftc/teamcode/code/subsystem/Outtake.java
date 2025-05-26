@@ -144,21 +144,29 @@ public class Outtake implements Subsystem {
     public static Sequential extendArmSample() {
         return new Sequential(
                 new Lambda("LED change").addRequirements(INSTANCE)
-                        .setExecute(() -> setLED(0.279)), // red
+                        .setExecute(() -> setLED(0.279))
+                        .setFinish(() -> true), // red
                 new Lambda("pivot to 0.67").addRequirements(INSTANCE)
-                        .setExecute(() -> setPivot(0.67)),
+                        .setExecute(() -> setPivot(0.67))
+                        .setFinish(() -> true),
                 new Lambda("wrist to sample").addRequirements(INSTANCE)
-                        .setExecute(() -> setOuttakeWrist(WristPosition.SAMPLE.pos)),
+                        .setExecute(() -> setOuttakeWrist(WristPosition.SAMPLE.pos))
+                        .setFinish(() -> true),
                 new Lambda("linkage to 0.15").addRequirements(INSTANCE)
-                        .setExecute(() -> setLinkage(0.15)),
+                        .setExecute(() -> setLinkage(0.15))
+                        .setFinish(() -> true),
                 new Wait(0.1),
                 new Lambda("linkage to 0.36").addRequirements(INSTANCE)
-                        .setExecute(() -> setLinkage(0.36)),
+                        .setExecute(() -> setLinkage(0.36))
+                        .setFinish(() -> true),
                 new Lambda("pivot to 0.8").addRequirements(INSTANCE)
-                        .setExecute(() -> setPivot(0.8)),
-                new Lambda("mark state EXTENDED").addRequirements(INSTANCE)
-                        .setExecute(() -> clawStates.setState(OuttakeStates.EXTENDED_SAMPLE))
-        );
+                        .setExecute(() -> setPivot(0.8))
+                        .setFinish(() -> true),
+
+        new Lambda("mark state EXTENDED").addRequirements(INSTANCE)
+                        .setExecute(() -> clawStates.setState(OuttakeStates.EXTENDED_SAMPLE)).setFinish(() -> true)
+
+                );
     }
 
 
@@ -167,6 +175,7 @@ public class Outtake implements Subsystem {
 
                 new Lambda("close claw").addRequirements(INSTANCE)
                         .setExecute(() -> setOuttakeClaw((outtakeClawPosition.CLOSED.pos)))
+                        .setFinish(() -> true)
 
         );
     }
@@ -217,38 +226,52 @@ public class Outtake implements Subsystem {
     public static Sequential grabSpecimen() {
         return new Sequential(
                 new Lambda("LED change").addRequirements(INSTANCE)
-                        .setExecute(() -> setLED(0.611)), //blue
+                        .setExecute(() -> setLED(0.611)) //blue
+                        .setFinish(() -> true),
                 new Lambda("wrist to SPECIMEN").addRequirements(INSTANCE)
-                        .setExecute(() -> setOuttakeClaw(outtakeClawPosition.OPEN.pos)),
+                        .setExecute(() -> setOuttakeClaw(outtakeClawPosition.OPEN.pos))
+                        .setFinish(() -> true),
                 new Lambda("linkage to 0.00").addRequirements(INSTANCE)
-                        .setExecute(() -> setLinkage(0.03)),
+                        .setExecute(() -> setLinkage(0.03))
+                        .setFinish(() -> true),
                 new Lambda("wrist to SPECIMEN").addRequirements(INSTANCE)
-                        .setExecute(() -> setOuttakeWrist(WristPosition.SPECIMEN.pos)),
+                        .setExecute(() -> setOuttakeWrist(WristPosition.SPECIMEN.pos))
+                        .setFinish(() -> true),
                 new Wait(.5),
                 new Lambda("pivot to 0.02").addRequirements(INSTANCE)
-                        .setExecute(() -> setPivot(0.03)),
+                        .setExecute(() -> setPivot(0.03))
+                        .setFinish(() -> true),
                 new Lambda("claw OPEN").addRequirements(INSTANCE)
-                        .setExecute(() -> setClaw(outtakeClawPosition.OPEN.pos)),
+                        .setExecute(() -> setClaw(outtakeClawPosition.OPEN.pos))
+                        .setFinish(() -> true),
                 new Wait(.5),
                 new Lambda("wrist to .7").addRequirements(INSTANCE)
-                        .setExecute(() -> setOuttakeWrist(0.73)),
+                        .setExecute(() -> setOuttakeWrist(0.73))
+                        .setFinish(() -> true),
                 new Lambda("mark state SPECIMEN_WALL").addRequirements(INSTANCE)
                         .setExecute(() -> clawStates.setState(OuttakeStates.SPECIMEN_WALL))
+                        .setFinish(() -> true)
         );
     }
 
     public static Parallel scoreSpecimenAuto() {
         return new Parallel(
                 new Lambda("LED change").addRequirements(INSTANCE)
-                        .setExecute(() -> setLED(0.722)), // violet
+                        .setExecute(() -> setLED(0.722))
+                        .setFinish(() -> true),// violet
                 new Lambda("pivot to 0.5").addRequirements(INSTANCE)
-                        .setExecute(() -> setPivot(0.5)),
+                        .setExecute(() -> setPivot(0.5))
+                        .setFinish(() -> true),
                 new Lambda("linkage to 0.32").addRequirements(INSTANCE)
-                        .setExecute(() -> setLinkage(0.35)),
+                        .setExecute(() -> setLinkage(0.35))
+                        .setFinish(() -> true),
                 new Lambda("wrist to .7").addRequirements(INSTANCE)
-                        .setExecute(() -> setOuttakeWrist(0.85)),
+                        .setExecute(() -> setOuttakeWrist(0.85))
+                        .setFinish(() -> true),
                 new Lambda("mark state EXTENDED_SPEC").addRequirements(INSTANCE)
                         .setExecute(() -> clawStates.setState(OuttakeStates.EXTENDED_SPEC))
+                        .setFinish(() -> true),
+                new Wait(0.05)
         );
     }
 

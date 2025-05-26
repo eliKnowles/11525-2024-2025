@@ -67,6 +67,11 @@ public class Drive implements Subsystem {
         this.dependency = dependency;
     }
 
+    public static void setPose(Pose pose) {
+        follower.setStartingPose(pose);
+    }
+
+
     @Override
     public void preUserInitHook(@NonNull Wrapper opMode) {
         this.telemetry = opMode.getOpMode().telemetry;

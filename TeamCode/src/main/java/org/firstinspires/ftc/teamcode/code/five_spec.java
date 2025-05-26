@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.code;
 
+import static org.firstinspires.ftc.teamcode.code.subsystem.Drive.follower;
+import static org.firstinspires.ftc.teamcode.code.subsystem.VSlide.INSTANCE;
+
 import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.BezierCurve;
 import com.pedropathing.pathgen.BezierLine;
@@ -11,6 +14,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.code.paths.Paths;
+import org.firstinspires.ftc.teamcode.code.subsystem.HSlide;
 import org.firstinspires.ftc.teamcode.code.subsystem.Intake;
 import org.firstinspires.ftc.teamcode.code.subsystem.VSlide;
 import org.firstinspires.ftc.teamcode.code.subsystem.Drive;
@@ -21,6 +25,7 @@ import org.firstinspires.ftc.teamcode.hermeshelper.pp.constants.LConstants;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 import dev.frozenmilk.mercurial.Mercurial;
+import dev.frozenmilk.mercurial.commands.Lambda;
 import dev.frozenmilk.mercurial.commands.groups.Parallel;
 import dev.frozenmilk.mercurial.commands.groups.Sequential;
 import dev.frozenmilk.mercurial.commands.util.Wait;
@@ -34,6 +39,7 @@ import dev.frozenmilk.mercurial.commands.util.Wait;
 @Autonomous(name = "Five Spec", group = "Spec")
 public class five_spec extends OpMode {
     private DashboardPoseTracker dashboardPoseTracker;
+
 
 
     private final Pose startPose = new Pose(7.600, 66.000, Math.toRadians(0));  // Starting position
@@ -257,8 +263,9 @@ public class five_spec extends OpMode {
 
     @Override
     public void init() {
-        VSlide.INSTANCE.setDefaultCommand(VSlide.update());
-
+        INSTANCE.setDefaultCommand(VSlide.update());
+        Paths.init();
+        Drive.setPose(startPose);
         pathTimer = new ElapsedTime();
         opmodeTimer = new ElapsedTime();
         actionTimer = new ElapsedTime();
@@ -268,96 +275,126 @@ public class five_spec extends OpMode {
 
     @Override
     public void start() {
-        opmodeTimer.reset();
-        actionTimer.reset();
-//            Outtake.scoreSpecimenAuto().schedule();
-//            // already a Parallel
-//            setPathState(0, false);
         new Sequential(
                 new Parallel(
-                        Drive.followPathChain(Paths.fiveSpecs.get(0)),
+                    Outtake.scoreSpecimenAuto(),
+                    Drive.followPathChain(Paths.fiveSpecs.get(0)),
+                    new Parallel(
+                         VSlide.goTo(18700, 1.0),
+                         new Wait(1.0)
+                          )),
+
+
+                new Wait (.5),
+                Outtake.outtakeClawOpen(),
+                new Parallel(
+                        Outtake.grabSpecimen(),
+                    VSlide.goTo(0, .6),
+                    Outtake.outtakeClawOpen(),
+                    Drive.followPathChain(Paths.fiveSpecs.get(1))
+                       // new Parallel(
+                         //       VSlide.goTo(0, 1.0),
+                     //           new Wait(0.1)
+                     //   )
+         )
+
+
+
+        //    Drive.followPathChain(Paths.fiveSpecs.get(0)),
+            //    new Wait(.5),
+          //      Drive.followPathChain(Paths.fiveSpecs.get(1))
+
+
+
+           /*     new Parallel(
                         new Sequential(
-                            new Wait(0.01),
-                            VSlide.goTo(18700)
-                        )
+                                VSlide.goTo(18700, 1.0),
+                                new Wait(0.1)
+                        ),
+                        Drive.followPathChain(Paths.fiveSpecs.get(0)),
+                        Outtake.scoreSpecimenAuto(),
+                         new Wait(0.3)
                 ),
 
                 new Parallel(
                         Drive.followPathChain(Paths.fiveSpecs.get(1)),
                         new Sequential(
-                                new Wait(0.01),
                                 Outtake.outtakeClawOpen(),
-                                Outtake.grabSpecimen(),
-                                VSlide.goTo(0, 1)
-                        )
-                ),
-
-                Drive.followPathChain(Paths.fiveSpecs.get(2)),
-
-                Drive.followPathChain(Paths.fiveSpecs.get(3)),
-
-                new Parallel(
-                        Drive.followPathChain(Paths.fiveSpecs.get(4)),
-                        new Sequential(
-                                new Wait(1.2),
-                                Outtake.outtakeClawClose()
-                        )
-                ),
-
-                new Parallel(
-                        Drive.followPathChain(Paths.fiveSpecs.get(5)),
-                        new Parallel(
-                                VSlide.goTo(18700),
-                                Outtake.scoreSpecimen()
-                        )
-                ),
-
-                new Parallel(
-                        Drive.followPathChain(Paths.fiveSpecs.get(6)),
-                        new Sequential(
-                                new Wait(0.001),
-                                new Parallel(
-                                        Outtake.outtakeClawOpen()
-                                )
-                        ),
-
-                        new Sequential(
                                 new Wait(0.1),
                                 new Parallel(
-                                    Outtake.grabSpecimen(),
-                                    VSlide.goTo(0, 1)
-                                )
-                        ),
-
-                        new Sequential(
-                                new Wait(.3),
-                                Outtake.outtakeClawClose()
-                        )
-                ),
-
-                new Parallel(
-                        Drive.followPathChain(Paths.fiveSpecs.get(7)),
-                        new Sequential(
-                                new Wait(0.05),
-                                new Parallel(
-                                        VSlide.goTo(18700),
-                                        Outtake.scoreSpecimen()
+                                        Outtake.grabSpecimen(),
+                                        new Sequential(
+                                                VSlide.goTo(0, 1.0),
+                                                new Wait(0.1)
+                                        )
                                 )
                         )
                 )
+ /*
+                // Push second and third specimens
+                Drive.followPathChain(Paths.fiveSpecs.get(2)),
+                Drive.followPathChain(Paths.fiveSpecs.get(3)),
+
+                // Grab #1
+                new Parallel(
+                        Drive.followPathChain(Paths.fiveSpecs.get(4)),
+                        new Sequential(
+                                new Wait(0.3),
+                                Outtake.outtakeClawClose()
+                        )
+                ),
+
+                // Score #1
+                new Parallel(
+                        Drive.followPathChain(Paths.fiveSpecs.get(5)),
+                        new Sequential(
+                                new Wait(0.1),
+                                Outtake.scoreSpecimen(),
+                                VSlide.goTo(18700)
+                        )
+                ),
+
+                // Grab #2
+                new Parallel(
+                        Drive.followPathChain(Paths.fiveSpecs.get(6)),
+                        new Sequential(
+                                Outtake.outtakeClawOpen(),
+                                new Wait(0.1),
+                                new Parallel(
+                                        Outtake.grabSpecimen(),
+                                        VSlide.goTo(0)
+                                )
+                        )
+                ),
+
+                new Sequential(
+                        new Wait(0.3),
+                        Outtake.outtakeClawClose()
+                ),
+
+                // Score #2
+                new Parallel(
+                        Drive.followPathChain(Paths.fiveSpecs.get(7)),
+                        new Sequential(
+                                new Wait(0.1),
+                                Outtake.scoreSpecimen(),
+                                VSlide.goTo(18700)
+                        )
+                )  */
         ).schedule();
     }
 
     @Override
     public void loop() {
-//
+        Drive.follower.update();
 //        follower.update();
 //        autonomousPathUpdate();
-//        telemetry.addData("timer", actionTimer);
-//        telemetry.addData("path state", pathState);
-//        telemetry.addData("x", follower.getPose().getX());
-//        telemetry.addData("y", follower.getPose().getY());
-//        telemetry.addData("heading", follower.getPose().getHeading());
-//        telemetry.update();
+        telemetry.addLine(Mercurial.INSTANCE.getActiveCommandSnapshot().toString());
+        telemetry.addData("timer", actionTimer);
+       telemetry.addData("path state", pathState);
+        telemetry.addData("x", follower.getPose().getX());
+     telemetry.addData("y", follower.getPose().getY());
+        telemetry.addData("heading", follower.getPose().getHeading());
+       telemetry.update();
     }
 }

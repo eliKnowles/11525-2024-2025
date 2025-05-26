@@ -1,8 +1,5 @@
 package org.firstinspires.ftc.teamcode.code.subsystem;
 
-
-
-
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -27,39 +24,29 @@ import kotlin.annotation.MustBeDocumented;
 
 @Config
 public class VSlide implements Subsystem {
-
-    private static Wrapper opModInstance;
-
     public static final VSlide INSTANCE = new VSlide();
 
     private static DcMotorEx vSlideMotorOne;
     private static DcMotorEx vSlideMotorTwo;
     public static DcMotorEx encoder;
-    private static int targetPosition = 0;
 
-    private static boolean pidEnabled = true;
-    private static double maxPower = 1.0;
-
-
-    // PIDF variables
     public static double kP = 0.0005;
     public static double kI = 0.0;
     public static double kD = 0.00015;
     public static double kF = 0.0;
     public static int tolerance = 450;
+    public static double maxPower = 1.0;
 
     private static double lastError = 0;
     private static double integral = 0;
 
-    private VSlide() {
-    }
+    private static int targetPosition = 0;
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.TYPE)
     @MustBeDocumented
     @Inherited
-    public @interface Attach {
-    }
+    public @interface Attach {}
 
     private Dependency<?> dependency = Subsystem.DEFAULT_DEPENDENCY.and(new SingleAnnotation<>(Attach.class));
 
@@ -76,14 +63,10 @@ public class VSlide implements Subsystem {
 
     @Override
     public void postUserInitHook(@NonNull Wrapper opMode) {
-        opModInstance = opMode;
-
-
         HardwareMap hw = opMode.getOpMode().hardwareMap;
 
         vSlideMotorTwo = new DcMotorV2("v_slide_two", hw);
         vSlideMotorOne = new DcMotorV2("v_slide_one", hw);
-
 
         vSlideMotorOne.setDirection(DcMotorV2.Direction.REVERSE);
         vSlideMotorTwo.setDirection(DcMotorV2.Direction.FORWARD);
@@ -92,8 +75,10 @@ public class VSlide implements Subsystem {
         vSlideMotorTwo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         vSlideMotorOne.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         vSlideMotorTwo.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        encoder = vSlideMotorOne; // Use whichever motor has the accurate encoder
 
+        encoder = vSlideMotorOne;
+
+        setDefaultCommand(update());
     }
 
     public static void setTarget(int ticks, double newMaxPower) {
@@ -104,35 +89,26 @@ public class VSlide implements Subsystem {
     }
 
     public static boolean atTarget() {
-        return Math.abs(targetPosition - encoder.getCurrentPosition()) < tolerance;
+        return Math.abs(getPosition() - targetPosition) < tolerance;
     }
 
     public static void resetEncoders() {
         encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         encoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
+
     public static double getPosition() {
         return -encoder.getCurrentPosition();
     }
 
-
     public static void pidfUpdate() {
-        if (!pidEnabled) {
-            vSlideMotorOne.setPower(0);
-            vSlideMotorTwo.setPower(0);
-            return;
-        }
-
-        double current = -encoder.getCurrentPosition();
+        double current = getPosition();
         double error = targetPosition - current;
         integral += error;
         double derivative = error - lastError;
         lastError = error;
 
-       // double sqrtError = Math.signum(error) * Math.sqrt(Math.abs(error));
-
         double output = kP * error + kI * integral + kD * derivative + kF * targetPosition;
-
         output = Math.max(-maxPower, Math.min(maxPower, output));
         if (Math.abs(output) < 0.05) output = 0;
 
@@ -156,12 +132,21 @@ public class VSlide implements Subsystem {
 
     @NonNull
     public static Lambda goTo(int target, double maxPower) {
-        return new Lambda("vslide-set-capped")
+        return new Lambda("vslide-set")
                 .setExecute(() -> setTarget(target, maxPower))
-                .setInterruptible(() -> true)
                 .setFinish(VSlide::atTarget);
     }
 
+    @NonNull
+    public static Lambda waitForPos(int target) {
+        return new Lambda("vslide-wait")
+                .setFinish(() -> Math.abs(getPosition() - target) < tolerance);
+    }
 
+    @NonNull
+    public static Lambda setTargetAndForget(int target, double power) {
+        return new Lambda("vslide-setpoint")
+                .setExecute(() -> setTarget(target, power))
+                .setFinish(() -> true);
+    }
 }
-
