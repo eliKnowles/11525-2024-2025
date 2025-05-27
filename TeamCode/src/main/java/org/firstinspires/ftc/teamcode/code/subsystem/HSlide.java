@@ -61,9 +61,7 @@ public class HSlide implements Subsystem {
 
         hSlideMotorOne.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         hSlideMotorOne.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
         goTo(0);
-
         setDefaultCommand(update());
     }
     public static double getPosition() {

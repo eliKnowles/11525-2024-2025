@@ -32,7 +32,7 @@ public class VSlide implements Subsystem {
 
     public static double kP = 0.0005;
     public static double kI = 0.0;
-    public static double kD = 0.00015;
+    public static double kD = 0.0001;
     public static double kF = 0.0;
     public static int tolerance = 450;
     public static double maxPower = 1.0;

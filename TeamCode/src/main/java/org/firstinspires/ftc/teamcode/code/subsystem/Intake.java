@@ -58,8 +58,7 @@ public class Intake implements Subsystem {
         intakeClawServo = new ServoV2("intake_claw", hw);
         intakeWristServo = new ServoV2("intake_wrist", hw);
         intakeWristServoTwo = new ServoV2("intake_wrist_two", hw);
-        intakeClawServo.setPosition(.4);
-
+        intakeSpecimen();
     }
 
     public static Parallel runTransfer() {
@@ -68,9 +67,7 @@ public class Intake implements Subsystem {
                 new Lambda("Set Wrist2 to .5").addRequirements(INSTANCE).setExecute(() -> intakeWristServoTwo.setPosition(.5f)),
 
 
-                new Lambda("Set Pivot to 0.55").addRequirements(INSTANCE).setExecute(() -> intakePivotServoOne.setPosition(0.84f)),
-                new Lambda("mark state RETRACTED_SAMPLE").addRequirements(INSTANCE)
-                        .setExecute(() -> clawStates.setState(Outtake.OuttakeStates.TRANSFER_SAMPLE))
+                new Lambda("Set Pivot to 0.55").addRequirements(INSTANCE).setExecute(() -> intakePivotServoOne.setPosition(0.84f))
 
         );
     }
