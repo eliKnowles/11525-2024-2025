@@ -1,11 +1,15 @@
 package org.firstinspires.ftc.teamcode.code.subsystem;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 import static org.firstinspires.ftc.teamcode.code.subsystem.Outtake.clawStates;
 
 import androidx.annotation.NonNull;
 
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
 
 import org.firstinspires.ftc.teamcode.hermeshelper.util.hardware.ServoV2;
 
@@ -26,6 +30,9 @@ import java.lang.annotation.Target;
 public class Intake implements Subsystem {
 
     public static final Intake INSTANCE = new Intake();
+
+    private static DigitalChannel sampleSensor;
+
 
     private static ServoV2 intakePivotServoOne;
     private static ServoV2 intakeClawServo, intakeWristServo, intakeWristServoTwo;
@@ -53,6 +60,9 @@ public class Intake implements Subsystem {
     @Override
     public void postUserInitHook(@NonNull Wrapper opMode) {
         HardwareMap hw = opMode.getOpMode().hardwareMap;
+
+        //sampleSensor = hardwareMap.get(DigitalChannel.class, "sampleSensor");
+      //  sampleSensor.setMode(DigitalChannel.Mode.INPUT);
 
         intakePivotServoOne = new ServoV2("intake_pivot_servo", hw);
         intakeClawServo = new ServoV2("intake_claw", hw);
