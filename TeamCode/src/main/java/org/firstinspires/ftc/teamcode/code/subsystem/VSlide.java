@@ -68,8 +68,8 @@ public class VSlide implements Subsystem {
         vSlideMotorTwo = new DcMotorV2("v_slide_two", hw);
         vSlideMotorOne = new DcMotorV2("v_slide_one", hw);
 
-        vSlideMotorOne.setDirection(DcMotorV2.Direction.REVERSE);
-        vSlideMotorTwo.setDirection(DcMotorV2.Direction.FORWARD);
+        vSlideMotorOne.setDirection(DcMotorV2.Direction.FORWARD);
+        vSlideMotorTwo.setDirection(DcMotorV2.Direction.REVERSE);
 
         vSlideMotorOne.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         vSlideMotorTwo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

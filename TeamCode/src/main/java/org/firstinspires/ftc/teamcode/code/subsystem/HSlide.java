@@ -31,9 +31,9 @@ public class HSlide implements Subsystem {
 
     public static double kP = 0.001;
     public static double kI = 0.0;
-    public static double kD = 0.0004;
+    public static double kD = 0.000175;
     public static double kF = 0.0;
-    public static int tolerance = 150;
+    public static int tolerance = 500;
 
     private static double lastError = 0;
     private static double integral = 0;
@@ -92,9 +92,8 @@ public class HSlide implements Subsystem {
         double derivative = error - lastError;
         lastError = error;
 
-        double sqrtError = Math.signum(error) * Math.sqrt(Math.abs(error));
 
-        double output = kP * sqrtError + kI * integral + kD * derivative + kF * targetPosition;
+        double output = kP * error + kI * integral + kD * derivative + kF * targetPosition;
         output = Math.max(-1, Math.min(1, output));
 
         if (Math.abs(output) < 0.05) output = 0;

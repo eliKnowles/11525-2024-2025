@@ -102,6 +102,7 @@ public class Outtake implements Subsystem {
 
         LED = hw.get(Servo.class, "led");
 
+        outtakePivotOne.setDirection(ServoV2.Direction.FORWARD);
         outtakePivotTwo.setDirection(ServoV2.Direction.REVERSE);
         outtakeLinkage.setDirection(ServoV2.Direction.REVERSE);
 
@@ -109,7 +110,7 @@ public class Outtake implements Subsystem {
                setOuttakeClaw(outtakeClawPosition.CLOSED.pos);
                 setOuttakeWrist(1);
                 setLinkage(0.05);
-                setPivot(0.75);
+                setPivot(0.5);
     }
 
     private static void setLED(double pos) {
@@ -203,7 +204,7 @@ public class Outtake implements Subsystem {
                 new Lambda("linkage to 0.00").addRequirements(INSTANCE)
                         .setExecute(() -> setLinkage(0.04)),
                 new Lambda("pivot to 0.5").addRequirements(INSTANCE)
-                        .setExecute(() -> setPivot(0.59)),
+                        .setExecute(() -> setPivot(0.60)),
                 new Lambda("claw open").addRequirements(INSTANCE)
                         .setExecute(() -> setOuttakeClaw(outtakeClawPosition.OPEN.pos)),
                 new Lambda("wrist SPECIMEN").addRequirements(INSTANCE)
@@ -275,7 +276,7 @@ public class Outtake implements Subsystem {
                         .setExecute(() -> setLED(0.722))
                         .setFinish(() -> true),// violet
                 new Lambda("pivot to 0.5").addRequirements(INSTANCE)
-                        .setExecute(() -> setPivot(0.5))
+                        .setExecute(() -> setPivot(0.52))
                         .setFinish(() -> true),
                 new Lambda("linkage to 0.32").addRequirements(INSTANCE)
                         .setExecute(() -> setLinkage(0.37))
@@ -301,7 +302,7 @@ public class Outtake implements Subsystem {
                 new Wait(.2),
 
                 new Lambda("pivot to 0.5").addRequirements(INSTANCE)
-                        .setExecute(() -> setPivot(0.5)),
+                        .setExecute(() -> setPivot(0.52)),
 
                 new Wait(.2),
                 new Lambda("linkage to 0.32").addRequirements(INSTANCE)

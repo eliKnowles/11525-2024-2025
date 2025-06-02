@@ -60,11 +60,12 @@ public class MainTeleOp extends OpMode {
                             }
                             else if (!Outtake.isSpecMode() && Outtake.getClawStates().getState() == Outtake.OuttakeStates.TRANSFER_SAMPLE) {
                                 new Parallel(
+                                        new Lambda("mark state SPECIMEN_WALL")
+                                                .setExecute(() -> clawStates.setState(Outtake.OuttakeStates.EXTENDED_SAMPLE))
+                                                .setFinish(() -> true),
                                         Outtake.extendArmSample(),
-                                        VSlide.goTo(26000),
-                                new Lambda("mark state SPECIMEN_WALL")
-                                        .setExecute(() -> clawStates.setState(Outtake.OuttakeStates.EXTENDED_SAMPLE))
-                                        .setFinish(() -> true)
+                                        VSlide.goTo(26000)
+
                                 ).schedule();
                             }
                         })
@@ -90,12 +91,13 @@ public class MainTeleOp extends OpMode {
                             } else if (Outtake.getClawStates().getState() == Outtake.OuttakeStates.EXTENDED_SAMPLE || !isSpecMode() && (Outtake.getClawStates().getState() == Outtake.OuttakeStates.SPECIMEN_WALL)) { // retract if its at the basket position
                                 new Sequential(
                                         Outtake.retractFromBasket(),
-                                        new Wait(.5),
+                                        new Wait(.4),
+                                        new Lambda("mark state SPECIMEN_WALL")
+                                                .setExecute(() -> clawStates.setState(Outtake.OuttakeStates.RETRACTED_SAMPLE))
+                                                .setFinish(() -> true),
                                         VSlide.goTo(0, 0.6),
-                                        Outtake.retractArmSample(),
-                                new Lambda("mark state SPECIMEN_WALL")
-                                        .setExecute(() -> clawStates.setState(Outtake.OuttakeStates.RETRACTED_SAMPLE))
-                                        .setFinish(() -> true)
+                                        Outtake.retractArmSample()
+
                                 ).schedule();
                             }
                         })
