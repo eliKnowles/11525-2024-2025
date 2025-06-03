@@ -33,13 +33,13 @@ import dev.frozenmilk.mercurial.commands.util.Wait;
 @HSlide.Attach
 @Intake.Attach
 @Drive.Attach
-@Autonomous(name = "Five Spec", group = "Spec")
-public class five_spec extends OpMode {
+@Autonomous(name = "sampleAuto", group = "Spec")
+public class sampleAuto extends OpMode {
     private DashboardPoseTracker dashboardPoseTracker;
 
 
 
-    private final Pose startPose = new Pose(7.600, 66.000, Math.toRadians(0));  // Starting position
+    private final Pose startPose = new Pose(7, 96.000, Math.toRadians(-90));  // Starting position
     private final Pose scorePose1 = new Pose(39.5, 66.000, Math.toRadians(0)); // Scoring position
     private final Pose scorePose2 = new Pose(14, 129, Math.toRadians(0)); // Scoring position
     private final Pose scorePose3 = new Pose(14, 129, Math.toRadians(0)); // Scoring position
@@ -59,11 +59,6 @@ public class five_spec extends OpMode {
     public void buildPaths() {
 
     }
-    private double clawTimeout = .1;
-    private double retractTimeout = 0.01;
-
-
-
 
 
     public void autonomousPathUpdate() {
@@ -98,82 +93,50 @@ public class five_spec extends OpMode {
 
         new Sequential(
                 new Parallel(
-                        VSlide.goTo(19000, 1.0),
-                        Intake.intakeSpecimen(),
-                        Outtake.scoreSpecimenAuto(),
-                        new Sequential(
-                                new Wait(.2),
-                                Drive.followPathChain(Paths.fiveSpecs.get(0))
-                )
-                ), // score preload,
-
-
-                Outtake.retractFromChamber(),
-                new Wait(retractTimeout),
+                        VSlide.goTo(26000),
+                        Outtake.extendArmSample(),
+                        Drive.followPathChain(Paths.sample.get(0))
+                ),
+                Outtake.outtakeClawOpen(),
+                Drive.followPathChain(Paths.sample.get(1)),
+                Outtake.retractFromBasket(),
+                Outtake.retractArmSample(),
+                VSlide.goTo(0),
                 new Parallel(
-                        Drive.followPathChain(Paths.fiveSpecs.get(1)),   // go around and push first
-                        Outtake.grabSpecimen(),
-                        VSlide.goTo(0, .4)
-               ),
+                        Intake.runExtend(),
+                        HSlide.goTo(13000)
+                ),
+                new Wait(.5),
+                Intake.intakeGrab(),
                 new Sequential(
-                        Drive.followPathChain(Paths.fiveSpecs.get(2)), // push second
-                        Drive.followPathChain(Paths.fiveSpecs.get(3)),// push third
-                        Drive.followPathChain(Paths.fiveSpecs.get(4)),
+                        Intake.runTransfer(),
+                        HSlide.goTo(0),
                         Outtake.outtakeClawClose(),
-                        new Wait(clawTimeout)
-                        ),
+                        Intake.intakeClawOpen(),
+                        Intake.intakeSpecimen()),
                 new Parallel(
-                        Outtake.scoreSpecimen(),
-                        VSlide.goTo(19000),
-                        Drive.followPathChain(Paths.fiveSpecs.get(5))
+                        VSlide.goTo(26000),
+                        Drive.followPathChain(Paths.sample.get(2)),
+                        Outtake.extendArmSample()
                 ),
-                Outtake.retractFromChamber(),
-                new Wait(retractTimeout),
+                Outtake.outtakeClawOpen(),
+                Drive.followPathChain(Paths.sample.get(3)),
+                Outtake.retractFromBasket(),
+                Outtake.retractArmSample(),
+                VSlide.goTo(0),
                 new Parallel(
-                        Outtake.grabSpecimen(),
-                        VSlide.goTo(0,.4),
-                        Drive.followPathChain(Paths.fiveSpecs.get(6))
+                        Intake.runExtend(),
+                        HSlide.goTo(13000)
                 ),
-                new Wait(clawTimeout),
-                Outtake.outtakeClawClose(),
-                new Parallel(
-                        Outtake.scoreSpecimen(), // score 3rd
-                        VSlide.goTo(19000),
-                        Drive.followPathChain(Paths.fiveSpecs.get(7)) // drive to score 3rd
-                ),
-                Outtake.retractFromChamber(),
-                new Wait(retractTimeout),
+                new Wait(.5),
+                Intake.intakeGrab()
 
-                new Parallel(
-                        Outtake.grabSpecimen(),
-                        VSlide.goTo(0,.4),
-                        Drive.followPathChain(Paths.fiveSpecs.get(8)) // grab 4th
-                ),
-                new Wait(clawTimeout),
-                Outtake.outtakeClawClose(),
-                new Parallel(
-                        Outtake.scoreSpecimen(), // score 4th
-                        VSlide.goTo(19000),
-                        Drive.followPathChain(Paths.fiveSpecs.get(9)) // drive to score 4th
-                ),
-                Outtake.retractFromChamber(),
-               new Wait(retractTimeout),
 
-                new Parallel(
-                        Outtake.grabSpecimen(),
-                        VSlide.goTo(0,1),
-                        Drive.followPathChain(Paths.fiveSpecs.get(10))),
-                new Wait(clawTimeout),
-                Outtake.outtakeClawClose(),
-                new Parallel(
-                        Outtake.scoreSpecimen(),
-                        VSlide.goTo(19000),
-                        Drive.followPathChain(Paths.fiveSpecs.get(11)) // drive to score 5th
-                ),
-                Outtake.retractFromChamber(),
-                new Wait(retractTimeout),
-                VSlide.goTo(0,.4),
-                Drive.followPathChain(Paths.fiveSpecs.get(12))
+
+
+
+
+
 
 
                 ).schedule();
@@ -186,10 +149,10 @@ public class five_spec extends OpMode {
 //        autonomousPathUpdate();
         telemetry.addLine(Mercurial.INSTANCE.getActiveCommandSnapshot().toString());
         telemetry.addData("timer", actionTimer);
-       telemetry.addData("path state", pathState);
+        telemetry.addData("path state", pathState);
         telemetry.addData("x", follower.getPose().getX());
-     telemetry.addData("y", follower.getPose().getY());
+        telemetry.addData("y", follower.getPose().getY());
         telemetry.addData("heading", follower.getPose().getHeading());
-       telemetry.update();
+        telemetry.update();
     }
 }

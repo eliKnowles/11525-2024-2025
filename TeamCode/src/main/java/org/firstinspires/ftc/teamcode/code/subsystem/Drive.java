@@ -41,9 +41,11 @@ public class Drive implements Subsystem {
     public static DcMotorEx bl;
     public static DcMotorEx br;
 
+    public static double speed = 1.0;
+
     private Dependency<?> dependency = Subsystem.DEFAULT_DEPENDENCY.and(new SingleAnnotation<>(Attach.class));
 
-    private Telemetry telemetry;
+    private static Telemetry telemetry;
 
     public static void drive(double x, double y, double z) {
         follower.setTeleOpMovementVectors(x, y, z, true);
@@ -79,7 +81,6 @@ public class Drive implements Subsystem {
         follower = new Follower(FeatureRegistrar.getActiveOpMode().hardwareMap);
 
         follower.setStartingPose(new Pose(0, 0, 0));
-        setDefaultCommand(drive(Mercurial.gamepad1()));
 
         HardwareMap hardwareMap = opMode.getOpMode().hardwareMap;
         fl = hardwareMap.get(DcMotorEx.class, FollowerConstants.leftFrontMotorName);
@@ -91,17 +92,48 @@ public class Drive implements Subsystem {
     @Override
     public void postUserInitHook(@NonNull Wrapper opMode) {
         follower.startTeleopDrive();
+        setDefaultCommand(drive(Mercurial.gamepad1()));
+        telemetry = opMode.getOpMode().telemetry;
     }
 
     public static Lambda drive(BoundGamepad gamepad){
         return new Lambda("drive")
                 .addRequirements(INSTANCE)
-                .setExecute(() -> drive(
+                .setExecute(() -> {
+                    drive(
                         gamepad.leftStickY().state(),
                         -gamepad.leftStickX().state(),
                         -gamepad.rightStickX().state()
-                ))
+                    );
+                })
+                .setInterruptible(true)
                 .setFinish(() -> false);
+    }
+
+    public static Lambda nerfDrive() {
+        return new Lambda("nerf_drive")
+                .addRequirements(INSTANCE)
+                .setExecute(() -> {
+                    speed = .6;
+                    follower.setMaxPower(speed);
+                    telemetry.addData("Drive: ", "slow");
+                    telemetry.update();
+                });
+    }
+
+    public static Lambda normalDrive() {
+        return new Lambda("normal_drive")
+                .addRequirements(INSTANCE)
+                .setExecute(() -> {
+                    speed = 1;
+                    follower.setMaxPower(speed);
+                    telemetry.addData("Drive: ", "normal");
+                    telemetry.update();
+                });
+    }
+
+    public static double getSpeed(){
+        return speed;
     }
 
     public static Lambda followPath(Path path, boolean hold) {

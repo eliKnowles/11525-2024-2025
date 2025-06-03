@@ -15,10 +15,14 @@ import java.util.List;
 
 public class Paths {
     public static ArrayList<PathChain> fiveSpecs = new ArrayList<>();
+    public static ArrayList<PathChain> sample = new ArrayList<>();
+
 
     public static final PathBuilder builder = new PathBuilder();
 
     public static final Pose startPose = new Pose(7.600, 66.000, Math.toRadians(0));  // Starting position
+    public static final Pose startPoseSample = new Pose(7, 96, Math.toRadians(0));  // Starting position
+
     private static final Pose scorePose1 = new Pose(39.5, 66.000, Math.toRadians(0)); // Scoring position
     private static final Pose scorePose2 = new Pose(14, 129, Math.toRadians(0)); // Scoring position
     private static final Pose scorePose3 = new Pose(14, 129, Math.toRadians(0)); // Scoring position
@@ -30,6 +34,8 @@ public class Paths {
     private final Pose parkPose = new Pose(60, 98, Math.toRadians(90));    // Parking position
     public static void init() {
         fiveSpecs.clear();
+        sample.clear();
+
 
         fiveSpecs.add(new PathBuilder() // score preload 0
                 .addPath(new BezierLine(new Point(startPose), new Point(scorePose1)))
@@ -142,6 +148,68 @@ public class Paths {
                                 new Point(41.000, 76.000, Point.CARTESIAN)
                         ))
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .build());
+
+        fiveSpecs.add(new PathBuilder() // score 5th 11
+                .addPath(
+                        new BezierCurve(
+                                new Point(40.000, 76.000, Point.CARTESIAN),
+                                new Point(16.481, 68.754, Point.CARTESIAN),
+                                new Point(12.818, 25.471, Point.CARTESIAN)
+                        )
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(45))
+                .build());
+
+        sample.add(new PathBuilder() // score 5th 11
+                .addPath(
+                        new BezierLine(
+                                new Point(7.000, 96.000, Point.CARTESIAN),
+                                new Point(13.000, 130.000, Point.CARTESIAN)
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(-90), Math.toRadians(-45))
+                .build());
+        sample.add(new PathBuilder() // score 5th 11
+                .addPath(
+                        // Line 2
+                        new BezierLine(
+                                new Point(13.000, 130.000, Point.CARTESIAN),
+                                new Point(16.000, 121.000, Point.CARTESIAN)
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(0))
+                .build());
+
+        sample.add(new PathBuilder() // score 5th 11
+                .addPath(
+                        // Line 2
+                        new BezierLine(
+                                new Point(13.000, 130.000, Point.CARTESIAN),
+                                new Point(16.000, 121.000, Point.CARTESIAN)
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(0))
+                .build());
+        sample.add(new PathBuilder() // score 5th 11
+                .addPath(
+                        // Line 3
+                        new BezierLine(
+                                new Point(16.000, 121.000, Point.CARTESIAN),
+                                new Point(13.000, 130.000, Point.CARTESIAN)
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(-45))
+                .build());
+        sample.add(new PathBuilder() // score 5th 11
+                .addPath(
+                        // Line 3
+                        new BezierLine(
+                                new Point(13.000, 130.000, Point.CARTESIAN),
+                                new Point(24.000, 131.750, Point.CARTESIAN)
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(-45))
                 .build());
     }
 

@@ -31,7 +31,9 @@ public class Intake implements Subsystem {
 
     public static final Intake INSTANCE = new Intake();
 
-    private static DigitalChannel sampleSensor;
+    public static DigitalChannel pin0;
+    public static DigitalChannel pin1;
+
 
 
     private static ServoV2 intakePivotServoOne;
@@ -52,7 +54,7 @@ public class Intake implements Subsystem {
     static int wristPos = 0; // -1 = left, 0 = center, 1 = right
 
     public enum ClawPosition {
-        OPEN(.6), CLOSED(1);
+        OPEN(.32), CLOSED(.85);
         public final double pos;
         ClawPosition(double pos) { this.pos = pos; }
     }
@@ -61,13 +63,17 @@ public class Intake implements Subsystem {
     public void postUserInitHook(@NonNull Wrapper opMode) {
         HardwareMap hw = opMode.getOpMode().hardwareMap;
 
-        //sampleSensor = hardwareMap.get(DigitalChannel.class, "sampleSensor");
-      //  sampleSensor.setMode(DigitalChannel.Mode.INPUT);
+        pin0 = hw.get(DigitalChannel.class, "digital0");
+        pin1 = hw.get(DigitalChannel.class, "digital1");
+        pin0.setMode(DigitalChannel.Mode.INPUT);
+        pin1.setMode(DigitalChannel.Mode.INPUT);
+
 
         intakePivotServoOne = new ServoV2("intake_pivot_servo", hw);
         intakeClawServo = new ServoV2("intake_claw", hw);
         intakeWristServo = new ServoV2("intake_wrist", hw);
         intakeWristServoTwo = new ServoV2("intake_wrist_two", hw);
+        intakeClawOpen();
         intakeSpecimen();
     }
 
@@ -98,6 +104,14 @@ public class Intake implements Subsystem {
         wristPos = 0;
         setWristPosition();
     }
+    public static boolean hasSample() {
+        if (pin1.getState() || pin0.getState() && pin1.getState() == false)  {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
 
 
     public static Sequential intakeClawOpen() {
@@ -114,8 +128,9 @@ public class Intake implements Subsystem {
     public static Sequential runExtend() {
         return new Sequential(
                 new Lambda("Set Wrist2 to 0.5").addRequirements(INSTANCE).setExecute(() -> intakeWristServoTwo.setPosition(0.5f)),
-                new Lambda("Set Pivot to 0.07").addRequirements(INSTANCE).setExecute(() -> intakePivotServoOne.setPosition(0.07f)),
+                new Lambda("Set Pivot to 0.07").addRequirements(INSTANCE).setExecute(() -> intakePivotServoOne.setPosition(0.1f)),
                 new Lambda("Set Wrist to 0.96").addRequirements(INSTANCE).setExecute(() -> intakeWristServo.setPosition(0.98f))
+
         );
     }
 
@@ -131,8 +146,10 @@ public class Intake implements Subsystem {
 
     public static Sequential intakeGrab() {
         return new Sequential(
-                new Lambda("Set Pivot to 0.02").addRequirements(INSTANCE).setExecute(() -> intakePivotServoOne.setPosition(0.00f)),
+                new Lambda("Set Pivot to 0.02").addRequirements(INSTANCE).setExecute(() -> intakePivotServoOne.setPosition(0.00f))
+                        .setFinish(() -> true),
                 new Lambda("Set Intake Claw to 0.92").addRequirements(INSTANCE).setExecute(() -> intakeClawServo.setPosition(ClawPosition.CLOSED.pos))
+                        .setFinish(() -> true)
                // new Lambda("Set Pivot to 0.3").addRequirements(INSTANCE).setExecute(() -> intakePivotServoOne.setPosition(0.3f))
         );
     }

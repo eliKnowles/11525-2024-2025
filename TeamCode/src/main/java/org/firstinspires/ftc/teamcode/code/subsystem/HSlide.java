@@ -29,11 +29,11 @@ public class HSlide implements Subsystem {
     private static DcMotorEx hSlideMotorOne;
     private static int targetPosition = 0;
 
-    public static double kP = 0.001;
+    public static double kP = 0.0005;
     public static double kI = 0.0;
-    public static double kD = 0.000175;
+    public static double kD = 0.00005;
     public static double kF = 0.0;
-    public static int tolerance = 500;
+    public static int tolerance = 300;
 
     private static double lastError = 0;
     private static double integral = 0;

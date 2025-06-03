@@ -165,7 +165,6 @@ public class Outtake implements Subsystem {
                 new Lambda("linkage to 0.15").addRequirements(INSTANCE)
                         .setExecute(() -> setLinkage(0.15))
                         .setFinish(() -> true),
-                new Wait(0.1),
                 new Lambda("linkage to 0.36").addRequirements(INSTANCE)
                         .setExecute(() -> setLinkage(0.36))
                         .setFinish(() -> true),
@@ -237,7 +236,9 @@ public class Outtake implements Subsystem {
                 new Lambda("linkage to 0.00").addRequirements(INSTANCE)
                         .setExecute(() -> setLinkage(0.04)),
                 new Lambda("pivot to 0.5").addRequirements(INSTANCE)
-                        .setExecute(() -> setPivot(0.70))
+                        .setExecute(() -> setPivot(0.65))
+                        .setFinish(() -> true)
+
 
         );
     }
@@ -282,7 +283,7 @@ public class Outtake implements Subsystem {
                         .setExecute(() -> setLinkage(0.37))
                         .setFinish(() -> true),
                 new Lambda("wrist to .7").addRequirements(INSTANCE)
-                        .setExecute(() -> setOuttakeWrist(0.75))
+                        .setExecute(() -> setOuttakeWrist(0.8))
                         .setFinish(() -> true),
                 new Lambda("mark state EXTENDED_SPEC").addRequirements(INSTANCE)
                         .setExecute(() -> clawStates.setState(OuttakeStates.EXTENDED_SPEC))
@@ -300,7 +301,6 @@ public class Outtake implements Subsystem {
                 new Lambda("wrist SPECIMEN").addRequirements(INSTANCE)
                         .setExecute(() -> setOuttakeWrist(WristPosition.SPECIMEN.pos)),
                 new Wait(.2),
-
                 new Lambda("pivot to 0.5").addRequirements(INSTANCE)
                         .setExecute(() -> setPivot(0.52)),
 
@@ -308,7 +308,7 @@ public class Outtake implements Subsystem {
                 new Lambda("linkage to 0.32").addRequirements(INSTANCE)
                         .setExecute(() -> setLinkage(0.37)),
                 new Lambda(" wrist to score").addRequirements(INSTANCE)
-                        .setExecute(() -> setOuttakeWrist(0.73))
+                        .setExecute(() -> setOuttakeWrist(0.8))
 
         );
     }
