@@ -22,7 +22,6 @@ public class Vector {
     public static Vector polar(double d, double m) {
         return new Vector(Math.cos(d) * m, Math.sin(d) * m, d, m);
     }
-
     public Pose pose(double rotation) { return new Pose(this.x, this.y, rotation); }
     public Vector add(Vector other) { return Vector.cartesian(this.x + other.x, this.y + other.y); }
     public Vector sub(Vector other) { return Vector.cartesian(this.x - other.x, this.y - other.y); }

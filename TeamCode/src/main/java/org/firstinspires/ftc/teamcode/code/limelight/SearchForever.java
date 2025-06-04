@@ -77,6 +77,7 @@ public class SearchForever implements Command {
         }
     }
 
+
     @Override
     public void end(boolean i) {
         this.follower.setMaxPower(1);

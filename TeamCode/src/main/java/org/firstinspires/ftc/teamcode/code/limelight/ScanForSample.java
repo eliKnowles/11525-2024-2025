@@ -76,7 +76,6 @@ public class ScanForSample implements Command {
             telemetry.addLine("IS NULL");
         }
     }
-
     @Override
     public boolean finished() {
         telemetry.addData("ANGLE2", result.angle);

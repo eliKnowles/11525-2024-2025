@@ -213,7 +213,6 @@ public class MainTeleOp extends OpMode {
         telemetry.addData("digital 1", pin1.getState());
 
         telemetry.addData("spec mode:", isSpecMode());
-
         telemetry.addLine(Mercurial.INSTANCE.getActiveCommandSnapshot().toString());
         telemetry.update();
         if (!gamepad1.left_bumper && !gamepad1.right_bumper) {
