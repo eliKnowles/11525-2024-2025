@@ -143,9 +143,10 @@ public class five_spec extends OpMode {
                 ),
                 Outtake.retractFromChamber(),
                 new Wait(retractTimeout),
-                new SearchForever(follower).raceWith(
-                        new ScanForSample(limelight, buffer, telemetry, follower, false)
-                ),
+                // TODO: lime light
+//                new SearchForever(follower).raceWith(
+//                        new ScanForSample(limelight, buffer, telemetry, follower, false)
+//                ),
                 new Parallel(
                         Outtake.grabSpecimen(),
                         VSlide.goTo(0,.4),
