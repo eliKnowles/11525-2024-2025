@@ -64,11 +64,10 @@ public class HSlide implements Subsystem {
         goTo(0);
         setDefaultCommand(update());
     }
+
     public static double getPosition() {
         return hSlideMotorOne.getCurrentPosition();
     }
-
-
 
     public static void setTarget(int ticks) {
         targetPosition = ticks;

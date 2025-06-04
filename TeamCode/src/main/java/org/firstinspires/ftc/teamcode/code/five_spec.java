@@ -10,6 +10,9 @@ import com.pedropathing.util.DashboardPoseTracker;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import org.firstinspires.ftc.teamcode.code.limelight.Limelight;
+import org.firstinspires.ftc.teamcode.code.limelight.ScanForSample;
+import org.firstinspires.ftc.teamcode.code.limelight.SearchForever;
 import org.firstinspires.ftc.teamcode.code.paths.Paths;
 import org.firstinspires.ftc.teamcode.code.subsystem.HSlide;
 import org.firstinspires.ftc.teamcode.code.subsystem.Intake;
@@ -37,7 +40,8 @@ import dev.frozenmilk.mercurial.commands.util.Wait;
 public class five_spec extends OpMode {
     private DashboardPoseTracker dashboardPoseTracker;
 
-
+    private Limelight limelight;
+    private Limelight.SampleState buffer;
 
     private final Pose startPose = new Pose(7.600, 66.000, Math.toRadians(0));  // Starting position
     private final Pose scorePose1 = new Pose(39.5, 66.000, Math.toRadians(0)); // Scoring position
@@ -61,10 +65,6 @@ public class five_spec extends OpMode {
     }
     private double clawTimeout = .1;
     private double retractTimeout = 0.01;
-
-
-
-
 
     public void autonomousPathUpdate() {
     }
@@ -143,7 +143,9 @@ public class five_spec extends OpMode {
                 ),
                 Outtake.retractFromChamber(),
                 new Wait(retractTimeout),
-
+                new SearchForever(follower).raceWith(
+                        new ScanForSample(limelight, buffer, telemetry, follower, false)
+                ),
                 new Parallel(
                         Outtake.grabSpecimen(),
                         VSlide.goTo(0,.4),
