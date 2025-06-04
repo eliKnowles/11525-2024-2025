@@ -3,7 +3,9 @@ package org.firstinspires.ftc.teamcode.code;
 
 
 
+import static org.firstinspires.ftc.teamcode.code.subsystem.Drive.follower;
 import static org.firstinspires.ftc.teamcode.code.subsystem.HSlide.INSTANCE;
+import static org.firstinspires.ftc.teamcode.code.subsystem.Intake.limelightSearch;
 import static org.firstinspires.ftc.teamcode.code.subsystem.Intake.pin0;
 import static org.firstinspires.ftc.teamcode.code.subsystem.Intake.pin1;
 import static org.firstinspires.ftc.teamcode.code.subsystem.Outtake.clawStates;
@@ -12,6 +14,9 @@ import static org.firstinspires.ftc.teamcode.code.subsystem.Outtake.isSpecMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.code.limelight.Limelight;
+import org.firstinspires.ftc.teamcode.code.limelight.ScanForSample;
+import org.firstinspires.ftc.teamcode.code.limelight.SearchForever;
 import org.firstinspires.ftc.teamcode.code.subsystem.HSlide;
 import org.firstinspires.ftc.teamcode.code.subsystem.Intake;
 import org.firstinspires.ftc.teamcode.code.subsystem.VSlide;
@@ -35,15 +40,18 @@ import dev.frozenmilk.mercurial.commands.util.Wait;
 @Drive.Attach
 public class MainTeleOp extends OpMode {
 
+    private Limelight limelight;
+    private Limelight.SampleState buffer;
+
     @Override
     public void init() {
+        this.buffer = new Limelight.SampleState();
+        this.limelight = new Limelight(hardwareMap);
 
         clawStates.setState(isSpecMode() ? Outtake.OuttakeStates.RETRACTED_SPEC : Outtake.OuttakeStates.RETRACTED_SAMPLE);
 
         INSTANCE.setDefaultCommand(HSlide.update());
         VSlide.INSTANCE.setDefaultCommand(VSlide.update());
-
-
 
         Mercurial.gamepad1().triangle().onTrue(
                 new Lambda("Score Position")
@@ -54,7 +62,7 @@ public class MainTeleOp extends OpMode {
                                         Outtake.outtakeClawClose(),
                                         new Wait(.2),
                                         new Parallel(
-                                                new Lambda("Set slide target").setExecute(() -> VSlide.setTarget(19500, 1)).setFinish(() -> true),
+                                                new Lambda("Set slide target").setExecute(() -> VSlide.setTarget(19200, 1)).setFinish(() -> true),
                                                 Outtake.scoreSpecimen()
                                         ),
                                         //Drive.nerfDrive(),
@@ -181,11 +189,20 @@ public class MainTeleOp extends OpMode {
                 Outtake.toggleMode()
         );
 
+        Mercurial.gamepad1().dpadUp().onTrue(
+                new Sequential(
+                        Intake.limelightSearch(),
+//                        new SearchForever(follower).raceWith(
+                                new ScanForSample(limelight, buffer, telemetry, follower, false)
+//                        )
+                )
+
+        );
     }
 
     @Override
     public void loop() {
-        Drive.follower.update();
+        follower.update();
         telemetry.addData("Claw State", clawStates.getState());
         telemetry.addData("VSlide Position", VSlide.getPosition());
         telemetry.addData("Extendo Position", HSlide.getPosition());

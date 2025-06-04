@@ -72,8 +72,9 @@ public class ScanForSample implements Command {
             this.result.robotPosition = detection.robotPosition;
             this.result.robotRotation = detection.robotRotation;
             this.result.slidePosition = HSlide.getPosition();
+        } else {
+            telemetry.addLine("IS NULL");
         }
-        else telemetry.addLine("IS NULL");
     }
 
     @Override

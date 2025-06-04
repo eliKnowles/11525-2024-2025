@@ -117,7 +117,6 @@ public class Drive implements Subsystem {
                     speed = .6;
                     follower.setMaxPower(speed);
                     telemetry.addData("Drive: ", "slow");
-                    telemetry.update();
                 });
     }
 
@@ -128,7 +127,6 @@ public class Drive implements Subsystem {
                     speed = 1;
                     follower.setMaxPower(speed);
                     telemetry.addData("Drive: ", "normal");
-                    telemetry.update();
                 });
     }
 

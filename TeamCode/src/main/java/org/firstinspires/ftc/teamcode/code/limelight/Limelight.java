@@ -15,25 +15,9 @@ public class Limelight {
 
     private double position = 0;
 
-    public enum Targets {
-        YellowOnly,
-        RedAndYellow,
-        BlueAndYellow
-    }
-
-    public Limelight(HardwareMap hwmp, Targets targets) {
+    public Limelight(HardwareMap hwmp) {
         this.hardware = hwmp.get(Limelight3A.class, "limelight");
-        switch (targets) {
-            case YellowOnly:
-                this.hardware.pipelineSwitch(1);
-                break;
-            case RedAndYellow:
-                this.hardware.pipelineSwitch(0);
-                break;
-            case BlueAndYellow:
-                this.hardware.pipelineSwitch(0);
-                break;
-        }
+        this.hardware.pipelineSwitch(1);
         this.hardware.updatePythonInputs(0, 0, 0, 0, 0, 0, 0, 0);
     }
 
@@ -76,22 +60,33 @@ public class Limelight {
         }
     }
 
+//    public SampleState query(Telemetry telemetry, Follower follower) {
+//        LLResult result = hardware.getLatestResult();
+//
+//        telemetry.addData("SOMERESULT", result == null);
+//        if (result == null) return null;
+//
+//        double[] result_array = result.getPythonOutput();
+//        telemetry.addData("SOMEPYTHON", result_array == null);
+//
+//        if (result_array == null) return null;
+//        if (result_array.length == 0) return null;
+//        double angle = result_array[0];
+//
+//        Vector center = Vector.cartesian(result_array[1], result_array[2]);
+//        Pose current = follower.getPose();
+//        return new SampleState(angle, center, Vector.cartesian(current.getX(),
+//                current.getY()), current.getHeading(), HSlide.getPosition());
+//    }
     public SampleState query(Telemetry telemetry, Follower follower) {
         LLResult result = hardware.getLatestResult();
 
         telemetry.addData("SOMERESULT", result == null);
         if (result == null) return null;
 
-        double[] result_array = result.getPythonOutput();
-        telemetry.addData("SOMEPYTHON", result_array == null);
+        double angle = result.getTa();
 
-        if (result_array == null) return null;
-        if (result_array.length == 0) return null;
-        double angle = result_array[0];
-
-        if (angle == 0) return null;
-
-        Vector center = Vector.cartesian(result_array[1], result_array[2]);
+        Vector center = Vector.cartesian(result.getTx(), result.getTy());
         Pose current = follower.getPose();
         return new SampleState(angle, center, Vector.cartesian(current.getX(),
                 current.getY()), current.getHeading(), HSlide.getPosition());

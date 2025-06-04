@@ -81,14 +81,18 @@ public class five_spec extends OpMode {
 
     @Override
     public void init() {
+        this.buffer = new Limelight.SampleState();
+        this.limelight = new Limelight(hardwareMap);
+        this.pathTimer = new ElapsedTime();
+        this.opmodeTimer = new ElapsedTime();
+        this.actionTimer = new ElapsedTime();
+
         INSTANCE.setDefaultCommand(VSlide.update());
         INSTANCE.setDefaultCommand(HSlide.update());
+
         HSlide.goTo(0);
         Paths.init();
         Drive.setPose(startPose);
-        pathTimer = new ElapsedTime();
-        opmodeTimer = new ElapsedTime();
-        actionTimer = new ElapsedTime();
         Constants.setConstants(FConstants.class, LConstants.class);
         buildPaths();
     }

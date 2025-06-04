@@ -59,8 +59,9 @@ public class Intake implements Subsystem {
         ClawPosition(double pos) { this.pos = pos; }
     }
 
+
     @Override
-    public void postUserInitHook(@NonNull Wrapper opMode) {
+    public void preUserInitHook(@NonNull Wrapper opMode) {
         HardwareMap hw = opMode.getOpMode().hardwareMap;
 
         pin0 = hw.get(DigitalChannel.class, "digital0");
@@ -86,6 +87,19 @@ public class Intake implements Subsystem {
                 new Lambda("Set Pivot to 0.55").addRequirements(INSTANCE).setExecute(() -> intakePivotServoOne.setPosition(0.84f))
 
         );
+    }
+    public static Parallel wrist_auto() {
+        return new Parallel(
+                new Lambda("Set Wrist to 0").addRequirements(INSTANCE).setExecute(() -> intakeWristServoTwo.setPosition(.8f))
+        );
+    }
+
+    public static Parallel limelightSearch() {
+        return new Parallel(
+                new Lambda("Set Wrist to 0").addRequirements(INSTANCE).setExecute(() -> intakeWristServo.setPosition(.96f)),
+                new Lambda("Set Wrist to 0").addRequirements(INSTANCE).setExecute(() -> intakePivotServoOne.setPosition(.22f))
+
+                );
     }
 
     public static void setWristPosition() {

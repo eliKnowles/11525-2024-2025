@@ -93,6 +93,7 @@ public class sampleAuto extends OpMode {
 
         new Sequential(
                 new Parallel(
+                        Intake.intakeClawOpen(),
                         VSlide.goTo(26000),
                         Outtake.extendArmSample(),
                         Drive.followPathChain(Paths.sample.get(0))
@@ -106,19 +107,21 @@ public class sampleAuto extends OpMode {
                         Intake.runExtend(),
                         HSlide.goTo(13000)
                 ),
-                new Wait(.5),
+                new Wait(.2),
                 Intake.intakeGrab(),
                 new Sequential(
                         Intake.runTransfer(),
                         HSlide.goTo(0),
                         Outtake.outtakeClawClose(),
                         Intake.intakeClawOpen(),
+                        new Wait(.2),
                         Intake.intakeSpecimen()),
                 new Parallel(
                         VSlide.goTo(26000),
-                        Drive.followPathChain(Paths.sample.get(2)),
                         Outtake.extendArmSample()
-                ),
+                        ),
+                new Wait(.2),
+                Drive.followPathChain(Paths.sample.get(2)),
                 Outtake.outtakeClawOpen(),
                 Drive.followPathChain(Paths.sample.get(3)),
                 Outtake.retractFromBasket(),
@@ -126,10 +129,79 @@ public class sampleAuto extends OpMode {
                 VSlide.goTo(0),
                 new Parallel(
                         Intake.runExtend(),
+                        HSlide.goTo(7000)
+                ),
+                new Wait(.2),
+                Intake.intakeGrab(),
+                new Wait(.2),
+
+                new Sequential(
+                        Intake.runTransfer(),
+                        HSlide.goTo(0),
+                        Outtake.outtakeClawClose(),
+                        Intake.intakeClawOpen(),
+                        new Wait(.2),
+                        Intake.intakeSpecimen()),
+                new Parallel(
+                        VSlide.goTo(26000),
+                        Outtake.extendArmSample()
+                ),
+                Drive.followPathChain(Paths.sample.get(4)),
+                Outtake.outtakeClawOpen(),
+                Outtake.retractFromBasket(),
+                Drive.followPathChain(Paths.sample.get(5)),
+                new Parallel(
+                        Outtake.retractArmSample(),
+                        VSlide.goTo(0) )
+               ,
+                new Parallel(
+                        Intake.runExtend(),
+                        HSlide.goTo(7500),
+                        Intake.wrist_auto()
+                ),
+                new Wait(.2),
+                Intake.intakeGrab(),
+                new Wait(.2),
+                new Sequential(
+                        Intake.runTransfer(),
+                        new Wait(.2),
+                        HSlide.goTo(0),
+                        Outtake.outtakeClawClose(),
+                        Intake.intakeClawOpen(),
+                        new Wait(.2),
+                        Intake.intakeSpecimen()),
+                new Parallel(
+                        VSlide.goTo(26000),
+                        Outtake.extendArmSample()
+                ),
+                        Drive.followPathChain(Paths.sample.get(6)),
+                Outtake.outtakeClawOpen(),
+                Outtake.retractFromBasket(),
+                Drive.followPathChain(Paths.sample.get(7)),
+                new Parallel(
+                        Outtake.retractArmSample(),
+                        VSlide.goTo(0))
+
+
+
+
+
+
+                //  )
+
+
+
+                //  Drive.followPathChain(Paths.sample.get(3)),
+                //Outtake.outtakeClawOpen()
+              /*  Outtake.retractFromBasket(),
+                Outtake.retractArmSample(),
+                VSlide.goTo(0),
+                new Parallel(
+                        Intake.runExtend(),
                         HSlide.goTo(13000)
                 ),
                 new Wait(.5),
-                Intake.intakeGrab()
+                Intake.intakeGrab() */
 
 
 

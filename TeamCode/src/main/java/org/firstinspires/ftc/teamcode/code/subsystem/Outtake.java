@@ -140,7 +140,7 @@ public class Outtake implements Subsystem {
 
 
     public enum WristPosition {
-        SPECIMEN(1), MID(0.5), SAMPLE(0);
+        SPECIMEN(1), MID(0.5), SAMPLE(0),SAMPLESCORE(0.2);
         public final double pos;
         WristPosition(double pos) { this.pos = pos; }
     }
@@ -160,7 +160,7 @@ public class Outtake implements Subsystem {
                         .setExecute(() -> setPivot(0.67))
                         .setFinish(() -> true),
                 new Lambda("wrist to sample").addRequirements(INSTANCE)
-                        .setExecute(() -> setOuttakeWrist(WristPosition.SAMPLE.pos))
+                        .setExecute(() -> setOuttakeWrist(WristPosition.SAMPLESCORE.pos))
                         .setFinish(() -> true),
                 new Lambda("linkage to 0.15").addRequirements(INSTANCE)
                         .setExecute(() -> setLinkage(0.15))
@@ -169,7 +169,7 @@ public class Outtake implements Subsystem {
                         .setExecute(() -> setLinkage(0.36))
                         .setFinish(() -> true),
                 new Lambda("pivot to 0.8").addRequirements(INSTANCE)
-                        .setExecute(() -> setPivot(0.8))
+                        .setExecute(() -> setPivot(0.82))
                         .setFinish(() -> true)
 
                 );
