@@ -24,6 +24,7 @@ public class ScanForSample implements Command {
     private boolean check;
     private double tilt = 0;
 
+
     public ScanForSample(Limelight limelight, Limelight.SampleState buffer, Follower follower, boolean isSub) {
         this.limelight = limelight;
         this.result = buffer;

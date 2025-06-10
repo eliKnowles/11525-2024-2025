@@ -100,6 +100,7 @@ public class Intake implements Subsystem {
         );
     }
 
+
     public static Parallel hang_1() {
         return new Parallel(
                 new Lambda("Set Wrist to 0").addRequirements(INSTANCE).setExecute(() -> hangServo.setPower(1))

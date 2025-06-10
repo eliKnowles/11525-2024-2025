@@ -15,6 +15,7 @@ public class Vector {
         this.m = m;
     }
 
+
     public static Vector cartesian(double x, double y) {
         return new Vector(x, y, Math.atan2(y, x), Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)));
     }

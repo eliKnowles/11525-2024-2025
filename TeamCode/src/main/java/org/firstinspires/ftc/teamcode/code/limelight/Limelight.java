@@ -63,6 +63,7 @@ public class Limelight {
 //        return new SampleState(angle, center, Vector.cartesian(current.getX(),
 //                current.getY()), current.getHeading(), HSlide.getPosition());
 //    }
+
     public SampleState query(Follower follower) {
         LLResult result = hardware.getLatestResult();
 

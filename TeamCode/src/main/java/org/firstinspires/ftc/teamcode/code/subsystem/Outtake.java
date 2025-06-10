@@ -194,6 +194,7 @@ public class Outtake implements Subsystem {
     }
 
 
+
     public static Sequential retractArmSample() {
         return new Sequential(
                 new Lambda("LED change").addRequirements(INSTANCE)
