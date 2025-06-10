@@ -43,20 +43,20 @@ public class Paths {
                 .build());
 
         fiveSpecs.add(new PathBuilder() // go around and push first 1
-                .addPath( new BezierCurve(
+                .addPath(  new BezierCurve(
                         new Point(39.500, 66.000, Point.CARTESIAN),
                         new Point(4.162, 10.821, Point.CARTESIAN),
-                        new Point(113.036, 45.947, Point.CARTESIAN),
+                        new Point(96.555, 43.450, Point.CARTESIAN),
                         new Point(73.914, 18.312, Point.CARTESIAN),
-                        new Point(13.984, 23.306, Point.CARTESIAN)
+                        new Point(8.657, 22.308, Point.CARTESIAN)
                 ))
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
                 .build());
 
         fiveSpecs.add(new PathBuilder() // push seonc 2
-                .addPath( new BezierCurve(
+                .addPath(   new BezierCurve(
                         new Point(8.657, 22.308, Point.CARTESIAN),
-                        new Point(76.412, 28.800, Point.CARTESIAN),
+                        new Point(74.414, 29.133, Point.CARTESIAN),
                         new Point(64.758, 9.489, Point.CARTESIAN),
                         new Point(61.262, 15.815, Point.CARTESIAN),
                         new Point(10.321, 13.318, Point.CARTESIAN)
@@ -65,10 +65,10 @@ public class Paths {
                 .build());
 
         fiveSpecs.add(new PathBuilder() // push third 3
-                .addPath(  new BezierCurve(
+                .addPath(   new BezierCurve(
                         new Point(10.321, 13.318, Point.CARTESIAN),
                         new Point(65.591, 16.647, Point.CARTESIAN),
-                        new Point(91.228, 2.664, Point.CARTESIAN),
+                        new Point(89.230, 4.162, Point.CARTESIAN),
                         new Point(10.654, 6.326, Point.CARTESIAN)
                 ))
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
@@ -153,9 +153,9 @@ public class Paths {
         fiveSpecs.add(new PathBuilder() // score 5th 11
                 .addPath(
                         new BezierCurve(
-                                new Point(40.000, 76.000, Point.CARTESIAN),
+                                new Point(41.000, 76.000, Point.CARTESIAN),
                                 new Point(16.481, 68.754, Point.CARTESIAN),
-                                new Point(12.818, 25.471, Point.CARTESIAN)
+                                new Point(12.818, 15.471, Point.CARTESIAN)
                         )
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(45))

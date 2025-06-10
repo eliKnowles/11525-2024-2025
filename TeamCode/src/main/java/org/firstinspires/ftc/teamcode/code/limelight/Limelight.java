@@ -17,21 +17,6 @@ public class Limelight {
 
     public Limelight(HardwareMap hwmp) {
         this.hardware = hwmp.get(Limelight3A.class, "limelight");
-        this.hardware.pipelineSwitch(1);
-        this.hardware.updatePythonInputs(0, 0, 0, 0, 0, 0, 0, 0);
-    }
-
-    public void enable() {
-        hardware.start();
-    }
-    public void logStatus(Telemetry telemetry) {
-        telemetry.addData("LL3A STATUS", hardware.getStatus().toString());
-    }
-    public void disable() { hardware.stop(); }
-    public void shutdown() { hardware.shutdown(); }
-
-    public void load(int id) {
-        this.hardware.pipelineSwitch(id);
     }
 
     public static class SampleState {
@@ -78,11 +63,8 @@ public class Limelight {
 //        return new SampleState(angle, center, Vector.cartesian(current.getX(),
 //                current.getY()), current.getHeading(), HSlide.getPosition());
 //    }
-    public SampleState query(Telemetry telemetry, Follower follower) {
+    public SampleState query(Follower follower) {
         LLResult result = hardware.getLatestResult();
-
-        telemetry.addData("SOMERESULT", result == null);
-        if (result == null) return null;
 
         double angle = result.getTa();
 

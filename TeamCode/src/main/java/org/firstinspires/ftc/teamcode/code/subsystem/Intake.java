@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.code.subsystem.Outtake.clawStates;
 
 import androidx.annotation.NonNull;
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
@@ -35,7 +36,7 @@ public class Intake implements Subsystem {
     public static DigitalChannel pin1;
 
 
-
+    private static CRServo hangServo, hangServo2;
     private static ServoV2 intakePivotServoOne;
     private static ServoV2 intakeClawServo, intakeWristServo, intakeWristServoTwo;
     private static ServoV2 outtakeClawServo, outtakePivotServo;
@@ -69,6 +70,11 @@ public class Intake implements Subsystem {
         pin0.setMode(DigitalChannel.Mode.INPUT);
         pin1.setMode(DigitalChannel.Mode.INPUT);
 
+        hangServo = hw.get(CRServo.class, "hang_servo");
+        hangServo2 = hw.get(CRServo.class, "hang_servo_2");
+
+
+
 
         intakePivotServoOne = new ServoV2("intake_pivot_servo", hw);
         intakeClawServo = new ServoV2("intake_claw", hw);
@@ -84,7 +90,7 @@ public class Intake implements Subsystem {
                 new Lambda("Set Wrist2 to .5").addRequirements(INSTANCE).setExecute(() -> intakeWristServoTwo.setPosition(.5f)),
 
 
-                new Lambda("Set Pivot to 0.55").addRequirements(INSTANCE).setExecute(() -> intakePivotServoOne.setPosition(0.84f))
+                new Lambda("Set Pivot to 0.55").addRequirements(INSTANCE).setExecute(() -> intakePivotServoOne.setPosition(0.86f))
 
         );
     }
@@ -94,12 +100,23 @@ public class Intake implements Subsystem {
         );
     }
 
+    public static Parallel hang_1() {
+        return new Parallel(
+                new Lambda("Set Wrist to 0").addRequirements(INSTANCE).setExecute(() -> hangServo.setPower(1))
+        );
+    }
+    public static Parallel hang_2() {
+        return new Parallel(
+                new Lambda("Set Wrist to 0").addRequirements(INSTANCE).setExecute(() -> hangServo2.setPower(-1))
+        );
+    }
+
+
     public static Parallel limelightSearch() {
         return new Parallel(
                 new Lambda("Set Wrist to 0").addRequirements(INSTANCE).setExecute(() -> intakeWristServo.setPosition(.96f)),
                 new Lambda("Set Wrist to 0").addRequirements(INSTANCE).setExecute(() -> intakePivotServoOne.setPosition(.22f))
-
-                );
+        );
     }
 
     public static void setWristPosition() {

@@ -65,7 +65,7 @@ public class MainTeleOp extends OpMode {
                                                 new Lambda("Set slide target").setExecute(() -> VSlide.setTarget(19200, 1)).setFinish(() -> true),
                                                 Outtake.scoreSpecimen()
                                         ),
-                                        //Drive.nerfDrive(),
+                                        Drive.nerfDrive(),
                                         new Lambda("mark state EXTENDED_SPEC")
                                                 .setExecute(() -> clawStates.setState(Outtake.OuttakeStates.EXTENDED_SPEC))
                                                 .setFinish(() -> true)
@@ -77,8 +77,8 @@ public class MainTeleOp extends OpMode {
                                                 .setExecute(() -> clawStates.setState(Outtake.OuttakeStates.EXTENDED_SAMPLE))
                                                 .setFinish(() -> true),
                                         Outtake.extendArmSample(),
-                                        VSlide.goTo(26000)
-                                     //   Drive.nerfDrive()
+                                        VSlide.goTo(26000),
+                                        Drive.nerfDrive()
 
                                 ).schedule();
                             }
@@ -96,7 +96,7 @@ public class MainTeleOp extends OpMode {
                                 {
                                     new Sequential(
                                             Outtake.grabSpecimen(),
-                                           // Drive.normalDrive(),
+                                            Drive.normalDrive(),
                                             VSlide.goTo(0, 0.6),
                                                     new Lambda("mark state SPECIMEN_WALL")
                                                             .setExecute(() -> clawStates.setState(Outtake.OuttakeStates.SPECIMEN_WALL))
@@ -106,7 +106,7 @@ public class MainTeleOp extends OpMode {
                             } else if (Outtake.getClawStates().getState() == Outtake.OuttakeStates.EXTENDED_SAMPLE || !isSpecMode() && (Outtake.getClawStates().getState() == Outtake.OuttakeStates.SPECIMEN_WALL)) { // retract if its at the basket position
                                 new Sequential(
                                         Outtake.retractFromBasket(),
-                                      //  Drive.normalDrive(),
+                                        Drive.normalDrive(),
                                         new Wait(.4),
                                         new Lambda("mark state SPECIMEN_WALL")
                                                 .setExecute(() -> clawStates.setState(Outtake.OuttakeStates.RETRACTED_SAMPLE))
@@ -126,7 +126,7 @@ public class MainTeleOp extends OpMode {
                             if (Outtake.getClawStates().getState() == Outtake.OuttakeStates.RETRACTED_SAMPLE && !isSpecMode()) { // not spec mode and outtake is in sample pos
                                 new Parallel(HSlide.goTo(13500),
                                         Intake.runExtend(),
-                                     //   Drive.nerfDrive(),
+                                        Drive.nerfDrive(),
                                         new Lambda("Set READY_FOR_TRANSFER")
                                                 .setExecute(() -> clawStates.setState(Outtake.OuttakeStates.EXTENDED_INTAKE))
                                                 .setFinish(() -> true)
@@ -145,7 +145,7 @@ public class MainTeleOp extends OpMode {
                         new Parallel(
                                 Outtake.retractArmSample(),
                                 Outtake.outtakeClawOpen(),
-                               // Drive.normalDrive(),
+                                Drive.normalDrive(),
                                 new Sequential(
                                         Intake.runTransfer(),
                                         HSlide.goTo(0),
@@ -169,6 +169,33 @@ public class MainTeleOp extends OpMode {
                 )
         )
         );
+        Mercurial.gamepad1().options().onTrue(
+                new Lambda("Wrist Left")
+                        .setExecute(() -> Outtake.resetExtendo())
+                        .setFinish(() -> true)
+        );
+        Mercurial.gamepad1().dpadLeft().onTrue(
+                new Parallel(
+                        HSlide.goTo(0),
+                        Intake.intakeSpecimen(),
+                        new Lambda("mark state SPECIMEN_WALL")
+                                .setExecute(() -> clawStates.setState(Outtake.OuttakeStates.RETRACTED_SAMPLE))
+                                .setFinish(() -> true)
+                )
+
+        );
+        Mercurial.gamepad2().leftBumper().whileTrue(
+                new Parallel(
+                        Intake.hang_1()
+                )
+        );
+        Mercurial.gamepad2().rightBumper().whileTrue(
+                new Parallel(
+                        Intake.hang_2()
+                )
+        );
+
+
 
         // LEFT BUMPER: move wrist left
         Mercurial.gamepad1().leftBumper().onTrue(
@@ -190,10 +217,10 @@ public class MainTeleOp extends OpMode {
         );
 
         Mercurial.gamepad1().dpadUp().onTrue(
-                new Sequential(
+                new Parallel(
                         Intake.limelightSearch(),
 //                        new SearchForever(follower).raceWith(
-                                new ScanForSample(limelight, buffer, telemetry, follower, false)
+                                new ScanForSample(limelight, buffer, follower, false)
 //                        )
                 )
 
@@ -218,5 +245,6 @@ public class MainTeleOp extends OpMode {
         if (!gamepad1.left_bumper && !gamepad1.right_bumper) {
             Intake.resetWrist();
         }
+
     }
 }

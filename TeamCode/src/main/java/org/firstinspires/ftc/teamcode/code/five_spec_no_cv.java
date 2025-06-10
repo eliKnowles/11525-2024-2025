@@ -11,8 +11,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.code.limelight.Limelight;
-import org.firstinspires.ftc.teamcode.code.limelight.ScanForSample;
-import org.firstinspires.ftc.teamcode.code.limelight.SearchForever;
 import org.firstinspires.ftc.teamcode.code.paths.Paths;
 import org.firstinspires.ftc.teamcode.code.subsystem.HSlide;
 import org.firstinspires.ftc.teamcode.code.subsystem.Intake;
@@ -36,8 +34,8 @@ import dev.frozenmilk.mercurial.commands.util.Wait;
 @HSlide.Attach
 @Intake.Attach
 @Drive.Attach
-@Autonomous(name = "Five Spec", group = "Spec")
-public class five_spec extends OpMode {
+@Autonomous(name = "Five Spec no cv", group = "Spec")
+public class five_spec_no_cv extends OpMode {
     private DashboardPoseTracker dashboardPoseTracker;
 
     private Limelight limelight;
@@ -147,10 +145,6 @@ public class five_spec extends OpMode {
                 ),
                 Outtake.retractFromChamber(),
                 new Wait(retractTimeout),
-                // TODO: lime light
-//                new SearchForever(follower).raceWith(
-//                        new ScanForSample(limelight, buffer, telemetry, follower, false)
-//                ),
                 new Parallel(
                         Outtake.grabSpecimen(),
                         VSlide.goTo(0,.4),

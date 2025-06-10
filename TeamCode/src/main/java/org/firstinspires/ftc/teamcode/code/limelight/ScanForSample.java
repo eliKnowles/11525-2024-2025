@@ -18,17 +18,15 @@ import dev.frozenmilk.mercurial.commands.Command;
 public class ScanForSample implements Command {
     private Limelight limelight;
     private Limelight.SampleState result;
-    private Telemetry telemetry;
 
     private Follower follower;
 
     private boolean check;
     private double tilt = 0;
 
-    public ScanForSample(Limelight limelight, Limelight.SampleState buffer, Telemetry telemetry, Follower follower, boolean isSub) {
+    public ScanForSample(Limelight limelight, Limelight.SampleState buffer, Follower follower, boolean isSub) {
         this.limelight = limelight;
         this.result = buffer;
-        this.telemetry = telemetry;
         this.follower = follower;
         this.check = isSub;
     }
@@ -40,13 +38,11 @@ public class ScanForSample implements Command {
 
     @Override
     public void initialise() {
-        this.limelight.enable();
     }
 
     @Override
     public void execute() {
-        this.limelight.logStatus(telemetry);
-        Limelight.SampleState detection = limelight.query(telemetry, follower);
+        Limelight.SampleState detection = limelight.query(follower);
 
         if (detection != null) {
 
@@ -66,25 +62,21 @@ public class ScanForSample implements Command {
             if (targetY < -16 && check) return;
             if (targetX < 49 && check) return;
 
-            telemetry.addData("ANGLE", detection.angle);
             this.result.angle = detection.angle;
             this.result.center = detection.center;
             this.result.robotPosition = detection.robotPosition;
             this.result.robotRotation = detection.robotRotation;
             this.result.slidePosition = HSlide.getPosition();
         } else {
-            telemetry.addLine("IS NULL");
         }
     }
     @Override
     public boolean finished() {
-        telemetry.addData("ANGLE2", result.angle);
         return this.result.angle != 0 && this.result.angle != 90;
     }
 
     @Override
     public void end(boolean i) {
-        this.limelight.disable();
     }
 
     @NonNull

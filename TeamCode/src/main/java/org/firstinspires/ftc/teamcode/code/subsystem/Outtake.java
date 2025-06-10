@@ -207,7 +207,15 @@ public class Outtake implements Subsystem {
                 new Lambda("claw open").addRequirements(INSTANCE)
                         .setExecute(() -> setOuttakeClaw(outtakeClawPosition.OPEN.pos)),
                 new Lambda("wrist SPECIMEN").addRequirements(INSTANCE)
-                        .setExecute(() -> setOuttakeWrist(0.73))
+                        .setExecute(() -> setOuttakeWrist(0.72))
+        );
+    }
+    public static Parallel resetExtendo() {
+        return new Parallel(
+                new Lambda("Re-extend intake")
+                        .setExecute(() -> clawStates.setState(Outtake.OuttakeStates.EXTENDED_INTAKE))
+                        .setFinish(() -> true)
+
         );
     }
 
