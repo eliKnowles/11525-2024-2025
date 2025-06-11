@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.code.limelight.Limelight;
+import org.firstinspires.ftc.teamcode.code.limelight.LimelightCV;
 import org.firstinspires.ftc.teamcode.code.limelight.ScanForSample;
 import org.firstinspires.ftc.teamcode.code.limelight.SearchForever;
 import org.firstinspires.ftc.teamcode.code.subsystem.HSlide;
@@ -43,10 +44,14 @@ public class MainTeleOp extends OpMode {
     private Limelight limelight;
     private Limelight.SampleState buffer;
 
+    private LimelightCV llCV;
+
     @Override
     public void init() {
         this.buffer = new Limelight.SampleState();
         this.limelight = new Limelight(hardwareMap);
+
+        this.llCV = new LimelightCV(hardwareMap, follower);
 
         clawStates.setState(isSpecMode() ? Outtake.OuttakeStates.RETRACTED_SPEC : Outtake.OuttakeStates.RETRACTED_SAMPLE);
 
@@ -217,13 +222,13 @@ public class MainTeleOp extends OpMode {
         );
 
         Mercurial.gamepad1().dpadUp().onTrue(
-                new Parallel(
-                        Intake.limelightSearch(),
-//                        new SearchForever(follower).raceWith(
-                                new ScanForSample(limelight, buffer, follower, false)
-//                        )
-                )
-
+                llCV.alignAction()
+//                new Parallel(
+//                        Intake.limelightSearch(),
+////                        new SearchForever(follower).raceWith(
+//                                new ScanForSample(limelight, buffer, follower, false)
+////                        )
+//                )
         );
     }
 
