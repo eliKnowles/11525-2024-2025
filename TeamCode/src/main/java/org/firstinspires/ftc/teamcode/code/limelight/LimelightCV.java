@@ -15,8 +15,6 @@ import java.util.Optional;
 import dev.frozenmilk.mercurial.commands.Lambda;
 
 public class LimelightCV {
-    public static final PathBuilder PATH_BUILDER = new PathBuilder();
-
     public final Limelight3A limelight;
     public final Follower follower;
 
@@ -42,32 +40,22 @@ public class LimelightCV {
     }
 
     public void align(Sample sample) {
-        double height = 0.25;
-        double targetHeight = 0.03;
-        double mountAngle = 25; // TODO: lucas change this please
-
-        double ty = sample.getTy();
         double tx = sample.getTx();
-
-        double distance = getDistance(ty, height, targetHeight, mountAngle);
-        double angleRad = Math.toRadians(tx);
-
-        double dx = distance * Math.cos(angleRad);
-        double dy = distance * Math.sin(angleRad);
+        double ty = sample.getTy();
 
         Pose currentPose = follower.getPose();
-        double heading = currentPose.getHeading();
 
-        double offsetX = dx * Math.cos(heading) - dy * Math.sin(heading);
-        double offsetY = dx * Math.sin(heading) + dy * Math.cos(heading);
+        double xScale = 0.01;
+        double yScale = 0.01;
 
-        double targetX = currentPose.getX() + offsetX;
-        double targetY = currentPose.getY() + offsetY;
+        double targetX = currentPose.getX() + (ty * yScale);
+        double targetY = currentPose.getY() - (tx * xScale);
 
-        Pose targetPose = new Pose(targetX, targetY, heading);
+        Pose targetPose = new Pose(targetX, targetY, currentPose.getHeading());
 
+        PathBuilder pathBuilder = new PathBuilder();
         follower.followPath(
-                PATH_BUILDER.addBezierLine(
+                pathBuilder.addBezierLine(
                         new Point(currentPose),
                         new Point(targetPose)
                 ).build()
@@ -76,25 +64,20 @@ public class LimelightCV {
 
     public void align() {
         align(scan().orElseGet(() -> {
-            System.out.println("Could not detect sample in latest scan");
-            return new Sample(0, 0);
+            throw new RuntimeException("Could not detect sample in latest scan");
+//            return new Sample(0, 0);
         }));
     }
 
     public Lambda alignAction(Sample sample) {
         return new Lambda("align with sample")
                 .setExecute(() -> align(sample))
-                .setFinish(follower::isBusy);
+                .setFinish(() -> !follower.isBusy());
     }
 
     public Lambda alignAction() {
         return new Lambda("align with sample")
-                .setExecute(() -> align(
-                        scan().orElseGet(() -> {
-                            System.out.println("Could not detect sample in latest scan");
-                            return new Sample(0, 0);
-                        }
-                )))
+                .setExecute(this::align)
                 .setFinish(follower::isBusy);
     }
 
