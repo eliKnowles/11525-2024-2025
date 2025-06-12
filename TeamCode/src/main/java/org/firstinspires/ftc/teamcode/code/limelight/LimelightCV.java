@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.code.limelight;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.BezierCurve;
+import com.pedropathing.pathgen.BezierLine;
 import com.pedropathing.pathgen.PathBuilder;
 import com.pedropathing.pathgen.Point;
 import com.pedropathing.pathgen.Vector;
@@ -10,10 +11,13 @@ import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.code.subsystem.Drive;
+
 import java.util.Optional;
 
 import dev.frozenmilk.mercurial.commands.Lambda;
 
+@Drive.Attach
 public class LimelightCV {
     public final Limelight3A limelight;
     public final Follower follower;
@@ -45,21 +49,31 @@ public class LimelightCV {
 
         Pose currentPose = follower.getPose();
 
-        double xScale = 0.01;
-        double yScale = 0.01;
+        double xScale = 0.02;
+        double yScale = 0.2;
 
         double targetX = currentPose.getX() + (ty * yScale);
         double targetY = currentPose.getY() - (tx * xScale);
 
-        Pose targetPose = new Pose(targetX, targetY, currentPose.getHeading());
+        double heading = currentPose.getHeading();
+
+        Point targetPose = new Point(targetX, targetY, Point.CARTESIAN);
 
         PathBuilder pathBuilder = new PathBuilder();
-        follower.followPath(
-                pathBuilder.addBezierLine(
-                        new Point(currentPose),
-                        new Point(targetPose)
-                ).build()
-        );
+
+        boolean reversed = ty < 0;
+
+        Drive.followPathChain(pathBuilder
+                .addPath(
+                        new BezierLine(
+                            new Point(currentPose.getX(), currentPose.getY(), Point.CARTESIAN),
+                            targetPose
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0), 0)
+                .setReversed(reversed)
+                .build()
+        ).schedule();
     }
 
     public void align() {

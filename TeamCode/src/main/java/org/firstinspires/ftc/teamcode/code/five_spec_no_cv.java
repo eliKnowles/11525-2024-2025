@@ -61,7 +61,7 @@ public class five_spec_no_cv extends OpMode {
     public void buildPaths() {
 
     }
-    private double clawTimeout = .1;
+    private double clawTimeout = .2;
     private double retractTimeout = 0.01;
 
     public void autonomousPathUpdate() {
@@ -100,7 +100,7 @@ public class five_spec_no_cv extends OpMode {
 
         new Sequential(
                 new Parallel(
-                        VSlide.goTo(19000, 1.0),
+                        VSlide.goTo(19500, 1.0),
                         Intake.intakeSpecimen(),
                         Outtake.scoreSpecimenAuto(),
                         new Sequential(
@@ -126,7 +126,7 @@ public class five_spec_no_cv extends OpMode {
                         ),
                 new Parallel(
                         Outtake.scoreSpecimen(),
-                        VSlide.goTo(19000),
+                        VSlide.goTo(19500),
                         Drive.followPathChain(Paths.fiveSpecs.get(5))
                 ),
                 Outtake.retractFromChamber(),
@@ -140,7 +140,7 @@ public class five_spec_no_cv extends OpMode {
                 Outtake.outtakeClawClose(),
                 new Parallel(
                         Outtake.scoreSpecimen(), // score 3rd
-                        VSlide.goTo(19000),
+                        VSlide.goTo(19500),
                         Drive.followPathChain(Paths.fiveSpecs.get(7)) // drive to score 3rd
                 ),
                 Outtake.retractFromChamber(),
@@ -154,7 +154,7 @@ public class five_spec_no_cv extends OpMode {
                 Outtake.outtakeClawClose(),
                 new Parallel(
                         Outtake.scoreSpecimen(), // score 4th
-                        VSlide.goTo(19000),
+                        VSlide.goTo(19500),
                         Drive.followPathChain(Paths.fiveSpecs.get(9)) // drive to score 4th
                 ),
                 Outtake.retractFromChamber(),
@@ -168,7 +168,7 @@ public class five_spec_no_cv extends OpMode {
                 Outtake.outtakeClawClose(),
                 new Parallel(
                         Outtake.scoreSpecimen(),
-                        VSlide.goTo(19000),
+                        VSlide.goTo(19500),
                         Drive.followPathChain(Paths.fiveSpecs.get(11)) // drive to score 5th
                 ),
                 Outtake.retractFromChamber(),

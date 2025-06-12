@@ -174,6 +174,25 @@ public class Outtake implements Subsystem {
 
                 );
     }
+    public static Sequential dropSample() {
+        return new Sequential(
+                new Lambda("LED change").addRequirements(INSTANCE)
+                        .setExecute(() -> setLED(0.279))
+                        .setFinish(() -> true), // red
+                new Lambda("wrist to sample").addRequirements(INSTANCE)
+                        .setExecute(() -> setOuttakeWrist(WristPosition.SAMPLESCORE.pos))
+                        .setFinish(() -> true),
+                new Lambda("linkage to 0.15").addRequirements(INSTANCE)
+                        .setExecute(() -> setLinkage(0.05))
+                        .setFinish(() -> true),
+
+                new Lambda("pivot to 0.8").addRequirements(INSTANCE)
+                        .setExecute(() -> setPivot(.78))
+                        .setFinish(() -> true)
+
+        );
+    }
+
 
 
     public static Sequential outtakeClawClose() {
@@ -204,7 +223,7 @@ public class Outtake implements Subsystem {
                 new Lambda("linkage to 0.00").addRequirements(INSTANCE)
                         .setExecute(() -> setLinkage(0.04)),
                 new Lambda("pivot to 0.5").addRequirements(INSTANCE)
-                        .setExecute(() -> setPivot(0.60)),
+                        .setExecute(() -> setPivot(0.61)),
                 new Lambda("claw open").addRequirements(INSTANCE)
                         .setExecute(() -> setOuttakeClaw(outtakeClawPosition.OPEN.pos)),
                 new Lambda("wrist SPECIMEN").addRequirements(INSTANCE)

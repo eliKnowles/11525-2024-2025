@@ -46,6 +46,9 @@ public class MainTeleOp extends OpMode {
 
     private LimelightCV llCV;
 
+    private boolean stopHangSceduled = false;
+    private boolean limelightSceduled = false;
+
     @Override
     public void init() {
         this.buffer = new Limelight.SampleState();
@@ -82,7 +85,7 @@ public class MainTeleOp extends OpMode {
                                                 .setExecute(() -> clawStates.setState(Outtake.OuttakeStates.EXTENDED_SAMPLE))
                                                 .setFinish(() -> true),
                                         Outtake.extendArmSample(),
-                                        VSlide.goTo(26000),
+                                        VSlide.goTo(27500),
                                         Drive.nerfDrive()
 
                                 ).schedule();
@@ -129,7 +132,8 @@ public class MainTeleOp extends OpMode {
                 new Lambda("extend intake")
                         .setExecute(() -> {
                             if (Outtake.getClawStates().getState() == Outtake.OuttakeStates.RETRACTED_SAMPLE && !isSpecMode()) { // not spec mode and outtake is in sample pos
-                                new Parallel(HSlide.goTo(13500),
+                                new Parallel(
+                                        HSlide.goTo(13500),
                                         Intake.runExtend(),
                                         Drive.nerfDrive(),
                                         new Lambda("Set READY_FOR_TRANSFER")
@@ -156,7 +160,7 @@ public class MainTeleOp extends OpMode {
                                         HSlide.goTo(0),
                                         Outtake.outtakeClawClose(),
                                         Intake.intakeClawOpen(),
-                                        Intake.intakeSpecimen(),
+                                      //  Intake.intakeSpecimen(),
                                         new Lambda("Transfer done")
                                                 .setExecute(() -> clawStates.setState(Outtake.OuttakeStates.TRANSFER_SAMPLE))
                                                 .setFinish(() -> true)
@@ -187,22 +191,29 @@ public class MainTeleOp extends OpMode {
                                 .setExecute(() -> clawStates.setState(Outtake.OuttakeStates.RETRACTED_SAMPLE))
                                 .setFinish(() -> true)
                 )
-
         );
-        Mercurial.gamepad2().leftBumper().whileTrue(
-                new Parallel(
-                        Intake.hang_1()
-                )
+        Mercurial.gamepad2().leftBumper().onTrue(
+                Intake.hang_1()
         );
-        Mercurial.gamepad2().rightBumper().whileTrue(
+        Mercurial.gamepad2().rightBumper().onTrue(
+                Intake.hang_2()
+        );
+        Mercurial.gamepad2().leftBumper().and(() -> {
+            return gamepad2.right_bumper;
+        }).onTrue(
                 new Parallel(
+                        Intake.hang_1(),
                         Intake.hang_2()
                 )
         );
+        Mercurial.gamepad2().triangle().whileTrue(
+                new Parallel(
+                        Outtake.grabSpecimen(),
+                        Intake.hangDeploy()
+                )
+        );
 
-
-
-        // LEFT BUMPER: move wrist left
+                // LEFT BUMPER: move wrist left
         Mercurial.gamepad1().leftBumper().onTrue(
                 new Lambda("Wrist Left")
                         .setExecute(() -> Intake.adjustWrist(-1))
@@ -222,6 +233,7 @@ public class MainTeleOp extends OpMode {
         );
 
         Mercurial.gamepad1().dpadUp().onTrue(
+
                 llCV.alignAction()
 //                new Parallel(
 //                        Intake.limelightSearch(),
@@ -251,6 +263,32 @@ public class MainTeleOp extends OpMode {
         if (!gamepad1.left_bumper && !gamepad1.right_bumper) {
             Intake.resetWrist();
         }
+        if (!gamepad2.left_bumper && !gamepad2.right_bumper && !gamepad2.triangle && !stopHangSceduled) {
+            Intake.stopHang();
+            stopHangSceduled = true;
+        } else {
+            stopHangSceduled = false;
+        }
 
+        if (gamepad1.right_trigger > 0.75 && !limelightSceduled) {
+            limelightSceduled = true;
+            new Lambda("Score Position")
+                    .setExecute(() -> {
+                        if (Outtake.getClawStates().getState() == Outtake.OuttakeStates.TRANSFER_SAMPLE) {
+                            new Sequential(
+                                    Outtake.dropSample(),
+                                    new Wait(.2),
+                                    Outtake.outtakeClawOpen(),
+                                    new Lambda("mark state EXTENDED_SPEC")
+                                            .setExecute(() -> clawStates.setState(Outtake.OuttakeStates.RETRACTED_SAMPLE))
+                                            .setFinish(() -> true)
+                            ).schedule();
+                        }
+                    })
+                    .setFinish(() -> true)
+                    .schedule();
+        } else if (gamepad1.right_trigger < 0.1) {
+            limelightSceduled = false;
+        }
     }
 }

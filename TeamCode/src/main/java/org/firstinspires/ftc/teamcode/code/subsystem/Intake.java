@@ -94,23 +94,39 @@ public class Intake implements Subsystem {
 
         );
     }
-    public static Parallel wrist_auto() {
-        return new Parallel(
-                new Lambda("Set Wrist to 0").addRequirements(INSTANCE).setExecute(() -> intakeWristServoTwo.setPosition(.8f))
-        );
+    public static Lambda wrist_auto() {
+        return new Lambda("Set Wrist to 0")
+                .addRequirements(INSTANCE)
+                .setExecute(() -> intakeWristServoTwo.setPosition(.8f))
+                .setInterruptible(true);
     }
 
 
-    public static Parallel hang_1() {
+    public static Lambda hang_1() {
+        return new Lambda("Set Wrist to 0")
+                .addRequirements(INSTANCE)
+                        .setExecute(() -> hangServo.setPower(1))
+                        .setInterruptible(true);
+    }
+    public static Lambda hang_2() {
+        return new Lambda("Set Wrist to 0")
+                        .addRequirements(INSTANCE)
+                        .setExecute(() -> hangServo2.setPower(-1))
+                        .setInterruptible(true);
+    }
+
+    public static void stopHang() {
+        hangServo.setPower(0);
+        hangServo2.setPower(0);
+
+    }
+    public static Parallel hangDeploy() {
         return new Parallel(
-                new Lambda("Set Wrist to 0").addRequirements(INSTANCE).setExecute(() -> hangServo.setPower(1))
+                new Lambda("Set Wrist to 0").addRequirements(INSTANCE).setExecute(() -> hangServo.setPower(-1)),
+                new Lambda("Set Wrist to 0").addRequirements(INSTANCE).setExecute(() -> hangServo2.setPower(1))
         );
     }
-    public static Parallel hang_2() {
-        return new Parallel(
-                new Lambda("Set Wrist to 0").addRequirements(INSTANCE).setExecute(() -> hangServo2.setPower(-1))
-        );
-    }
+
 
 
     public static Parallel limelightSearch() {

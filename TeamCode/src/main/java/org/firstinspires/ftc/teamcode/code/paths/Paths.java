@@ -43,11 +43,13 @@ public class Paths {
                 .build());
 
         fiveSpecs.add(new PathBuilder() // go around and push first 1
-                .addPath(  new BezierCurve(
+                .addPath(          new BezierCurve(
                         new Point(39.500, 66.000, Point.CARTESIAN),
-                        new Point(4.162, 10.821, Point.CARTESIAN),
-                        new Point(96.555, 43.450, Point.CARTESIAN),
-                        new Point(73.914, 18.312, Point.CARTESIAN),
+                        new Point(1.498, 21.975, Point.CARTESIAN),
+                        new Point(112.370, 37.790, Point.CARTESIAN),
+                        new Point(29.799, 23.473, Point.CARTESIAN),
+                        new Point(92.060, 15.316, Point.CARTESIAN),
+                        new Point(16.148, 27.968, Point.CARTESIAN),
                         new Point(8.657, 22.308, Point.CARTESIAN)
                 ))
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
@@ -67,8 +69,8 @@ public class Paths {
         fiveSpecs.add(new PathBuilder() // push third 3
                 .addPath(   new BezierCurve(
                         new Point(10.321, 13.318, Point.CARTESIAN),
-                        new Point(65.591, 16.647, Point.CARTESIAN),
-                        new Point(89.230, 4.162, Point.CARTESIAN),
+                        new Point(65.591, 15.815, Point.CARTESIAN),
+                        new Point(88.398, 2.497, Point.CARTESIAN),
                         new Point(10.654, 6.326, Point.CARTESIAN)
                 ))
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
@@ -86,7 +88,7 @@ public class Paths {
                 .addPath(new BezierCurve(
                         new Point(8.000, 28.634, Point.CARTESIAN),
                         new Point(9.156, 72.250, Point.CARTESIAN),
-                        new Point(40.000, 69.000, Point.CARTESIAN)
+                        new Point(41.000, 69.000, Point.CARTESIAN)
                 ))
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
                 .build());
