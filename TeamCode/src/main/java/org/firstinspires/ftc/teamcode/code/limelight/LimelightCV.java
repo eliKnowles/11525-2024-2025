@@ -5,6 +5,7 @@ import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.BezierCurve;
 import com.pedropathing.pathgen.BezierLine;
 import com.pedropathing.pathgen.PathBuilder;
+import com.pedropathing.pathgen.PathChain;
 import com.pedropathing.pathgen.Point;
 import com.pedropathing.pathgen.Vector;
 import com.qualcomm.hardware.limelightvision.LLResult;
@@ -63,17 +64,16 @@ public class LimelightCV {
 
         boolean reversed = ty < 0;
 
-        Drive.followPathChain(pathBuilder
-                .addPath(
-                        new BezierLine(
-                            new Point(currentPose.getX(), currentPose.getY(), Point.CARTESIAN),
-                            targetPose
-                        )
-                )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0), 0)
+        PathChain chain = new PathBuilder()
+                .addPath(new BezierLine(
+                        new Point(currentPose.getX(), currentPose.getY(), Point.CARTESIAN),
+                        targetPose
+                ))
+                .setConstantHeadingInterpolation(heading)
                 .setReversed(reversed)
-                .build()
-        ).schedule();
+                .build();
+
+        Drive.followPathChain(chain).schedule();
     }
 
     public void align() {
