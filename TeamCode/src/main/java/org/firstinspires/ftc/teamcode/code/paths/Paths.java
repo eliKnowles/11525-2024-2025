@@ -19,10 +19,10 @@ public class Paths {
 
     public static final PathBuilder builder = new PathBuilder();
 
-    public static final Pose startPose = new Pose(7.600, 66.000, Math.toRadians(0));  // Starting position
+    public static final Pose startPose = new Pose(8.200, 66.000, Math.toRadians(0));  // Starting position
     public static final Pose startPoseSample = new Pose(7, 96, Math.toRadians(0));  // Starting position
 
-    private static final Pose scorePose1 = new Pose(39.5, 66.000, Math.toRadians(0)); // Scoring position
+    private static final Pose scorePose1 = new Pose(41, 66.000, Math.toRadians(0)); // Scoring position
     private static final Pose scorePose2 = new Pose(14, 129, Math.toRadians(0)); // Scoring position
     private static final Pose scorePose3 = new Pose(14, 129, Math.toRadians(0)); // Scoring position
     private static final Pose scorePose4 = new Pose(14, 129, Math.toRadians(0)); // Scoring position
@@ -43,7 +43,7 @@ public class Paths {
 
         fiveSpecs.add(new PathBuilder() // go around and push first 1
                 .addPath(          new BezierCurve(
-                        new Point(39.500, 66.000, Point.CARTESIAN),
+                        new Point(41, 66.000, Point.CARTESIAN),
                         new Point(1.498, 21.975, Point.CARTESIAN),
                         new Point(112.370, 37.790, Point.CARTESIAN),
                         new Point(29.799, 23.473, Point.CARTESIAN),

@@ -68,26 +68,19 @@ public class Intake implements Subsystem {
         hangServo = hw.get(CRServo.class, "hang_servo");
         hangServo2 = hw.get(CRServo.class, "hang_servo_2");
 
-
-
-
         intakePivotServoOne = new ServoV2("intake_pivot_servo", hw);
         intakeClawServo = new ServoV2("intake_claw", hw);
         intakeWristServo = new ServoV2("intake_wrist", hw);
         intakeWristServoTwo = new ServoV2("intake_wrist_two", hw);
         intakeClawOpen().schedule();
         setPivot(.7f);
-
     }
 
     public static Parallel runTransfer() {
         return new Parallel(
                 new Lambda("Set Wrist to 0").addRequirements(INSTANCE).setExecute(() -> intakeWristServo.setPosition(.43f)),
                 new Lambda("Set Wrist2 to .5").addRequirements(INSTANCE).setExecute(() -> intakeWristServoTwo.setPosition(.5f)),
-
-
                 new Lambda("Set Pivot to 0.55").addRequirements(INSTANCE).setExecute(() -> intakePivotServoOne.setPosition(0.86f))
-
         );
     }
     public static Lambda wrist_auto() {
@@ -104,6 +97,7 @@ public class Intake implements Subsystem {
                         .setExecute(() -> hangServo.setPower(1))
                         .setInterruptible(true);
     }
+
     public static Lambda hang_2() {
         return new Lambda("Set Wrist to 0")
                         .addRequirements(INSTANCE)
@@ -116,6 +110,7 @@ public class Intake implements Subsystem {
         hangServo2.setPower(0);
 
     }
+
     public static Parallel hangDeploy() {
         return new Parallel(
                 new Lambda("Set Wrist to 0").addRequirements(INSTANCE).setExecute(() -> hangServo.setPower(-1)),
@@ -152,15 +147,10 @@ public class Intake implements Subsystem {
         wristPos = 0;
         setWristPosition();
     }
-    public static boolean hasSample() {
-        if (pin1.getState() || pin0.getState() && pin1.getState() == false)  {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
 
+    public static boolean hasSample() {
+        return pin1.getState() || pin0.getState() && !pin1.getState();
+    }
 
     public static Sequential intakeClawOpen() {
         return new Sequential(
@@ -181,13 +171,13 @@ public class Intake implements Subsystem {
 
         );
     }
+
     public static Sequential chamberTransfer() {
         return new Sequential(
                 new Lambda("Set Wrist2 to 0.5").addRequirements(INSTANCE).setExecute(() -> intakeWristServo.setPosition(0.6f))
 
         );
     }
-
 
     public static Sequential intakeSpecimen() {
         return new Sequential(
@@ -197,7 +187,6 @@ public class Intake implements Subsystem {
                 new Lambda("Set Intake Claw to 0.4").addRequirements(INSTANCE).setExecute(() -> intakeClawServo.setPosition(0.4f))
         );
     }
-
 
     public static Sequential intakeGrab() {
 //        if ()
@@ -209,7 +198,6 @@ public class Intake implements Subsystem {
                // new Lambda("Set Pivot to 0.3").addRequirements(INSTANCE).setExecute(() -> intakePivotServoOne.setPosition(0.3f))
         );
     }
-
 
     public static Sequential idle() {
         return new Sequential(

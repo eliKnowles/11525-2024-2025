@@ -40,7 +40,7 @@ public class five_spec_no_cv extends OpMode {
     private Limelight limelight;
     private Limelight.SampleState buffer;
 
-    private final Pose startPose = new Pose(7.600, 66.000, Math.toRadians(0));  // Starting position
+    private final Pose startPose = new Pose(8.2, 66.000, Math.toRadians(0));  // Starting position
     private final Pose scorePose1 = new Pose(39.5, 66.000, Math.toRadians(0)); // Scoring position
     private final Pose scorePose2 = new Pose(14, 129, Math.toRadians(0)); // Scoring position
     private final Pose scorePose3 = new Pose(14, 129, Math.toRadians(0)); // Scoring position
@@ -52,6 +52,8 @@ public class five_spec_no_cv extends OpMode {
     private final Pose parkPose = new Pose(60, 98, Math.toRadians(90));    // Parking position
 
     private ElapsedTime pathTimer, actionTimer, opmodeTimer;
+
+    private final int slideScorePos = 19500;
 
 
     private int pathState;
@@ -99,7 +101,7 @@ public class five_spec_no_cv extends OpMode {
 
         new Sequential(
                 new Parallel(
-                        VSlide.goTo(19500, 1.0),
+                        VSlide.goTo(slideScorePos, 1.0),
                         Intake.intakeSpecimen(),
                         Outtake.scoreSpecimenAuto(),
                         new Sequential(
@@ -125,7 +127,7 @@ public class five_spec_no_cv extends OpMode {
                         ),
                 new Parallel(
                         Outtake.scoreSpecimen(),
-                        VSlide.goTo(19500),
+                        VSlide.goTo(slideScorePos),
                         Drive.followPathChain(Paths.fiveSpecs.get(5))
                 ),
                 Outtake.retractFromChamber(),
@@ -139,7 +141,7 @@ public class five_spec_no_cv extends OpMode {
                 Outtake.outtakeClawClose(),
                 new Parallel(
                         Outtake.scoreSpecimen(), // score 3rd
-                        VSlide.goTo(19500),
+                        VSlide.goTo(slideScorePos),
                         Drive.followPathChain(Paths.fiveSpecs.get(7)) // drive to score 3rd
                 ),
                 Outtake.retractFromChamber(),
@@ -153,7 +155,7 @@ public class five_spec_no_cv extends OpMode {
                 Outtake.outtakeClawClose(),
                 new Parallel(
                         Outtake.scoreSpecimen(), // score 4th
-                        VSlide.goTo(19500),
+                        VSlide.goTo(slideScorePos),
                         Drive.followPathChain(Paths.fiveSpecs.get(9)) // drive to score 4th
                 ),
                 Outtake.retractFromChamber(),
@@ -167,7 +169,7 @@ public class five_spec_no_cv extends OpMode {
                 Outtake.outtakeClawClose(),
                 new Parallel(
                         Outtake.scoreSpecimen(),
-                        VSlide.goTo(19500),
+                        VSlide.goTo(slideScorePos),
                         Drive.followPathChain(Paths.fiveSpecs.get(11)) // drive to score 5th
                 ),
                 Outtake.retractFromChamber(),

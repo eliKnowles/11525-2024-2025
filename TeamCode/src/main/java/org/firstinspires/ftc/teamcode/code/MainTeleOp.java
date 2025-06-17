@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.code;
 
-
 import static org.firstinspires.ftc.teamcode.code.subsystem.Drive.follower;
 import static org.firstinspires.ftc.teamcode.code.subsystem.HSlide.INSTANCE;
 import static org.firstinspires.ftc.teamcode.code.subsystem.Intake.pin0;
@@ -64,7 +63,7 @@ public class MainTeleOp extends OpMode {
                                         Outtake.outtakeClawClose(),
                                         new Wait(.2),
                                         new Parallel(
-                                                new Lambda("Set slide target").setExecute(() -> VSlide.setTarget(19200, 1)).setFinish(() -> true),
+                                                new Lambda("Set slide target").setExecute(() -> VSlide.setTarget(19800, 1)).setFinish(() -> true),
                                                 Outtake.scoreSpecimen()
                                         ),
                                         Drive.nerfDrive(),
@@ -177,13 +176,12 @@ public class MainTeleOp extends OpMode {
                 )
         );
 
-
-
         Mercurial.gamepad1().options().onTrue(
                 new Lambda("Wrist Left")
                         .setExecute(() -> Outtake.resetExtendo())
                         .setFinish(() -> true)
         );
+
         Mercurial.gamepad1().dpadLeft().onTrue(
                 new Parallel(
                         HSlide.goTo(0),
@@ -193,27 +191,28 @@ public class MainTeleOp extends OpMode {
                                 .setFinish(() -> true)
                 )
         );
+
         Mercurial.gamepad2().leftBumper().onTrue(
                 Intake.hang_1()
         );
+
         Mercurial.gamepad2().rightBumper().onTrue(
                 Intake.hang_2()
         );
-        Mercurial.gamepad2().leftBumper().and(() -> {
-            return gamepad2.right_bumper;
-        }).onTrue(
+
+        Mercurial.gamepad2().leftBumper().and(() -> gamepad2.right_bumper).onTrue(
                 new Parallel(
                         Intake.hang_1(),
                         Intake.hang_2()
                 )
         );
+
         Mercurial.gamepad2().triangle().whileTrue(
                 new Parallel(
                         Outtake.grabSpecimen(),
                         Intake.hangDeploy()
                 )
         );
-
                 // LEFT BUMPER: move wrist left
         Mercurial.gamepad1().leftBumper().onTrue(
                 new Lambda("Wrist Left")

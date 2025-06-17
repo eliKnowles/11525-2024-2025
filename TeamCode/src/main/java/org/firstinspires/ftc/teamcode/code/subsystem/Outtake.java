@@ -264,7 +264,7 @@ public class Outtake implements Subsystem {
                 new Lambda("linkage to 0.00").addRequirements(INSTANCE)
                         .setExecute(() -> setLinkage(0.04)),
                 new Lambda("pivot to 0.5").addRequirements(INSTANCE)
-                        .setExecute(() -> setPivot(0.65))
+                        .setExecute(() -> setPivot(0.6))
                         .setFinish(() -> true)
 
 
@@ -305,7 +305,7 @@ public class Outtake implements Subsystem {
                         .setExecute(() -> setLED(0.722))
                         .setFinish(() -> true),// violet
                 new Lambda("pivot to 0.5").addRequirements(INSTANCE)
-                        .setExecute(() -> setPivot(0.52))
+                        .setExecute(() -> setPivot(0.54))
                         .setFinish(() -> true),
                 new Lambda("linkage to 0.32").addRequirements(INSTANCE)
                         .setExecute(() -> setLinkage(0.37))
@@ -330,7 +330,7 @@ public class Outtake implements Subsystem {
                         .setExecute(() -> setOuttakeWrist(WristPosition.SPECIMEN.pos)),
                 new Wait(.2),
                 new Lambda("pivot to 0.5").addRequirements(INSTANCE)
-                        .setExecute(() -> setPivot(0.52)),
+                        .setExecute(() -> setPivot(0.54)),
 
                 new Wait(.2),
                 new Lambda("linkage to 0.32").addRequirements(INSTANCE)
