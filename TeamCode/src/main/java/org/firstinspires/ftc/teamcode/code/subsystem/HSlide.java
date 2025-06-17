@@ -38,6 +38,8 @@ public class HSlide implements Subsystem {
     private static double lastError = 0;
     private static double integral = 0;
 
+    private static int offset = 0;
+
     private HSlide() {}
 
     @Retention(RetentionPolicy.RUNTIME)
@@ -65,7 +67,7 @@ public class HSlide implements Subsystem {
         setDefaultCommand(update());
     }
 
-    public static double getPosition() {
+    public static int getPosition() {
         return hSlideMotorOne.getCurrentPosition();
     }
 
@@ -75,8 +77,12 @@ public class HSlide implements Subsystem {
         lastError = 0;
     }
 
+    public static int getTargetPosition() {
+        return targetPosition + offset;
+    }
+
     public static boolean atTarget() {
-        return Math.abs(targetPosition - hSlideMotorOne.getCurrentPosition()) < tolerance;
+        return Math.abs(getTargetPosition() - getPosition()) < tolerance;
     }
 
     public static void resetEncoders() {
@@ -85,19 +91,40 @@ public class HSlide implements Subsystem {
     }
 
     public static void pidfUpdate() {
-        double current = hSlideMotorOne.getCurrentPosition();
-        double error = targetPosition - current;
+        double current = getPosition();
+        double error = getTargetPosition() - current;
         integral += error;
         double derivative = error - lastError;
         lastError = error;
 
 
-        double output = kP * error + kI * integral + kD * derivative + kF * targetPosition;
+        double output = kP * error + kI * integral + kD * derivative + kF * getTargetPosition();
         output = Math.max(-1, Math.min(1, output));
 
         if (Math.abs(output) < 0.05) output = 0;
 
         hSlideMotorOne.setPower(output);
+    }
+
+    public static Lambda setOffset(int offset) {
+        return new Lambda("set-new-offset-to-" + offset)
+                .setInit(() -> HSlide.offset = offset)
+                .setFinish(() -> true);
+    }
+
+    public static Lambda zeroEncoder() {
+        return new Lambda("set-new-offset-to-" + offset)
+                .setInit(() -> {
+                    offset = getPosition();
+                    targetPosition = 0;
+                })
+                .setFinish(() -> true);
+    }
+
+    public static Lambda changeOffset(int offset) {
+        return new Lambda("set-new-offset-to-" + offset)
+                .setInit(() -> HSlide.offset += offset)
+                .setFinish(() -> true);
     }
 
     @NonNull

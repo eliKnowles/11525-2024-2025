@@ -112,7 +112,6 @@ public class Drive implements Subsystem {
 
     public static Lambda nerfDrive() {
         return new Lambda("nerf_drive")
-                .setInterruptible(true)
                 .setInit(() -> {
                     speed = .6;
                 })
@@ -122,7 +121,6 @@ public class Drive implements Subsystem {
 
     public static Lambda normalDrive() {
         return new Lambda("normal_drive")
-                .setInterruptible(true)
                 .setInit(() -> {
                     speed = 1;
                 })

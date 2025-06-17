@@ -97,8 +97,9 @@ public class MainTeleOp extends OpMode {
                                             Outtake.getClawStates().getState() == Outtake.OuttakeStates.EXTENDED_SPEC)) {
                                 {
                                     new Sequential(
+                                            Intake.intakeSpecimen(),
                                             Outtake.grabSpecimen(),
-                                            Drive.normalDrive(),
+                                            Drive.nerfDrive(),
                                             VSlide.goTo(0, 0.6),
                                                     new Lambda("mark state SPECIMEN_WALL")
                                                             .setExecute(() -> clawStates.setState(Outtake.OuttakeStates.SPECIMEN_WALL))
@@ -127,9 +128,9 @@ public class MainTeleOp extends OpMode {
                         .setExecute(() -> {
                             if (Outtake.getClawStates().getState() == Outtake.OuttakeStates.RETRACTED_SAMPLE && !isSpecMode()) { // not spec mode and outtake is in sample pos
                                 new Parallel(
+                                        Drive.nerfDrive(),
                                         HSlide.goTo(13500),
                                         Intake.runExtend(),
-                                        Drive.nerfDrive(),
                                         new Lambda("Set READY_FOR_TRANSFER")
                                                 .setExecute(() -> clawStates.setState(Outtake.OuttakeStates.EXTENDED_INTAKE))
                                                 .setFinish(() -> true)
@@ -178,7 +179,7 @@ public class MainTeleOp extends OpMode {
 
         Mercurial.gamepad1().options().onTrue(
                 new Lambda("Wrist Left")
-                        .setExecute(() -> Outtake.resetExtendo())
+                        .setExecute(Outtake::resetExtendo)
                         .setFinish(() -> true)
         );
 
@@ -209,6 +210,7 @@ public class MainTeleOp extends OpMode {
 
         Mercurial.gamepad2().triangle().whileTrue(
                 new Parallel(
+                        Intake.intakeSpecimen(),
                         Outtake.grabSpecimen(),
                         Intake.hangDeploy()
                 )
@@ -226,10 +228,18 @@ public class MainTeleOp extends OpMode {
                         .setFinish(() -> true)
         );
 
-
         // TOGGLE button
         Mercurial.gamepad1().share().onTrue(
                 Outtake.toggleMode()
+        );
+
+        //HSlides
+        Mercurial.gamepad2().dpadDown().onTrue(
+                HSlide.changeOffset(-200)
+        );
+
+        Mercurial.gamepad2().dpadUp().onTrue(
+                HSlide.zeroEncoder()
         );
 
       //  Mercurial.gamepad1().dpadUp().onTrue(
