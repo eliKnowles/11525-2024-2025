@@ -10,7 +10,6 @@ import com.pedropathing.pathgen.PathChain;
 import com.pedropathing.pathgen.Point;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class Paths {
@@ -166,8 +165,8 @@ public class Paths {
         sample.add(new PathBuilder() // score first
                 .addPath(
                         new BezierLine(
-                                new Point(7.000, 96.000, Point.CARTESIAN),
-                                new Point(13.000, 130.000, Point.CARTESIAN)
+                                new Point(8.000, 95.000, Point.CARTESIAN),
+                                new Point(13.000, 132.000, Point.CARTESIAN)
                         )
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(-90), Math.toRadians(-45))
@@ -176,7 +175,7 @@ public class Paths {
                 .addPath(
                         // Line
                         new BezierLine(
-                                new Point(13.000, 130.000, Point.CARTESIAN),
+                                new Point(13.000, 132.000, Point.CARTESIAN),
                                 new Point(16.000, 123.000, Point.CARTESIAN)
                         )
                 )
@@ -188,7 +187,7 @@ public class Paths {
                         // Line 2
                         new BezierLine(
                                 new Point(16.000, 123.000, Point.CARTESIAN),
-                                new Point(13.000, 130.000, Point.CARTESIAN)
+                                new Point(13.000, 132.000, Point.CARTESIAN)
                         )
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(-45))
@@ -197,7 +196,7 @@ public class Paths {
                 .addPath(
                         // Line 3
                         new BezierLine(
-                                new Point(13.000, 130.000, Point.CARTESIAN),
+                                new Point(13.000, 132.000, Point.CARTESIAN),
                                 new Point(24.000, 131.750, Point.CARTESIAN)
                         )
                 )
@@ -208,7 +207,7 @@ public class Paths {
                         // Line 3
                         new BezierLine(
                                 new Point(24.000, 131.750, Point.CARTESIAN),
-                                new Point(13.000, 130.000, Point.CARTESIAN)
+                                new Point(13.000, 132.000, Point.CARTESIAN)
                         )
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(-45))
@@ -218,7 +217,7 @@ public class Paths {
                 .addPath(
                         // Line 7
                         new BezierCurve(
-                                new Point(13.000, 130.000, Point.CARTESIAN),
+                                new Point(13.000, 132.000, Point.CARTESIAN),
                                 new Point(18.978, 118.363, Point.CARTESIAN),
                                 new Point(29.133, 125.521, Point.CARTESIAN)
                         )
@@ -229,7 +228,7 @@ public class Paths {
                 .addPath(
                         new BezierLine(
                                 new Point(29.133, 125.521, Point.CARTESIAN),
-                                new Point(15.000, 129.000, Point.CARTESIAN)
+                                new Point(15.000, 131.000, Point.CARTESIAN)
                         )
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(-45))
@@ -238,7 +237,7 @@ public class Paths {
                 .addPath(
                         // Line 8
                         new BezierCurve(
-                                new Point(15.000, 129.000, Point.CARTESIAN),
+                                new Point(15.000, 131.000, Point.CARTESIAN),
                                 new Point(56.934, 129.683, Point.CARTESIAN),
                                 new Point(61.762, 96.555, Point.CARTESIAN)
                         )

@@ -8,6 +8,12 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.hermeshelper.util.hardware.ServoV2;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 import dev.frozenmilk.dairy.core.dependency.Dependency;
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotation;
 import dev.frozenmilk.dairy.core.wrapper.Wrapper;
@@ -17,12 +23,6 @@ import dev.frozenmilk.mercurial.commands.groups.Sequential;
 import dev.frozenmilk.mercurial.commands.util.StateMachine;
 import dev.frozenmilk.mercurial.commands.util.Wait;
 import dev.frozenmilk.mercurial.subsystems.Subsystem;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 
 @Config
 public class Outtake implements Subsystem {
@@ -110,7 +110,7 @@ public class Outtake implements Subsystem {
                setOuttakeClaw(outtakeClawPosition.CLOSED.pos);
                 setOuttakeWrist(1);
                 setLinkage(0.05);
-                setPivot(0.5);
+                setPivot(0.7);
     }
 
     private static void setLED(double pos) {
@@ -286,7 +286,7 @@ public class Outtake implements Subsystem {
                         .setExecute(() -> setOuttakeWrist(WristPosition.SPECIMEN.pos))
                         .setFinish(() -> true),
                 new Lambda("pivot to 0.02").addRequirements(INSTANCE)
-                        .setExecute(() -> setPivot(0.03))
+                        .setExecute(() -> setPivot(0.04))
                         .setFinish(() -> true),
                 new Lambda("claw OPEN").addRequirements(INSTANCE)
                         .setExecute(() -> setClaw(outtakeClawPosition.OPEN.pos))

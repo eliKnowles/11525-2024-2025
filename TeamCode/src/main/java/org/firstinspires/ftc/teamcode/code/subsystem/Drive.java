@@ -147,11 +147,8 @@ public class Drive implements Subsystem {
 
     public static Lambda followPathChain(PathChain chain) {
         return new Lambda("follow-path-chain")
-                .addRequirements(INSTANCE)
                 .setInit(() -> follower.followPath(chain, true))
-                .setExecute(() -> {
-                    follower.update();
-                })
-                .setFinish(() -> !follower.isBusy() || follower.isRobotStuck());
+                .setExecute(() -> follower.update())
+                .setFinish(() -> !follower.isBusy());
     }
 }

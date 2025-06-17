@@ -12,7 +12,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-
 import org.firstinspires.ftc.teamcode.hermeshelper.pp.constants.FConstants;
 import org.firstinspires.ftc.teamcode.hermeshelper.pp.constants.LConstants;
 

@@ -2,12 +2,10 @@ package org.firstinspires.ftc.teamcode.code.limelight;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.localization.Pose;
-import com.pedropathing.pathgen.BezierCurve;
 import com.pedropathing.pathgen.BezierLine;
 import com.pedropathing.pathgen.PathBuilder;
 import com.pedropathing.pathgen.PathChain;
 import com.pedropathing.pathgen.Point;
-import com.pedropathing.pathgen.Vector;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -44,7 +42,7 @@ public class LimelightCV {
         return Optional.of(new Sample(tx, ty));
     }
 
-    public void align(Sample sample) {
+    public PathChain align(Sample sample) {
         double tx = sample.getTx();
         double ty = sample.getTy();
 
@@ -73,11 +71,11 @@ public class LimelightCV {
                 .setReversed(reversed)
                 .build();
 
-        Drive.followPathChain(chain).schedule();
+        return chain;
     }
 
-    public void align() {
-        align(scan().orElseGet(() -> {
+    public PathChain align() {
+        return align(scan().orElseGet(() -> {
             throw new RuntimeException("Could not detect sample in latest scan");
 //            return new Sample(0, 0);
         }));
@@ -86,12 +84,13 @@ public class LimelightCV {
     public Lambda alignAction(Sample sample) {
         return new Lambda("align with sample")
                 .setExecute(() -> align(sample))
-                .setFinish(() -> !follower.isBusy());
+                .setFinish(() -> true);
     }
 
     public Lambda alignAction() {
         return new Lambda("align with sample")
-                .setExecute(this::align)
+                .setInit(this::align)
+//                .setExecute(follower::update)
                 .setFinish(follower::isBusy);
     }
 

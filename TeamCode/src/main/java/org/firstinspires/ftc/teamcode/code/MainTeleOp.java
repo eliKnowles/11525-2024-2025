@@ -1,11 +1,8 @@
 package org.firstinspires.ftc.teamcode.code;
 
 
-
-
 import static org.firstinspires.ftc.teamcode.code.subsystem.Drive.follower;
 import static org.firstinspires.ftc.teamcode.code.subsystem.HSlide.INSTANCE;
-import static org.firstinspires.ftc.teamcode.code.subsystem.Intake.limelightSearch;
 import static org.firstinspires.ftc.teamcode.code.subsystem.Intake.pin0;
 import static org.firstinspires.ftc.teamcode.code.subsystem.Intake.pin1;
 import static org.firstinspires.ftc.teamcode.code.subsystem.Outtake.clawStates;
@@ -16,14 +13,11 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.code.limelight.Limelight;
 import org.firstinspires.ftc.teamcode.code.limelight.LimelightCV;
-import org.firstinspires.ftc.teamcode.code.limelight.ScanForSample;
-import org.firstinspires.ftc.teamcode.code.limelight.SearchForever;
+import org.firstinspires.ftc.teamcode.code.subsystem.Drive;
 import org.firstinspires.ftc.teamcode.code.subsystem.HSlide;
 import org.firstinspires.ftc.teamcode.code.subsystem.Intake;
-import org.firstinspires.ftc.teamcode.code.subsystem.VSlide;
-import org.firstinspires.ftc.teamcode.code.subsystem.Drive;
 import org.firstinspires.ftc.teamcode.code.subsystem.Outtake;
-
+import org.firstinspires.ftc.teamcode.code.subsystem.VSlide;
 
 import dev.frozenmilk.mercurial.Mercurial;
 import dev.frozenmilk.mercurial.commands.Lambda;
@@ -47,7 +41,7 @@ public class MainTeleOp extends OpMode {
     private LimelightCV llCV;
 
     private boolean stopHangSceduled = false;
-    private boolean limelightSceduled = false;
+    private boolean limelightScheduled, grabScheduled = false;
 
     @Override
     public void init() {
@@ -84,6 +78,7 @@ public class MainTeleOp extends OpMode {
                                         new Lambda("mark state SPECIMEN_WALL")
                                                 .setExecute(() -> clawStates.setState(Outtake.OuttakeStates.EXTENDED_SAMPLE))
                                                 .setFinish(() -> true),
+                                        Intake.intakeSpecimen(),
                                         Outtake.extendArmSample(),
                                         VSlide.goTo(27500),
                                         Drive.nerfDrive()
@@ -146,38 +141,43 @@ public class MainTeleOp extends OpMode {
         );
 
         Mercurial.gamepad1().a().onTrue(
-        new Sequential(
-                Intake.intakeGrab(),
-                new IfElse(
-                        Intake::hasSample, // condition: sample detected
-                        // TRUE: run full transfer
-                        new Parallel(
-                                Outtake.retractArmSample(),
-                                Outtake.outtakeClawOpen(),
-                                Drive.normalDrive(),
-                                new Sequential(
-                                        Intake.runTransfer(),
-                                        HSlide.goTo(0),
-                                        Outtake.outtakeClawClose(),
+                new Sequential(
+                        Intake.intakeGrab(),
+                        new IfElse(
+                                Intake::hasSample, // condition: sample detected
+                                // TRUE: run full transfer
+                                new Parallel(
+                                        Outtake.retractArmSample(),
+                                        Outtake.outtakeClawOpen(),
+                                        Drive.normalDrive(),
+                                        new Sequential(
+                                                Intake.chamberTransfer(),
+                                                HSlide.goTo(0),
+                                                Intake.runTransfer(),
+                                                new Wait(.4),
+                                                Outtake.outtakeClawClose(),
+                                                Intake.intakeClawOpen(),
+                                                //  Intake.intakeSpecimen(),
+                                                new Lambda("Transfer done")
+                                                        .setExecute(() -> clawStates.setState(Outtake.OuttakeStates.TRANSFER_SAMPLE))
+                                                        .setFinish(() -> true)
+                                        )
+                                ),
+                                // FALSE: re-extend intake
+                                new Parallel(
                                         Intake.intakeClawOpen(),
-                                      //  Intake.intakeSpecimen(),
-                                        new Lambda("Transfer done")
-                                                .setExecute(() -> clawStates.setState(Outtake.OuttakeStates.TRANSFER_SAMPLE))
+                                        Intake.runExtend(),
+                                        HSlide.goTo(13500),
+                                        new Lambda("Re-extend intake")
+                                                .setExecute(() -> clawStates.setState(Outtake.OuttakeStates.EXTENDED_INTAKE))
                                                 .setFinish(() -> true)
                                 )
-                        ),
-                        // FALSE: re-extend intake
-                        new Parallel(
-                                Intake.intakeClawOpen(),
-                                Intake.runExtend(),
-                                HSlide.goTo(13500),
-                                new Lambda("Re-extend intake")
-                                        .setExecute(() -> clawStates.setState(Outtake.OuttakeStates.EXTENDED_INTAKE))
-                                        .setFinish(() -> true)
                         )
                 )
-        )
         );
+
+
+
         Mercurial.gamepad1().options().onTrue(
                 new Lambda("Wrist Left")
                         .setExecute(() -> Outtake.resetExtendo())
@@ -232,16 +232,15 @@ public class MainTeleOp extends OpMode {
                 Outtake.toggleMode()
         );
 
-        Mercurial.gamepad1().dpadUp().onTrue(
-
-                llCV.alignAction()
+      //  Mercurial.gamepad1().dpadUp().onTrue(
+        //        Drive.followPathChain(llCV.align())
 //                new Parallel(
 //                        Intake.limelightSearch(),
 ////                        new SearchForever(follower).raceWith(
 //                                new ScanForSample(limelight, buffer, follower, false)
 ////                        )
 //                )
-        );
+    //    );
     }
 
 
@@ -270,8 +269,8 @@ public class MainTeleOp extends OpMode {
             stopHangSceduled = false;
         }
 
-        if (gamepad1.right_trigger > 0.75 && !limelightSceduled) {
-            limelightSceduled = true;
+        if (gamepad1.right_trigger > 0.75 && !limelightScheduled) {
+            limelightScheduled = true;
             new Lambda("Score Position")
                     .setExecute(() -> {
                         if (Outtake.getClawStates().getState() == Outtake.OuttakeStates.TRANSFER_SAMPLE) {
@@ -288,7 +287,44 @@ public class MainTeleOp extends OpMode {
                     .setFinish(() -> true)
                     .schedule();
         } else if (gamepad1.right_trigger < 0.1) {
-            limelightSceduled = false;
+            limelightScheduled = false;
+        }
+
+        if (gamepad1.left_trigger > 0.75 && !grabScheduled) {
+            grabScheduled = true;
+            new Sequential(
+                    Intake.intakeGrab(),
+                    new IfElse(
+                            Intake::hasSample, // condition: sample detected
+                            // TRUE: run full transfer
+                            new Parallel(
+                                    Outtake.retractArmSample(),
+                                    Outtake.outtakeClawOpen(),
+                                    Drive.normalDrive(),
+                                    new Sequential(
+                                            Intake.runTransfer(),
+                                            HSlide.goTo(0),
+                                            Outtake.outtakeClawClose(),
+                                            Intake.intakeClawOpen(),
+                                            //  Intake.intakeSpecimen(),
+                                            new Lambda("Transfer done")
+                                                    .setExecute(() -> clawStates.setState(Outtake.OuttakeStates.TRANSFER_SAMPLE))
+                                                    .setFinish(() -> true)
+                                    )
+                            ),
+                            // FALSE: re-extend intake
+                            new Parallel(
+                                    Intake.intakeClawOpen(),
+                                    Intake.runExtend(),
+                                    HSlide.goTo(13500),
+                                    new Lambda("Re-extend intake")
+                                            .setExecute(() -> clawStates.setState(Outtake.OuttakeStates.EXTENDED_INTAKE))
+                                            .setFinish(() -> true)
+                            )
+                    )
+            ).schedule();
+        } else if (gamepad1.left_trigger < 0.1) {
+            grabScheduled = false;
         }
     }
 }

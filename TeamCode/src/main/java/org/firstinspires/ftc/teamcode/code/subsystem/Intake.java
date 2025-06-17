@@ -1,18 +1,19 @@
 package org.firstinspires.ftc.teamcode.code.subsystem;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
-import static org.firstinspires.ftc.teamcode.code.subsystem.Outtake.clawStates;
-
 import androidx.annotation.NonNull;
 
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-
 
 import org.firstinspires.ftc.teamcode.hermeshelper.util.hardware.ServoV2;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 import dev.frozenmilk.dairy.core.dependency.Dependency;
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotation;
@@ -21,12 +22,6 @@ import dev.frozenmilk.mercurial.commands.Lambda;
 import dev.frozenmilk.mercurial.commands.groups.Parallel;
 import dev.frozenmilk.mercurial.commands.groups.Sequential;
 import dev.frozenmilk.mercurial.subsystems.Subsystem;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 
 public class Intake implements Subsystem {
 
@@ -80,8 +75,9 @@ public class Intake implements Subsystem {
         intakeClawServo = new ServoV2("intake_claw", hw);
         intakeWristServo = new ServoV2("intake_wrist", hw);
         intakeWristServoTwo = new ServoV2("intake_wrist_two", hw);
-        intakeClawOpen();
-        intakeSpecimen();
+        intakeClawOpen().schedule();
+        setPivot(.7f);
+
     }
 
     public static Parallel runTransfer() {
@@ -148,6 +144,10 @@ public class Intake implements Subsystem {
         setWristPosition();
     }
 
+    private static void setPivot(double pos) {
+        intakePivotServoOne.setPosition(pos);
+    }
+
     public static void resetWrist() {
         wristPos = 0;
         setWristPosition();
@@ -176,11 +176,18 @@ public class Intake implements Subsystem {
     public static Sequential runExtend() {
         return new Sequential(
                 new Lambda("Set Wrist2 to 0.5").addRequirements(INSTANCE).setExecute(() -> intakeWristServoTwo.setPosition(0.5f)),
-                new Lambda("Set Pivot to 0.07").addRequirements(INSTANCE).setExecute(() -> intakePivotServoOne.setPosition(0.1f)),
+                new Lambda("Set Pivot to 0.07").addRequirements(INSTANCE).setExecute(() -> intakePivotServoOne.setPosition(0.15f)),
                 new Lambda("Set Wrist to 0.96").addRequirements(INSTANCE).setExecute(() -> intakeWristServo.setPosition(0.98f))
 
         );
     }
+    public static Sequential chamberTransfer() {
+        return new Sequential(
+                new Lambda("Set Wrist2 to 0.5").addRequirements(INSTANCE).setExecute(() -> intakeWristServo.setPosition(0.6f))
+
+        );
+    }
+
 
     public static Sequential intakeSpecimen() {
         return new Sequential(

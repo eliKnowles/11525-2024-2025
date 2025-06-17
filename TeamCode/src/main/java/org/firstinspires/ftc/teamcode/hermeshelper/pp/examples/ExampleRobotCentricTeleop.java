@@ -1,11 +1,9 @@
 package org.firstinspires.ftc.teamcode.hermeshelper.pp.examples;
 
-import android.provider.SyncStateContract;
-
 import com.pedropathing.follower.Follower;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.util.Constants;
-import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.hermeshelper.pp.constants.FConstants;

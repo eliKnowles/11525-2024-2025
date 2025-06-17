@@ -6,9 +6,7 @@ import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.code.subsystem.HSlide;
-import org.firstinspires.ftc.teamcode.code.subsystem.Intake;
 
 public class Limelight {
     private final Limelight3A hardware;
