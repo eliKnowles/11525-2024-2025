@@ -200,6 +200,7 @@ public class Intake implements Subsystem {
 
 
     public static Sequential intakeGrab() {
+//        if ()
         return new Sequential(
                 new Lambda("Set Pivot to 0.02").addRequirements(INSTANCE).setExecute(() -> intakePivotServoOne.setPosition(0.00f))
                         .setFinish(() -> true),

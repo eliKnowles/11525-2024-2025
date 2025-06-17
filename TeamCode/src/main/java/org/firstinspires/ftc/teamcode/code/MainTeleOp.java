@@ -149,6 +149,7 @@ public class MainTeleOp extends OpMode {
                                 new Parallel(
                                         Outtake.retractArmSample(),
                                         Outtake.outtakeClawOpen(),
+                                        VSlide.goTo(0),
                                         Drive.normalDrive(),
                                         new Sequential(
                                                 Intake.chamberTransfer(),
